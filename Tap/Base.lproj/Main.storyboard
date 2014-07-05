@@ -81,6 +81,8 @@
                     </view>
                     <navigationItem key="navigationItem" title="LOGIN" id="VO8-DG-daI"/>
                     <connections>
+                        <outlet property="passwordField" destination="CaH-Fn-XSw" id="OWq-At-ks1"/>
+                        <outlet property="usernameField" destination="nLv-aw-9ZG" id="ivN-hh-WrB"/>
                         <segue destination="NT2-N6-W34" kind="push" id="nWM-dg-S3Z"/>
                     </connections>
                 </viewController>
