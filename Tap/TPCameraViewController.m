@@ -7,6 +7,8 @@
 //
 
 #import "TPCameraViewController.h"
+#import <Parse/Parse.h>
+
 
 @interface TPCameraViewController (){
  
@@ -22,6 +24,18 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    
+    // Login
+    PFUser *currentUser = [PFUser currentUser];
+    
+    if (currentUser) {
+        NSLog(@"Current user: %@", currentUser.username);
+    }
+    else {
+        [self performSegueWithIdentifier:@"showLanding" sender:self];
+    }
+
     frontCam = NO;
     [self setupCamera];
     takingPicture = true;
