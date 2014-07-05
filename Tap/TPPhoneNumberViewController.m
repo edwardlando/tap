@@ -23,6 +23,7 @@
 }
 
 - (void)savePhone{
+    NSLog(@"Saving phone");
     NSString *phone = [self.phoneField.text stringByTrimmingCharactersInSet:
                           [NSCharacterSet whitespaceAndNewlineCharacterSet]];
    
@@ -31,16 +32,19 @@
         [alertView show];
     }
     else {
-        PFUser *currentUser = [PFUser currentUser];
-        [currentUser setObject:phone forKey:@"phone"];
-      
-        [currentUser saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+        NSLog(@"Phone not length 0");
+        [self.user setObject:phone forKey:@"phone"];
+        NSLog(@"%@", self.user);
+        
+        NSLog(@"Saving user");
+        [self.user signUpInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
             if (error) {
                 UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Sorry!" message:[error.userInfo objectForKey:@"error"] delegate:nil cancelButtonTitle:@"OK!" otherButtonTitles: nil];
                 [alertView show];
             }
             else {
-                NSLog(@"Error");
+                // Take me to the camera
+                NSLog(@"About to be taken to camera");
                 [self dismissViewControllerAnimated:YES completion:nil];
             }
         }];
@@ -50,6 +54,7 @@
 
 
 - (IBAction)continue:(id)sender {
+    NSLog(@"Continue");
     [self savePhone];
 }
 

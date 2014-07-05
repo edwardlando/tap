@@ -7,6 +7,7 @@
 //
 
 #import "TPSignUpViewController.h"
+#import "TPPhoneNumberViewController.h"
 #import <Parse/Parse.h>
 
 @interface TPSignUpViewController ()
@@ -15,10 +16,20 @@
 
 @implementation TPSignUpViewController
 
+- (PFUser *)user
+{
+    if (!_user) {
+        _user = [PFUser user];
+    }
+    
+    return _user;
+}
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    self.passwordField.secureTextEntry = YES;
+    // self.user = [PFUser user];
     // Do any additional setup after loading the view.
 }
 
@@ -29,29 +40,34 @@
                           [NSCharacterSet whitespaceAndNewlineCharacterSet]];
     
     if ([username length] == 0 || [password length] == 0) {
-        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Oops!" message:@"Make sure you enter a username, email and a password!" delegate:nil cancelButtonTitle:@"OK!" otherButtonTitles: nil];
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Oops!" message:@"Make sure you enter a username and a password!" delegate:nil cancelButtonTitle:@"OK!" otherButtonTitles: nil];
         [alertView show];
     }
     else {
-        PFUser *newUser = [PFUser user];
-        newUser.username = username;
-        newUser.password = password;
+        // Do I need to initialize the PFUser?
+        self.user.username = username;
+        self.user.password = password;
+       [self performSegueWithIdentifier:@"showPhone" sender:self];
+    }
+}
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    // Make sure your segue name in storyboard is the same as this line
+    if ([[segue identifier] isEqualToString:@"showPhone"])
+    {
+        TPPhoneNumberViewController *vc = (TPPhoneNumberViewController *)[segue destinationViewController];
+        NSLog(@"%@", self.user);
+        vc.user = self.user;
+        NSLog(@"%@", vc.user);
         
-        [newUser signUpInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-            if (error) {
-                UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Sorry!" message:[error.userInfo objectForKey:@"error"] delegate:nil cancelButtonTitle:@"OK!" otherButtonTitles: nil];
-                [alertView show];
-            }
-            else {
-                [self.navigationController popToRootViewControllerAnimated:YES];
-            }
-        }];
+     
     }
 }
 
 
 - (IBAction)continueToPhone:(id)sender {
     [self signup];
-    [self performSegueWithIdentifier:@"showPhone" sender:self];
+    
 }
 @end
