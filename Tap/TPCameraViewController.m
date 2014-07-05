@@ -80,10 +80,18 @@
     [self.view addGestureRecognizer:tap];
     tap.delegate = self;
     
-    UISwipeGestureRecognizer *swipeRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swapCamera)];
-    [swipeRecognizer setDirection:(UISwipeGestureRecognizerDirectionRight)];
-    [self.view addGestureRecognizer:swipeRecognizer];
-    swipeRecognizer.delegate = self;
+    UISwipeGestureRecognizer *rightSwipeRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swapCamera)];
+    [rightSwipeRecognizer setDirection:(UISwipeGestureRecognizerDirectionRight)];
+
+    [self.view addGestureRecognizer:rightSwipeRecognizer];
+    rightSwipeRecognizer.delegate = self;
+    
+    UISwipeGestureRecognizer *leftSwipeRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swapCamera)];
+    [leftSwipeRecognizer setDirection:(UISwipeGestureRecognizerDirectionLeft)];
+    
+    [self.view addGestureRecognizer:leftSwipeRecognizer];
+    leftSwipeRecognizer.delegate = self;
+    
 }
 
 -(void)touch:(UITapGestureRecognizer *)recognizer
@@ -133,6 +141,7 @@
 
 -(void) resetBatch {
     taps = 0;
+    self.tapsCounter.text = [NSString stringWithFormat:@"%d", taps];
     [self resetBatchId];
 }
 

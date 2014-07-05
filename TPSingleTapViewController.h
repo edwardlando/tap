@@ -7,7 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <Parse/Parse.h>
 
-@interface TPSingleTapViewController : UIViewController
+@interface TPSingleTapViewController : UIViewController <UIGestureRecognizerDelegate>
+
+@property (strong, nonatomic) NSMutableArray *objects;
+@property (strong, nonatomic) IBOutlet PFImageView *imageView;
 
 @end

@@ -108,8 +108,8 @@
 		B6CB8EB51967CF69002996E8 /* CaptureSessionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CaptureSessionManager.m; sourceTree = "<group>"; };
 		B6CB8EBA1967D59E002996E8 /* TPProcessImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TPProcessImage.h; path = ../TPProcessImage.h; sourceTree = "<group>"; };
 		B6CB8EBB1967D59E002996E8 /* TPProcessImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TPProcessImage.m; path = ../TPProcessImage.m; sourceTree = "<group>"; };
-		B6CB8EBD1967E09A002996E8 /* TPSingleTapViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPSingleTapViewController.h; sourceTree = "<group>"; };
-		B6CB8EBE1967E09A002996E8 /* TPSingleTapViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TPSingleTapViewController.m; sourceTree = "<group>"; };
+		B6CB8EBD1967E09A002996E8 /* TPSingleTapViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TPSingleTapViewController.h; path = ../TPSingleTapViewController.h; sourceTree = "<group>"; };
+		B6CB8EBE1967E09A002996E8 /* TPSingleTapViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TPSingleTapViewController.m; path = ../TPSingleTapViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -151,8 +151,6 @@
 		B6CB8E391967C41C002996E8 = {
 			isa = PBXGroup;
 			children = (
-				B6CB8EBD1967E09A002996E8 /* TPSingleTapViewController.h */,
-				B6CB8EBE1967E09A002996E8 /* TPSingleTapViewController.m */,
 				B6CB8E4B1967C41C002996E8 /* Tap */,
 				B6CB8E6A1967C41C002996E8 /* TapTests */,
 				B6CB8E441967C41C002996E8 /* Frameworks */,
@@ -205,6 +203,7 @@
 				B6CB8EB01967CC3F002996E8 /* Login */,
 				B6CB8EB11967CC7C002996E8 /* My Group */,
 				B6CB8EB21967CC84002996E8 /* Camera */,
+				B6CB8EC01968A219002996E8 /* Single Tap */,
 				B6CB8EB31967CC8E002996E8 /* Inbox */,
 				B6CB8E5D1967C41C002996E8 /* Images.xcassets */,
 				B6CB8E4C1967C41C002996E8 /* Supporting Files */,
@@ -333,6 +332,15 @@
 				B6CB8E991967CB0A002996E8 /* TPVerifyViewController.m */,
 			);
 			name = "Phone Verify";
+			sourceTree = "<group>";
+		};
+		B6CB8EC01968A219002996E8 /* Single Tap */ = {
+			isa = PBXGroup;
+			children = (
+				B6CB8EBD1967E09A002996E8 /* TPSingleTapViewController.h */,
+				B6CB8EBE1967E09A002996E8 /* TPSingleTapViewController.m */,
+			);
+			name = "Single Tap";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

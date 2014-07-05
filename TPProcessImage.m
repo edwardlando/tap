@@ -23,11 +23,13 @@
         PFObject *msg = [PFObject objectWithClassName:@"Message"];
         msg[@"img"] = file;
         msg[@"sender"] = [PFUser currentUser];
-//        msg[@"recipients"] = recipients;
-        msg[@"recipients"] = @[@"asdf"];
+        recipients = [@[[PFUser currentUser]] mutableCopy];
+        msg[@"recipients"] = recipients;
         msg[@"read"] = [[NSMutableDictionary alloc] init];
+        msg[@"batchId"] = batchId;
+        
         for (id recipient in recipients) {
-            [msg[@"read"] setObject:[NSNumber numberWithBool:NO] forKey:[recipient objectForKey:@"objectId"]];
+            [msg[@"read"] setObject:[NSNumber numberWithBool:NO] forKey:[recipient objectId]];
         }
         
         [msg saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {

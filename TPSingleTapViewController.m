@@ -8,33 +8,62 @@
 
 #import "TPSingleTapViewController.h"
 
+//#import <SDWebImage/UIImageView+WebCache.h>
+
 @interface TPSingleTapViewController ()
 
 @end
 
 @implementation TPSingleTapViewController
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        // Custom initialization
-    }
-    return self;
-}
+
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationNone];
+    [self setupTap];
+    NSLog(@"objects %@", self.objects);
+    
+    PFFile *file = [[self.objects objectAtIndex:0] objectForKey:@"img"];
+
+    //    self.imageView = [[PFImageView alloc] init];
+    
+    self.imageView.file = file;
+    [self.imageView loadInBackground:^(UIImage *image, NSError *error) {
+        if (!error) {
+            NSLog(@"Finished Loading Image");
+        } else {
+            NSLog(@"Error: %@", error);
+        }
+
+    }];
+    
+    
+    
+    
+    
+    
     // Do any additional setup after loading the view.
 }
 
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+- (BOOL)prefersStatusBarHidden {
+    return YES;
 }
 
+-(void) setupTap {
+    
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tap:)];
+    [self.view addGestureRecognizer:tap];
+    tap.delegate = self;
+    
+}
+
+-(void) tap:(UITapGestureRecognizer *)recognizer {
+    [self dismissViewControllerAnimated:NO completion:nil];
+}
+
+//-(void) markAsRead:
 /*
 #pragma mark - Navigation
 

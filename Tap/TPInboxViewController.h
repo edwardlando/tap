@@ -7,7 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <Parse/Parse.h>
 
-@interface TPInboxViewController : UITableViewController
+@interface TPInboxViewController : PFQueryTableViewController
 
 @end
