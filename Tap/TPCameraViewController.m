@@ -82,7 +82,16 @@
 //    _imageView.image = [captureManager stillImage];
     _selectedImage = [captureManager stillImage];
 //    [[[self captureManager]captureSession]stopRunning];
-    [TPProcessImage addPost:@"" andImage:_selectedImage completed:^(BOOL success) {
+    CGFloat newHeight = _selectedImage.size.height / 3.0f;
+    CGFloat newWidth = _selectedImage.size.width / 3.0f;
+    
+    CGSize newSize = CGSizeMake(newWidth, newHeight);
+    UIGraphicsBeginImageContext(newSize);
+    [_selectedImage drawInRect:CGRectMake(0,0,newSize.width,newSize.height)];
+    UIImage* newImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    [TPProcessImage addPost:@"" andImage:newImage completed:^(BOOL success) {
         NSLog(@"HOly shit it saved?");
     }];
 }
