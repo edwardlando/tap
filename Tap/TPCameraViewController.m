@@ -7,7 +7,9 @@
 //
 
 #import "TPCameraViewController.h"
+#import <Parse/Parse.h>
 #import "TPProcessImage.h"
+
 
 @interface TPCameraViewController (){
  
@@ -26,7 +28,17 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+        
+    // Login
+    PFUser *currentUser = [PFUser currentUser];
     
+    if (currentUser) {
+        NSLog(@"Current user: %@", currentUser.username);
+    }
+    else {
+        [self performSegueWithIdentifier:@"showLanding" sender:self];
+    }
+
     [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationNone];
     taps = 0;
     frontCam = NO;

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="5056" systemVersion="13C64" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="mMY-s0-lSu">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="5056" systemVersion="12F45" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="mMY-s0-lSu">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3733"/>
     </dependencies>
@@ -118,13 +118,18 @@
                                 <state key="normal" title="CONTINUE">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
+                                <connections>
+                                    <action selector="continueToPhone:" destination="6z7-pe-tL7" eventType="touchUpInside" id="5Bx-dE-fb4"/>
+                                </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
                     <navigationItem key="navigationItem" title="SIGN UP" id="qW8-EI-nTP"/>
                     <connections>
-                        <segue destination="RqI-qg-CHl" kind="push" id="8bt-DM-dl2"/>
+                        <outlet property="passwordField" destination="lzC-6l-2Vw" id="2YY-g8-q5C"/>
+                        <outlet property="usernameField" destination="neE-EV-lYu" id="cw6-ir-bbb"/>
+                        <segue destination="RqI-qg-CHl" kind="push" identifier="showPhone" id="8bt-DM-dl2"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ce6-OW-Kxm" userLabel="First Responder" sceneMemberID="firstResponder"/>
