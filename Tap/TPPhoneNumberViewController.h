@@ -10,4 +10,8 @@
 
 @interface TPPhoneNumberViewController : UIViewController
 
+@property (weak, nonatomic) IBOutlet UITextField *phoneField;
+
+- (IBAction)continue:(id)sender;
+
 @end
