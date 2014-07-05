@@ -42,6 +42,8 @@
 		B6CB8EA91967CB8D002996E8 /* TPMyGroupViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B6CB8EA81967CB8D002996E8 /* TPMyGroupViewController.m */; };
 		B6CB8EAC1967CBA4002996E8 /* TPAllContactsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B6CB8EAB1967CBA4002996E8 /* TPAllContactsViewController.m */; };
 		B6CB8EB61967CF69002996E8 /* CaptureSessionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = B6CB8EB51967CF69002996E8 /* CaptureSessionManager.m */; };
+		B6CB8EBC1967D59E002996E8 /* TPProcessImage.m in Sources */ = {isa = PBXBuildFile; fileRef = B6CB8EBB1967D59E002996E8 /* TPProcessImage.m */; };
+		B6CB8EBF1967E09A002996E8 /* TPSingleTapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B6CB8EBE1967E09A002996E8 /* TPSingleTapViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -104,6 +106,10 @@
 		B6CB8EAB1967CBA4002996E8 /* TPAllContactsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TPAllContactsViewController.m; sourceTree = "<group>"; };
 		B6CB8EB41967CF69002996E8 /* CaptureSessionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CaptureSessionManager.h; sourceTree = "<group>"; };
 		B6CB8EB51967CF69002996E8 /* CaptureSessionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CaptureSessionManager.m; sourceTree = "<group>"; };
+		B6CB8EBA1967D59E002996E8 /* TPProcessImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TPProcessImage.h; path = ../TPProcessImage.h; sourceTree = "<group>"; };
+		B6CB8EBB1967D59E002996E8 /* TPProcessImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TPProcessImage.m; path = ../TPProcessImage.m; sourceTree = "<group>"; };
+		B6CB8EBD1967E09A002996E8 /* TPSingleTapViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPSingleTapViewController.h; sourceTree = "<group>"; };
+		B6CB8EBE1967E09A002996E8 /* TPSingleTapViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TPSingleTapViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -145,6 +151,8 @@
 		B6CB8E391967C41C002996E8 = {
 			isa = PBXGroup;
 			children = (
+				B6CB8EBD1967E09A002996E8 /* TPSingleTapViewController.h */,
+				B6CB8EBE1967E09A002996E8 /* TPSingleTapViewController.m */,
 				B6CB8E4B1967C41C002996E8 /* Tap */,
 				B6CB8E6A1967C41C002996E8 /* TapTests */,
 				B6CB8E441967C41C002996E8 /* Frameworks */,
@@ -190,6 +198,8 @@
 				B6CB8E541967C41C002996E8 /* TPAppDelegate.h */,
 				B6CB8E551967C41C002996E8 /* TPAppDelegate.m */,
 				B6CB8E571967C41C002996E8 /* Main.storyboard */,
+				B6CB8EBA1967D59E002996E8 /* TPProcessImage.h */,
+				B6CB8EBB1967D59E002996E8 /* TPProcessImage.m */,
 				B6CB8EB71967D20D002996E8 /* Onboarding */,
 				B6CB8EAD1967CC17002996E8 /* All Contacts */,
 				B6CB8EB01967CC3F002996E8 /* Login */,
@@ -433,6 +443,8 @@
 				B6CB8EA31967CB50002996E8 /* TPCameraViewController.m in Sources */,
 				B6CB8E9D1967CB2A002996E8 /* TPLandingViewController.m in Sources */,
 				B6CB8EA01967CB3F002996E8 /* TPLoginViewController.m in Sources */,
+				B6CB8EBF1967E09A002996E8 /* TPSingleTapViewController.m in Sources */,
+				B6CB8EBC1967D59E002996E8 /* TPProcessImage.m in Sources */,
 				B6CB8E521967C41C002996E8 /* main.m in Sources */,
 				B6CB8EAC1967CBA4002996E8 /* TPAllContactsViewController.m in Sources */,
 			);
