@@ -33,6 +33,15 @@
 		B6CB8E8D1967C4F2002996E8 /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B6CB8E8C1967C4F2002996E8 /* Social.framework */; };
 		B6CB8E8F1967C4F8002996E8 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B6CB8E8E1967C4F8002996E8 /* StoreKit.framework */; };
 		B6CB8E911967C4FF002996E8 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B6CB8E901967C4FE002996E8 /* SystemConfiguration.framework */; };
+		B6CB8E941967CAE4002996E8 /* TPSignUpViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B6CB8E931967CAE4002996E8 /* TPSignUpViewController.m */; };
+		B6CB8E971967CAFB002996E8 /* TPPhoneNumberViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B6CB8E961967CAFB002996E8 /* TPPhoneNumberViewController.m */; };
+		B6CB8E9A1967CB0A002996E8 /* TPVerifyViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B6CB8E991967CB0A002996E8 /* TPVerifyViewController.m */; };
+		B6CB8E9D1967CB2A002996E8 /* TPLandingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B6CB8E9C1967CB2A002996E8 /* TPLandingViewController.m */; };
+		B6CB8EA01967CB3F002996E8 /* TPLoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B6CB8E9F1967CB3F002996E8 /* TPLoginViewController.m */; };
+		B6CB8EA31967CB50002996E8 /* TPCameraViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B6CB8EA21967CB50002996E8 /* TPCameraViewController.m */; };
+		B6CB8EA61967CB68002996E8 /* TPInboxViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B6CB8EA51967CB68002996E8 /* TPInboxViewController.m */; };
+		B6CB8EA91967CB8D002996E8 /* TPMyGroupViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B6CB8EA81967CB8D002996E8 /* TPMyGroupViewController.m */; };
+		B6CB8EAC1967CBA4002996E8 /* TPAllContactsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B6CB8EAB1967CBA4002996E8 /* TPAllContactsViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -77,6 +86,24 @@
 		B6CB8E8C1967C4F2002996E8 /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
 		B6CB8E8E1967C4F8002996E8 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		B6CB8E901967C4FE002996E8 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		B6CB8E921967CAE4002996E8 /* TPSignUpViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPSignUpViewController.h; sourceTree = "<group>"; };
+		B6CB8E931967CAE4002996E8 /* TPSignUpViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TPSignUpViewController.m; sourceTree = "<group>"; };
+		B6CB8E951967CAFB002996E8 /* TPPhoneNumberViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPPhoneNumberViewController.h; sourceTree = "<group>"; };
+		B6CB8E961967CAFB002996E8 /* TPPhoneNumberViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TPPhoneNumberViewController.m; sourceTree = "<group>"; };
+		B6CB8E981967CB0A002996E8 /* TPVerifyViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPVerifyViewController.h; sourceTree = "<group>"; };
+		B6CB8E991967CB0A002996E8 /* TPVerifyViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TPVerifyViewController.m; sourceTree = "<group>"; };
+		B6CB8E9B1967CB2A002996E8 /* TPLandingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPLandingViewController.h; sourceTree = "<group>"; };
+		B6CB8E9C1967CB2A002996E8 /* TPLandingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TPLandingViewController.m; sourceTree = "<group>"; };
+		B6CB8E9E1967CB3F002996E8 /* TPLoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPLoginViewController.h; sourceTree = "<group>"; };
+		B6CB8E9F1967CB3F002996E8 /* TPLoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TPLoginViewController.m; sourceTree = "<group>"; };
+		B6CB8EA11967CB50002996E8 /* TPCameraViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPCameraViewController.h; sourceTree = "<group>"; };
+		B6CB8EA21967CB50002996E8 /* TPCameraViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TPCameraViewController.m; sourceTree = "<group>"; };
+		B6CB8EA41967CB68002996E8 /* TPInboxViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPInboxViewController.h; sourceTree = "<group>"; };
+		B6CB8EA51967CB68002996E8 /* TPInboxViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TPInboxViewController.m; sourceTree = "<group>"; };
+		B6CB8EA71967CB8D002996E8 /* TPMyGroupViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPMyGroupViewController.h; sourceTree = "<group>"; };
+		B6CB8EA81967CB8D002996E8 /* TPMyGroupViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TPMyGroupViewController.m; sourceTree = "<group>"; };
+		B6CB8EAA1967CBA4002996E8 /* TPAllContactsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPAllContactsViewController.h; sourceTree = "<group>"; };
+		B6CB8EAB1967CBA4002996E8 /* TPAllContactsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TPAllContactsViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -163,6 +190,24 @@
 				B6CB8E541967C41C002996E8 /* TPAppDelegate.h */,
 				B6CB8E551967C41C002996E8 /* TPAppDelegate.m */,
 				B6CB8E571967C41C002996E8 /* Main.storyboard */,
+				B6CB8EAA1967CBA4002996E8 /* TPAllContactsViewController.h */,
+				B6CB8EAB1967CBA4002996E8 /* TPAllContactsViewController.m */,
+				B6CB8E921967CAE4002996E8 /* TPSignUpViewController.h */,
+				B6CB8E931967CAE4002996E8 /* TPSignUpViewController.m */,
+				B6CB8E951967CAFB002996E8 /* TPPhoneNumberViewController.h */,
+				B6CB8E961967CAFB002996E8 /* TPPhoneNumberViewController.m */,
+				B6CB8E981967CB0A002996E8 /* TPVerifyViewController.h */,
+				B6CB8E991967CB0A002996E8 /* TPVerifyViewController.m */,
+				B6CB8E9B1967CB2A002996E8 /* TPLandingViewController.h */,
+				B6CB8E9C1967CB2A002996E8 /* TPLandingViewController.m */,
+				B6CB8E9E1967CB3F002996E8 /* TPLoginViewController.h */,
+				B6CB8E9F1967CB3F002996E8 /* TPLoginViewController.m */,
+				B6CB8EA71967CB8D002996E8 /* TPMyGroupViewController.h */,
+				B6CB8EA81967CB8D002996E8 /* TPMyGroupViewController.m */,
+				B6CB8EA11967CB50002996E8 /* TPCameraViewController.h */,
+				B6CB8EA21967CB50002996E8 /* TPCameraViewController.m */,
+				B6CB8EA41967CB68002996E8 /* TPInboxViewController.h */,
+				B6CB8EA51967CB68002996E8 /* TPInboxViewController.m */,
 				B6CB8E5A1967C41C002996E8 /* TPViewController.h */,
 				B6CB8E5B1967C41C002996E8 /* TPViewController.m */,
 				B6CB8E5D1967C41C002996E8 /* Images.xcassets */,
@@ -298,9 +343,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B6CB8E941967CAE4002996E8 /* TPSignUpViewController.m in Sources */,
 				B6CB8E5C1967C41C002996E8 /* TPViewController.m in Sources */,
+				B6CB8E971967CAFB002996E8 /* TPPhoneNumberViewController.m in Sources */,
+				B6CB8EA61967CB68002996E8 /* TPInboxViewController.m in Sources */,
+				B6CB8E9A1967CB0A002996E8 /* TPVerifyViewController.m in Sources */,
 				B6CB8E561967C41C002996E8 /* TPAppDelegate.m in Sources */,
+				B6CB8EA91967CB8D002996E8 /* TPMyGroupViewController.m in Sources */,
+				B6CB8EA31967CB50002996E8 /* TPCameraViewController.m in Sources */,
+				B6CB8E9D1967CB2A002996E8 /* TPLandingViewController.m in Sources */,
+				B6CB8EA01967CB3F002996E8 /* TPLoginViewController.m in Sources */,
 				B6CB8E521967C41C002996E8 /* main.m in Sources */,
+				B6CB8EAC1967CBA4002996E8 /* TPAllContactsViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
