@@ -22,7 +22,7 @@
     // Do any additional setup after loading the view.
 }
 
-- (void)signup:(id)sender {
+- (void)signup {
     NSString *username = [self.usernameField.text stringByTrimmingCharactersInSet:
                           [NSCharacterSet whitespaceAndNewlineCharacterSet]];
     NSString *password = [self.passwordField.text stringByTrimmingCharactersInSet:
@@ -51,7 +51,7 @@
 
 
 - (IBAction)continueToPhone:(id)sender {
-    [self signup:self];
+    [self signup];
     [self performSegueWithIdentifier:@"showPhone" sender:self];
 }
 @end
