@@ -1,0 +1,14 @@
+{
+    "applications": {
+        "Tap": {
+            "applicationId": "oa9f1pYhUoLldBojIPFVwPDpcsaMjuhfkSi1bb8a", 
+            "masterKey": "4xVaIJ8bl4hvYiaqEC5ICvlSlIYMmBcpsOP82kRA"
+        }, 
+        "_default": {
+            "link": "Tap"
+        }
+    }, 
+    "global": {
+        "parseVersion": "1.2.18"
+    }
+}
