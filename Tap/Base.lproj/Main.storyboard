@@ -254,7 +254,7 @@
                         <outlet property="cameraView" destination="QUu-xs-5q7" id="C1Q-Wm-2ar"/>
                         <outlet property="imageView" destination="fcU-79-8tM" id="ULg-60-MwU"/>
                         <outlet property="tapsCounter" destination="Lja-cq-arR" id="09W-eF-Yvl"/>
-                        <segue destination="vXZ-lx-hvc" kind="modal" identifier="showLanding" animates="NO" id="pwR-yj-TEQ"/>
+                        <segue destination="kV9-w9-b9A" kind="modal" identifier="showLanding" animates="NO" id="pSg-CV-kRm"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="c5p-QK-JY3" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -820,6 +820,5 @@
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
         <segue reference="nWM-dg-S3Z"/>
-        <segue reference="pwR-yj-TEQ"/>
     </inferredMetricsTieBreakers>
 </document>
