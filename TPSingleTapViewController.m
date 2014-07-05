@@ -8,7 +8,7 @@
 
 #import "TPSingleTapViewController.h"
 
-//#import <SDWebImage/UIImageView+WebCache.h>
+
 
 @interface TPSingleTapViewController ()
 
@@ -23,13 +23,17 @@
     [super viewDidLoad];
     [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationNone];
     [self setupTap];
-    NSLog(@"objects %@", self.objects);
     
-    PFFile *file = [[self.objects objectAtIndex:0] objectForKey:@"img"];
-
-    //    self.imageView = [[PFImageView alloc] init];
+    NSLog(@"objects %@", self.objects);
+    PFObject *singleTap =[self.objects objectAtIndex:0];
+    
+    PFFile *file = [singleTap objectForKey:@"img"];
+    
+//    [self markAsRead:singleTap];
+    // self.imageView = [[PFImageView alloc] init];
     
     self.imageView.file = file;
+    
     [self.imageView loadInBackground:^(UIImage *image, NSError *error) {
         if (!error) {
             NSLog(@"Finished Loading Image");
@@ -38,14 +42,8 @@
         }
 
     }];
-    
-    
-    
-    
-    
-    
-    // Do any additional setup after loading the view.
 }
+
 
 - (BOOL)prefersStatusBarHidden {
     return YES;
@@ -63,7 +61,19 @@
     [self dismissViewControllerAnimated:NO completion:nil];
 }
 
-//-(void) markAsRead:
+-(void) markAsRead:(PFObject *)message {
+    [[message objectForKey:@"read"] setObject:[NSNumber numberWithBool:YES] forKey:[[PFUser currentUser] objectId]] ;
+    [[message objectForKey:@"readArray"] addObject:[[PFUser currentUser] objectId]];
+    [message saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+        if (succeeded) {
+            NSLog(@"marked as read");
+        } else {
+            NSLog(@"Error: %@", error);
+        }
+
+    }];
+}
+
 /*
 #pragma mark - Navigation
 

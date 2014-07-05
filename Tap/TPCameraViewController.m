@@ -133,6 +133,10 @@
     UIImage* newImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     NSString *batchIdString = [NSString stringWithFormat:@"%ld", batchId];
+    if (taps == 0) {
+        [TPProcessImage createSprayTo:self.appDelegate.myGroup withBatchId:batchIdString withNumOfTaps:0];
+    }
+    
     [TPProcessImage sendTapTo:self.appDelegate.myGroup andImage:newImage inBatch:batchIdString  completed:^(BOOL success) {
         NSLog(@"HOly shit it saved?");
     }];

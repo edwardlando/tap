@@ -23,9 +23,9 @@
         PFObject *msg = [PFObject objectWithClassName:@"Message"];
         msg[@"img"] = file;
         msg[@"sender"] = [PFUser currentUser];
-        recipients = [@[[PFUser currentUser]] mutableCopy];
         msg[@"recipients"] = recipients;
         msg[@"read"] = [[NSMutableDictionary alloc] init];
+        msg[@"readArray"] = [[NSMutableArray alloc] init];
         msg[@"batchId"] = batchId;
         
         for (id recipient in recipients) {
@@ -35,6 +35,7 @@
         [msg saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
             if(succeeded){
                 NSLog(@"Succeded");
+
             } else {
                 NSLog(@"Error: %@", error);
             }
@@ -46,5 +47,20 @@
 }
 
 
++ (void) createSprayTo:(NSMutableArray *)recipients withBatchId: (NSString *) batchId withNumOfTaps: (NSUInteger) numOfTaps {
+    PFObject *spray = [PFObject objectWithClassName:@"Spray"];
+    spray[@"sender"] = [PFUser currentUser];
+    spray[@"recipients"] = recipients;
+    spray[@"batchId"] = batchId;
+    spray[@"numOfTaps"] = @(numOfTaps);
+    [spray saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+        if(succeeded){
+            NSLog(@"Saved spray");
+            
+        } else {
+            NSLog(@"Error: %@", error);
+        }
+    }];
+}
 
 @end
