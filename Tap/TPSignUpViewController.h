@@ -7,10 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <Parse/Parse.h>
 
 @interface TPSignUpViewController : UIViewController
 @property (weak, nonatomic) IBOutlet UITextField *usernameField;
 @property (weak, nonatomic) IBOutlet UITextField *passwordField;
+
+@property (weak, nonatomic) PFUser *user;
 
 - (IBAction)continueToPhone:(id)sender;
 

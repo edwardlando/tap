@@ -7,10 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <Parse/Parse.h>
 
 @interface TPPhoneNumberViewController : UIViewController
 
 @property (weak, nonatomic) IBOutlet UITextField *phoneField;
+@property (strong, nonatomic) PFUser *user;
 
 - (IBAction)continue:(id)sender;
 
