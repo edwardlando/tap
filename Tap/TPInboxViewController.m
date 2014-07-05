@@ -9,6 +9,7 @@
 #import "TPInboxViewController.h"
 
 @interface TPInboxViewController ()
+- (IBAction)goToCamera:(id)sender;
 
 @end
 
@@ -116,4 +117,7 @@
 }
 */
 
+- (IBAction)goToCamera:(id)sender {
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
 @end
