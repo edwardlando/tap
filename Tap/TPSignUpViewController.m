@@ -44,6 +44,7 @@
         [alertView show];
     }
     else {
+        NSLog(@"password and username not empty");
         // Do I need to initialize the PFUser?
         self.user.username = username;
         self.user.password = password;
@@ -57,9 +58,9 @@
     if ([[segue identifier] isEqualToString:@"showPhone"])
     {
         TPPhoneNumberViewController *vc = (TPPhoneNumberViewController *)[segue destinationViewController];
-        NSLog(@"%@", self.user);
+        NSLog(@"user %@", self.user);
         vc.user = self.user;
-        NSLog(@"%@", vc.user);
+        NSLog(@"vc.user %@", vc.user);
         
      
     }

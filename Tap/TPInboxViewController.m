@@ -79,7 +79,7 @@
 
     PFQuery *query = [PFQuery queryWithClassName:self.parseClassName];
     [query setLimit:0];
-    [query orderByAscending:@"createdAt"];
+    [query orderByDescending:@"createdAt"];
     [query includeKey:@"sender"];
     return query;
 }
