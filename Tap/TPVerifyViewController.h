@@ -7,7 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <Parse/Parse.h>
 
 @interface TPVerifyViewController : UIViewController
+
+@property (strong, nonatomic) PFUser *user;
+@property (weak, nonatomic) IBOutlet UITextField *verifyField;
+- (IBAction)verify:(id)sender;
+
 
 @end

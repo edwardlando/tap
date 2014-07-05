@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="5056" systemVersion="13C64" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="NT2-N6-W34">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="5056" systemVersion="12F45" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="NT2-N6-W34">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3733"/>
     </dependencies>
@@ -175,7 +175,7 @@
                     <navigationItem key="navigationItem" title="PHONE NUMBER" id="vLu-ZB-0JC"/>
                     <connections>
                         <outlet property="phoneField" destination="GOI-9d-KAT" id="KO2-2J-Xx7"/>
-                        <segue destination="kIo-je-wea" kind="push" id="TnC-Kw-GsX"/>
+                        <segue destination="kIo-je-wea" kind="push" identifier="showVerify" id="TnC-Kw-GsX"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dOX-j4-15C" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -206,12 +206,16 @@
                                 <state key="normal" title="VERIFY">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
+                                <connections>
+                                    <action selector="verify:" destination="kIo-je-wea" eventType="touchUpInside" id="Emc-u2-p7r"/>
+                                </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
                     <navigationItem key="navigationItem" title="VERIFY" id="6hy-dE-SIg"/>
                     <connections>
+                        <outlet property="verifyField" destination="TbJ-gB-T1i" id="YKu-Aj-0YQ"/>
                         <segue destination="NT2-N6-W34" kind="push" id="2H4-8k-1P7"/>
                     </connections>
                 </viewController>
@@ -859,6 +863,6 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="nWM-dg-S3Z"/>
+        <segue reference="2H4-8k-1P7"/>
     </inferredMetricsTieBreakers>
 </document>
