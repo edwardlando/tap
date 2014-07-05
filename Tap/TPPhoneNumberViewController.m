@@ -7,6 +7,7 @@
 //
 
 #import "TPPhoneNumberViewController.h"
+#import "TPVerifyViewController.h"
 #import <Parse/Parse.h>
 
 @interface TPPhoneNumberViewController ()
@@ -35,19 +36,23 @@
         NSLog(@"Phone not length 0");
         [self.user setObject:phone forKey:@"phone"];
         NSLog(@"%@", self.user);
+        [self performSegueWithIdentifier:@"showVerify" sender:self];
+
         
-        NSLog(@"Saving user");
-        [self.user signUpInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-            if (error) {
-                UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Sorry!" message:[error.userInfo objectForKey:@"error"] delegate:nil cancelButtonTitle:@"OK!" otherButtonTitles: nil];
-                [alertView show];
-            }
-            else {
-                // Take me to the camera
-                NSLog(@"About to be taken to camera");
-                [self dismissViewControllerAnimated:YES completion:nil];
-            }
-        }];
+    }
+}
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    // Make sure your segue name in storyboard is the same as this line
+    if ([[segue identifier] isEqualToString:@"showVerify"])
+    {
+        TPVerifyViewController *vc = (TPVerifyViewController *)[segue destinationViewController];
+        NSLog(@"user %@", self.user);
+        vc.user = self.user;
+        NSLog(@"vc.user %@", vc.user);
+        
+        
     }
 }
 
