@@ -22,6 +22,7 @@
     // Do any additional setup after loading the view.
 }
 
+
 - (IBAction)login:(id)sender {
     NSString *username = [self.usernameField.text stringByTrimmingCharactersInSet:
                           [NSCharacterSet whitespaceAndNewlineCharacterSet]];
@@ -39,11 +40,11 @@
                 [alertView show];
             }
             else {
-                [self.navigationController popToRootViewControllerAnimated:YES];
+                 [self dismissViewControllerAnimated:YES completion:nil];
             }
         }];
     }
-    
 }
+
 
 @end
