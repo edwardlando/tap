@@ -36,6 +36,7 @@
         NSLog(@"Current user: %@", currentUser.username);
     }
     else {
+        NSLog(@"Segue time!!!!");
         [self performSegueWithIdentifier:@"showLanding" sender:self];
     }
 
