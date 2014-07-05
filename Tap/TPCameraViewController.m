@@ -9,26 +9,38 @@
 #import "TPCameraViewController.h"
 #import <Parse/Parse.h>
 #import "TPProcessImage.h"
-
+#import "TPAppDelegate.h"
 
 @interface TPCameraViewController (){
  
     BOOL takingPicture;
     int taps;
     BOOL frontCam;
+    long batchId;
 }
 
 @property (strong, nonatomic) IBOutlet UILabel *tapsCounter;
+@property (strong, nonatomic) TPAppDelegate *appDelegate;
 
 @end
 
 @implementation TPCameraViewController
 @synthesize captureManager;
 
+- (TPAppDelegate *)appDelegate
+{
+    if (!_appDelegate) {
+        _appDelegate = (TPAppDelegate *)[[UIApplication sharedApplication] delegate];
+    }
+    
+    return _appDelegate;
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-        
+    [[self navigationController] setNavigationBarHidden:YES animated:NO];
+    
     // Login
     PFUser *currentUser = [PFUser currentUser];
     
@@ -41,12 +53,18 @@
     }
 
     [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationNone];
+    [self resetBatchId];
     taps = 0;
+
     frontCam = NO;
     [self setupCamera];
     takingPicture = true;
     [self setupTap];
     
+}
+
+-(void)resetBatchId {
+    batchId = [[NSDate date] timeIntervalSince1970];
 }
 
 -(void)viewDidDisappear:(BOOL)animated {
@@ -70,18 +88,21 @@
 
 -(void)touch:(UITapGestureRecognizer *)recognizer
 {
-    if(takingPicture){
+//    if(takingPicture){
         [self takePicture];
+//    NSLog(@"tap");
         taps++;
         self.tapsCounter.text = [NSString stringWithFormat:@"%d", taps];
-    }
-    [self resignFirstResponder];
+//    }
+//    [self resignFirstResponder];
 }
 
 -(void)takePicture{
     NSLog(@"Take Picture");
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(saveImage) name:kImageCapturedSuccessfully object:nil];
+//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(saveImage) name:kImageCapturedSuccessfully object:nil];
+
     [[self captureManager]captureStillImage];
+    [self saveImage];
 //    takingPicture = false;
 }
 
@@ -90,8 +111,8 @@
     [captureManager addVideoInputFrontCamera:frontCam];
 }
 
-
 -(void)saveImage{
+    NSLog(@"save image");
 //    _imageView.image = [captureManager stillImage];
     _selectedImage = [captureManager stillImage];
 //    [[[self captureManager]captureSession]stopRunning];
@@ -100,13 +121,19 @@
     
     CGSize newSize = CGSizeMake(newWidth, newHeight);
     UIGraphicsBeginImageContext(newSize);
-    [_selectedImage drawInRect:CGRectMake(0,0,newSize.width,newSize.height)];
+    [[captureManager stillImage] drawInRect:CGRectMake(0,0,newSize.width,newSize.height)];
     UIImage* newImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
-    
-    [TPProcessImage addPost:@"" andImage:newImage completed:^(BOOL success) {
+    NSString *batchIdString = [NSString stringWithFormat:@"%ld", batchId];
+    [TPProcessImage sendTapTo:self.appDelegate.myGroup andImage:newImage inBatch:batchIdString  completed:^(BOOL success) {
         NSLog(@"HOly shit it saved?");
     }];
+    
+}
+
+-(void) resetBatch {
+    taps = 0;
+    [self resetBatchId];
 }
 
 
@@ -126,6 +153,11 @@
     [[[self captureManager]captureSession]startRunning];
     
     
+}
+
+-(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    NSLog(@"segue performed");
+    [self resetBatch];
 }
 
 @end

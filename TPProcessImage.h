@@ -7,11 +7,10 @@
 //
 
 #import <Foundation/Foundation.h>
-
+#import "TPAppDelegate.h"
 @interface TPProcessImage : NSObject
 
 
-+(void)addPost:(NSString *)text andImage:(UIImage *)image completed:(void (^)(BOOL success))completed;
-
++(void)sendTapTo:(NSMutableArray *)recipients andImage:(UIImage *)image inBatch:(NSString *)batchId completed:(void (^)(BOOL success))completed;
 
 @end

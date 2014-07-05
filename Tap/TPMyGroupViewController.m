@@ -7,12 +7,23 @@
 //
 
 #import "TPMyGroupViewController.h"
+#import "TPAppDelegate.h"
 
 @interface TPMyGroupViewController ()
+@property (strong, nonatomic) TPAppDelegate *appDelegate;
 
 @end
 
 @implementation TPMyGroupViewController
+
+- (TPAppDelegate *)appDelegate
+{
+    if (!_appDelegate) {
+        _appDelegate = (TPAppDelegate *)[[UIApplication sharedApplication] delegate];
+    }
+    
+    return _appDelegate;
+}
 
 - (id)initWithStyle:(UITableViewStyle)style
 {

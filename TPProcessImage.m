@@ -7,17 +7,29 @@
 //
 
 #import "TPProcessImage.h"
+
+
 #import <Parse/Parse.h>
+
 
 @implementation TPProcessImage
 
 
-+(void)addPost:(NSString *)text andImage:(UIImage *)image completed:(void (^)(BOOL success))completed{
++(void)sendTapTo:(NSMutableArray *)recipients andImage:(UIImage *)image inBatch:(NSString *)batchId completed:(void (^)(BOOL success))completed{
 
     if(image){
+        NSLog(@"trying to save");
         PFFile *file = [PFFile fileWithName:@"image.png" data:UIImagePNGRepresentation(image)];
         PFObject *msg = [PFObject objectWithClassName:@"Message"];
         msg[@"img"] = file;
+        msg[@"sender"] = [PFUser currentUser];
+//        msg[@"recipients"] = recipients;
+        msg[@"recipients"] = @[@"asdf"];
+        msg[@"read"] = [[NSMutableDictionary alloc] init];
+        for (id recipient in recipients) {
+            [msg[@"read"] setObject:[NSNumber numberWithBool:NO] forKey:[recipient objectForKey:@"objectId"]];
+        }
+        
         [msg saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
             if(succeeded){
                 NSLog(@"Succeded");

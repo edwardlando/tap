@@ -20,6 +20,9 @@
     
     [PFAnalytics trackAppOpenedWithLaunchOptions:launchOptions];
     
+    self.myGroup = [[NSMutableArray alloc] init];
+    [self.myGroup addObject:@"asdf"];
+    
     return YES;
 }
 							
