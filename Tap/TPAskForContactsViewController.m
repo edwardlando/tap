@@ -83,8 +83,6 @@
                 if (![self.phonebook containsObject:contact]) {
                     [self.phonebook addObject:contact];
                     NSString *firstLetter = [[[contact objectForKey:@"name"] substringToIndex:1] uppercaseString];
-                    
-                    //                    [[self.alphabeticalPhonebook valueForKeyPath:firstLetter] addObject:contact];
                     [[self.alphabeticalPhonebook valueForKey:firstLetter] addObject:contact];
                     
                 }
@@ -93,15 +91,11 @@
         }
         CFRelease(addressBook);
         
-        //        NSLog(@"all items %ld", (unsigned long)[self.phonebook count]);
-        //        for (int i =0; i< [self.phonebook count]; i++) {
-        //            NSLog(@"something %@", [self.phonebook objectAtIndex:i]);
-        //        }
         NSSortDescriptor *sort = [NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES];
         for (NSString *key in [self.alphabeticalPhonebook allKeys]) {
             [[self.alphabeticalPhonebook objectForKey:key ] sortUsingDescriptors:[NSArray arrayWithObject:sort]];
         }
-        if (DEBUG)  NSLog(@"alphabetical phonebook %@", self.alphabeticalPhonebook);
+        NSLog(@"alphabetical phonebook %@", self.alphabeticalPhonebook);
         //        [self.phonebook sortUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
         allPeople = nil;
         NSArray *temp = [[PFUser currentUser]objectForKey:@"contacts"];
