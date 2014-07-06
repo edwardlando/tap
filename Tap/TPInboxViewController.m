@@ -12,17 +12,24 @@
 @interface TPInboxViewController ()
 - (IBAction)goToCamera:(id)sender;
 @property (strong, nonatomic) NSMutableDictionary *allTaps;
-
+@property (strong, nonatomic) PFObject *selectedSpray;
 @end
 
 @implementation TPInboxViewController
 
 
--(NSMutableArray *)allTaps {
+-(NSMutableDictionary *)allTaps {
     if (!_allTaps) {
         _allTaps = [[NSMutableDictionary alloc] init];
     }
     return _allTaps;
+}
+
+-(PFObject *) selectedSpray {
+    if (!_selectedSpray) {
+        _selectedSpray = [[PFObject alloc] init];
+    }
+    return _selectedSpray;
 }
 
 - (id)initWithCoder:(NSCoder *)aCoder {
@@ -56,6 +63,19 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    [self registerForNotifications];
+}
+
+-(void) registerForNotifications {
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(didDismissSingleTapView)
+                                                 name:@"singleTapViewDismissed"
+                                               object:nil];
+}
+
+-(void)didDismissSingleTapView {
+    NSLog(@"Dismissed single tap view");
+    [self.tableView reloadData];
 }
 
 
@@ -83,6 +103,7 @@
     PFQuery *query = [PFQuery queryWithClassName:self.parseClassName];
     [query setLimit:0];
     [query whereKey:@"recipients" equalTo:[PFUser currentUser]];
+//    [query whereKey:@"read" notEqualTo:[PFUser currentUser]];
     [query orderByDescending:@"createdAt"];
     [query includeKey:@"sender"];
     return query;
@@ -98,6 +119,7 @@
     [ind startAnimating];
     [ind hidesWhenStopped];
     cell.textLabel.text = [[object objectForKey:@"sender"] objectForKey:@"username"];
+    cell.detailTextLabel.textColor = [UIColor grayColor];
      
     PFQuery *tapsQuery = [[PFQuery alloc] initWithClassName:@"Message"];
     [tapsQuery whereKey:@"batchId" equalTo:[object objectForKey:@"batchId"]];
@@ -110,11 +132,30 @@
             [self.allTaps setObject:objects forKey:[object objectForKey:@"batchId"]];
             
             if ([objects count] > 0) {
-                cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:18.0];
+                cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:20.0];
+                cell.detailTextLabel.text = [NSString stringWithFormat:@"2m ago - tap to open"/*, (unsigned long)[objects count]*/];
+            } else {
+                cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:20.0];
+                cell.detailTextLabel.text = [NSString stringWithFormat:@"2m ago - tap to reply"/*, (unsigned long)[objects count]*/];
             }
-            cell.detailTextLabel.text = [NSString stringWithFormat:@"%lu taps • TIMESTAMP", (unsigned long)[objects count]];
+
+
             [ind stopAnimating];
             [ind setHidden:YES];
+            UILabel *tapsCounter = (UILabel *)[cell viewWithTag:11];
+            tapsCounter.frame = CGRectMake(tapsCounter.frame.origin.x, tapsCounter.frame.origin.y, 31 ,21 );
+            tapsCounter.text = [NSString stringWithFormat:@"%ld",(unsigned long)[objects count]];
+            
+            tapsCounter.layer.cornerRadius = 5;
+            tapsCounter.clipsToBounds = YES;
+            
+            if ([objects count] > 0) {
+                [tapsCounter setHidden:NO];
+            } else {
+                [tapsCounter setHidden:YES];
+            }
+
+            
         } else {
             NSLog(@"Error: %@", error);
         }
@@ -125,8 +166,13 @@
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
 
-    NSMutableArray *batchTaps = [self.allTaps objectForKey:[[self.objects objectAtIndex:indexPath.row] objectForKey:@"batchId" ]];
+    self.selectedSpray =[self.objects objectAtIndex:indexPath.row];
+    NSMutableArray *batchTaps = [self.allTaps objectForKey:[self.selectedSpray objectForKey:@"batchId" ]];
     NSLog(@"batch taps %@", batchTaps);
+    UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
+    UILabel *tapsCounter = (UILabel *)[cell viewWithTag:11];
+    [tapsCounter setHidden:YES];
+    
     if ([batchTaps count] == 0) {
         [self goToCamera:self];
     } else {
@@ -143,6 +189,7 @@
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([segue.identifier isEqual:@"showTap"]) {
         TPSingleTapViewController *vc = (TPSingleTapViewController *)segue.destinationViewController;
+        vc.spray = self.selectedSpray;
         vc.objects = sender;
     }
 }

@@ -26,7 +26,15 @@
     [super viewDidLoad];
     [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationNone];
 
+    UILabel *tapsLabel = (UILabel *)[self.view viewWithTag:10];
+    tapsLabel.layer.cornerRadius = 5;
+    
     taps = [@(self.objects.count) intValue];
+    
+    if (taps > 2) {
+        tapsLabel.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"pink"]];
+    }
+
     NSLog(@"self.objects.count %d", taps);
     if (taps == 0) {
         [self noMoreTaps];
@@ -40,6 +48,10 @@
 
 -(void) showTap {
     self.tapsLabel.text = [NSString stringWithFormat:@"%d", taps];
+    if (taps == 2) {
+        UILabel *tapsLabel = (UILabel *)[self.view viewWithTag:10];
+        tapsLabel.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"blue"]];
+    }
     if (taps - 1 < 0) {
         [self noMoreTaps];
         return;
@@ -77,6 +89,10 @@
 }
 
 -(void) tap:(UITapGestureRecognizer *)recognizer {
+
+    
+
+    
     if (taps >= 1) {
         taps--;
         [self showTap];
@@ -92,6 +108,13 @@
 //    [self presentViewController:camera animated:NO completion:^{
 //        //
 //    }];
+    [[self.spray objectForKey:@"read"] addObject:[PFUser currentUser]];
+    [self.spray saveEventually];
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"singleTapViewDismissed"
+                                                        object:nil
+                                                      userInfo:nil];
+    
     [self dismissViewControllerAnimated:NO completion:nil];
 }
 

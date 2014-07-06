@@ -53,6 +53,8 @@
     spray[@"recipients"] = recipients;
     spray[@"batchId"] = batchId;
     spray[@"numOfTaps"] = @(numOfTaps);
+    spray[@"read"] = [[NSMutableArray alloc] init];
+    
     [spray saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         if(succeeded){
             NSLog(@"Saved spray");
