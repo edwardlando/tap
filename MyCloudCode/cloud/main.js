@@ -11,7 +11,7 @@ Parse.Cloud.define("sendVerificationCode",function(request,response){
   var user = request.user;
   user.set("phoneNumber",request.params.phoneNumber);
   user.set("phoneVerified",false);
-  user.set("verifyCode",randVerify);
+  user.set("verifyCode",code);
 
   user.save().then(function(obj){
       textVerification(request.params.phoneNumber,code);
@@ -50,35 +50,41 @@ Parse.Cloud.define("verifyCode",function(request,response){
     var userT = request.user;
     userT.fetch({
         success:function(user){
+            console.log("this is users code" + user.get("verifyCode") + " and this is what supplied " + code);
             if(user.get("verifyCode") === code){
                 user.set("phoneVerified",true);
                 user.save().then(
                     function(obj){
-                        var installation = request.params.installation;
-                        if(installation != "0"){
+                        // var installation = request.params.installation;
+                        // console.log("Installation: ");
+                        // console.log(installation);
+                        // if(installation != "0"){
                             Parse.Cloud.useMasterKey();
                             query = new Parse.Query(Parse.Installation);
-                            query.get(installation,{
+                            query.equalTo("user", user);
+                            query.find({
                                 success:function(inst){
                                     var chan = new Array();
                                     var chanStr = "tap"+user.id;
                                     chan.push(chanStr);
-                                    inst.set("channels",chan);
-                                    inst.set("user",user);
-                                    inst.save().then(function(obj){
+                                    inst[0].set("channels",chan);
+                                    // inst.set("user",user);
+                                    inst[0].save().then(function(obj){
                                         response.success("true");
                                     },function(error){
-                                        response.error(error);
+                                        response.error("Failed to save installation " + error);
                                     });
                                 },
                                 error:function(error){
-                                    response.error(error);
+                                    response.error("Couldn't get installation with error :  " + error);
                                 }
                             });
-                        }
-                        else{
-                            response.success("true");
-                        }
+                        // }
+                        // else{
+                        //     response.success("true");
+                        // }
+                }, function ( error) {
+                    response.error(error);
                 });
             }
             else{
@@ -86,7 +92,7 @@ Parse.Cloud.define("verifyCode",function(request,response){
             }
         },
         error:function(error){
-            response.error(error);
+            response.error("here " + error);
         }
     });
  

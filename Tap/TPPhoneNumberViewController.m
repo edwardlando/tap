@@ -38,7 +38,7 @@
         NSLog(@"%@", self.user);
         
         
-        [PFCloud callFunctionInBackground:@"sendVerificationCode" withParameters:@{@"user":self.user,@"phoneNumber":phone} block:^(id object, NSError *error) {
+        [PFCloud callFunctionInBackground:@"sendVerificationCode" withParameters:@{@"phoneNumber":phone} block:^(id object, NSError *error) {
             if (error) {
                 NSLog(@"Error sending verification code");
             } else {

@@ -57,8 +57,11 @@
                 [alertView show];
             }
             else {
-                // Take me to the camera
-                NSLog(@"About to be taken to camera");
+                NSLog(@"Showing phone input screen");
+                PFInstallation *currentInstallation = [PFInstallation currentInstallation];
+                [currentInstallation setObject:[PFUser currentUser] forKey:@"user"];
+                [currentInstallation saveInBackground];
+                
                 [self performSegueWithIdentifier:@"showPhone" sender:self];
             }
         }];

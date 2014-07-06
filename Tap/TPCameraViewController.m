@@ -56,14 +56,18 @@
     }
 
     [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationNone];
+    [self setupCameraScreen];
+    
+}
+
+-(void)setupCameraScreen {
     [self resetBatchId];
     taps = 0;
-
+    
     frontCam = NO;
     [self setupCamera];
     takingPicture = true;
     [self setupTap];
-    
 }
 
 -(void)resetBatchId {
@@ -97,15 +101,20 @@
     
 }
 
+-(void) handleNoGroup {
+    
+}
+
 -(void)touch:(UITapGestureRecognizer *)recognizer
 {
-//    if(takingPicture){
+    if (!self.appDelegate.myGroup) {
+        [self handleNoGroup];
+        return;
+    }
+
         [self takePicture];
-//    NSLog(@"tap");
         taps++;
         self.tapsCounter.text = [NSString stringWithFormat:@"%d", taps];
-//    }
-//    [self resignFirstResponder];
 }
 
 -(void)takePicture{
@@ -115,6 +124,13 @@
     [[self captureManager]captureStillImage];
     [self saveImage];
 //    takingPicture = false;
+}
+
+-(void) registerForNotifications {
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(setupCameraScreen)
+                                                 name:@"onboardingFinished"
+                                               object:nil];
 }
 
 -(void)swapCamera {
