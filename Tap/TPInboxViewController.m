@@ -11,10 +11,19 @@
 
 @interface TPInboxViewController ()
 - (IBAction)goToCamera:(id)sender;
+@property (strong, nonatomic) NSMutableDictionary *allTaps;
 
 @end
 
 @implementation TPInboxViewController
+
+
+-(NSMutableArray *)allTaps {
+    if (!_allTaps) {
+        _allTaps = [[NSMutableDictionary alloc] init];
+    }
+    return _allTaps;
+}
 
 - (id)initWithCoder:(NSCoder *)aCoder {
     self = [super initWithCoder:aCoder];
@@ -22,7 +31,7 @@
         // Customize the table
         
         // The className to query on
-        self.parseClassName = @"Message";
+        self.parseClassName = @"Spray";
         
         // The key of the PFObject to display in the label of the default cell style
         // self.textKey = @"text";
@@ -65,23 +74,19 @@
 }
 
 
-
-//- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-//    if (indexPath.section >= self.objects.count) {
-//        // Load More Section
-//        return 44.0f;
-//    }
-//    
-//    return 280.0f;
-//}
-
 - (PFQuery *)queryForTable {
 
+    if (![PFUser currentUser]) {
+        return nil;
+    }
+    
     PFQuery *query = [PFQuery queryWithClassName:self.parseClassName];
     [query setLimit:0];
+    [query whereKey:@"recipients" equalTo:[PFUser currentUser]];
     [query orderByDescending:@"createdAt"];
     [query includeKey:@"sender"];
     return query;
+    
 }
 
  - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath object:(PFObject *)object {
@@ -89,16 +94,45 @@
 
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
     
-     cell.textLabel.text = [[object objectForKey:@"sender"] objectForKey:@"username"];
+    UIActivityIndicatorView *ind = (UIActivityIndicatorView *)[cell viewWithTag:5];
+    [ind startAnimating];
+    [ind hidesWhenStopped];
+    cell.textLabel.text = [[object objectForKey:@"sender"] objectForKey:@"username"];
      
-    // Configure the cell...
+    PFQuery *tapsQuery = [[PFQuery alloc] initWithClassName:@"Message"];
+    [tapsQuery whereKey:@"batchId" equalTo:[object objectForKey:@"batchId"]];
+    [tapsQuery orderByDescending:@"imageId"];
+    [tapsQuery whereKey:@"recipients" equalTo:[PFUser currentUser]];
+    [tapsQuery whereKey:@"readArray" notEqualTo:[[PFUser currentUser] objectId]];
+
+    [tapsQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        if (!error) {
+            [self.allTaps setObject:objects forKey:[object objectForKey:@"batchId"]];
+            
+            if ([objects count] > 0) {
+                cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:18.0];
+            }
+            cell.detailTextLabel.text = [NSString stringWithFormat:@"%lu taps • TIMESTAMP", (unsigned long)[objects count]];
+            [ind stopAnimating];
+            [ind setHidden:YES];
+        } else {
+            NSLog(@"Error: %@", error);
+        }
+    }];
     
     return cell;
 }
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
 
-    [self performSegueWithIdentifier:@"showTap" sender:[self.objects objectAtIndex:indexPath.row ]];
+    NSMutableArray *batchTaps = [self.allTaps objectForKey:[[self.objects objectAtIndex:indexPath.row] objectForKey:@"batchId" ]];
+    NSLog(@"batch taps %@", batchTaps);
+    if ([batchTaps count] == 0) {
+        [self goToCamera:self];
+    } else {
+        [self performSegueWithIdentifier:@"showTap" sender:batchTaps];
+    }
+
     
 }
 
@@ -109,7 +143,7 @@
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([segue.identifier isEqual:@"showTap"]) {
         TPSingleTapViewController *vc = (TPSingleTapViewController *)segue.destinationViewController;
-        vc.objects = [[NSMutableArray alloc] initWithArray:@[sender]];
+        vc.objects = sender;
     }
 }
 @end

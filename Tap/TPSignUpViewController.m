@@ -74,11 +74,8 @@
         NSLog(@"user %@", self.user);
         vc.user = self.user;
         NSLog(@"vc.user %@", vc.user);
-        
-     
     }
 }
-
 
 - (IBAction)continueToPhone:(id)sender {
     [self signup];

@@ -20,8 +20,12 @@
     
     [PFAnalytics trackAppOpenedWithLaunchOptions:launchOptions];
     
-    self.myGroup = [[NSMutableArray alloc] init];
-    [self.myGroup addObject:@"asdf"];
+    //Temp
+    
+    if ([PFUser currentUser]) {
+        self.myGroup = [@[[PFUser currentUser]] mutableCopy];        
+    }
+
     
     return YES;
 }

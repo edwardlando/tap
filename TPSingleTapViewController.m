@@ -7,10 +7,13 @@
 //
 
 #import "TPSingleTapViewController.h"
+#import "TPCameraViewController.h"
 
-//#import <SDWebImage/UIImageView+WebCache.h>
 
-@interface TPSingleTapViewController ()
+@interface TPSingleTapViewController () {
+    int taps;
+}
+@property (strong, nonatomic) IBOutlet UILabel *tapsLabel;
 
 @end
 
@@ -22,30 +25,44 @@
 {
     [super viewDidLoad];
     [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationNone];
-    [self setupTap];
-    NSLog(@"objects %@", self.objects);
-    
-    PFFile *file = [[self.objects objectAtIndex:0] objectForKey:@"img"];
 
-    //    self.imageView = [[PFImageView alloc] init];
+    taps = [@(self.objects.count) intValue];
+    NSLog(@"self.objects.count %d", taps);
+    if (taps == 0) {
+        [self noMoreTaps];
+    } else {
+        [self setupTap];
+        
+        NSLog(@"objects %@", self.objects);
+        [self showTap];
+    }
+}
+
+-(void) showTap {
+    self.tapsLabel.text = [NSString stringWithFormat:@"%d", taps];
+    if (taps - 1 < 0) {
+        [self noMoreTaps];
+        return;
+    }
     
+    PFObject *singleTap =[self.objects objectAtIndex:taps - 1];
+    PFFile *file = [singleTap objectForKey:@"img"];
+    
+    [self markAsRead:singleTap];
+    
+//    self.imageView = [[PFImageView alloc] init];
     self.imageView.file = file;
+    
     [self.imageView loadInBackground:^(UIImage *image, NSError *error) {
         if (!error) {
             NSLog(@"Finished Loading Image");
         } else {
             NSLog(@"Error: %@", error);
         }
-
+        
     }];
-    
-    
-    
-    
-    
-    
-    // Do any additional setup after loading the view.
 }
+
 
 - (BOOL)prefersStatusBarHidden {
     return YES;
@@ -60,10 +77,37 @@
 }
 
 -(void) tap:(UITapGestureRecognizer *)recognizer {
+    if (taps >= 1) {
+        taps--;
+        [self showTap];
+    } else {
+        [self noMoreTaps];
+    }
+
+}
+
+-(void)noMoreTaps {
+//    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+//    TPCameraViewController *camera = (TPCameraViewController*)[storyboard instantiateViewControllerWithIdentifier:@"camera"];
+//    [self presentViewController:camera animated:NO completion:^{
+//        //
+//    }];
     [self dismissViewControllerAnimated:NO completion:nil];
 }
 
-//-(void) markAsRead:
+-(void) markAsRead:(PFObject *)message {
+    [[message objectForKey:@"read"] setObject:[NSNumber numberWithBool:YES] forKey:[[PFUser currentUser] objectId]] ;
+    [[message objectForKey:@"readArray"] addObject:[[PFUser currentUser] objectId]];
+    [message saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+        if (succeeded) {
+            NSLog(@"marked as read");
+        } else {
+            NSLog(@"Error: %@", error);
+        }
+
+    }];
+}
+
 /*
 #pragma mark - Navigation
 
