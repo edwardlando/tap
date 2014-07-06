@@ -34,6 +34,12 @@
     }
     else {
         NSLog(@"Phone not length 0");
+        
+        if([phone characterAtIndex:0] != '1'){
+            NSString *temp = @"1";
+            phone = [temp stringByAppendingString:phone];
+        }
+        
         [self.user setObject:phone forKey:@"phone"];
         NSLog(@"%@", self.user);
         

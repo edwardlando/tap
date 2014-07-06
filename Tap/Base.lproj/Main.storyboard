@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="5056" systemVersion="12F45" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="NT2-N6-W34">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="5056" systemVersion="13C64" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="NT2-N6-W34">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3733"/>
     </dependencies>
@@ -139,7 +139,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ce6-OW-Kxm" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="141" y="-618"/>
+            <point key="canvasLocation" x="103" y="-618"/>
         </scene>
         <!--Phone Number View Controller - PHONE NUMBER-->
         <scene sceneID="sHZ-y1-aGF">
@@ -313,6 +313,7 @@
                         <outlet property="imageView" destination="fcU-79-8tM" id="ULg-60-MwU"/>
                         <outlet property="tapsCounter" destination="Lja-cq-arR" id="09W-eF-Yvl"/>
                         <segue destination="kV9-w9-b9A" kind="modal" identifier="showLanding" animates="NO" id="pSg-CV-kRm"/>
+                        <segue destination="ZUl-Hd-Pvv" kind="modal" identifier="showAllContacts" id="psx-2p-ncc"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="c5p-QK-JY3" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -371,6 +372,9 @@
                             <outlet property="delegate" destination="XH0-bJ-Dxg" id="cuc-PG-rLc"/>
                         </connections>
                     </tableView>
+                    <toolbarItems>
+                        <barButtonItem title="Settings" id="Hwv-EV-xbV"/>
+                    </toolbarItems>
                     <navigationItem key="navigationItem" title="tap" id="WsJ-wj-uDx">
                         <barButtonItem key="leftBarButtonItem" title="People" id="jHS-mL-yYr">
                             <connections>
@@ -384,6 +388,7 @@
                             </connections>
                         </barButtonItem>
                     </navigationItem>
+                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <segue destination="sx4-49-ihh" kind="modal" identifier="showTap" animates="NO" id="6fd-lM-wCn"/>
                         <segue destination="VtX-dh-37U" kind="push" id="dVD-i1-Gfu"/>
@@ -624,10 +629,11 @@
                     <navigationItem key="navigationItem" title="MY GROUP" id="aws-sb-gjj">
                         <barButtonItem key="rightBarButtonItem" title="Find Friends" id="Dsm-ya-4qf">
                             <connections>
-                                <segue destination="uHL-VO-cEb" kind="push" id="2Ll-N5-WGa"/>
+                                <segue destination="ZUl-Hd-Pvv" kind="modal" animates="NO" id="zUt-4g-dLj"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
+                    <nil key="simulatedBottomBarMetrics"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="7h3-wr-Y9c" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -636,7 +642,7 @@
         <!--All Contacts View Controller - ALL CONTACTS-->
         <scene sceneID="Ybt-9o-LBm">
             <objects>
-                <tableViewController id="uHL-VO-cEb" customClass="TPAllContactsViewController" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="contactsView" useStoryboardIdentifierAsRestorationIdentifier="YES" id="uHL-VO-cEb" customClass="TPAllContactsViewController" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="65" sectionHeaderHeight="22" sectionFooterHeight="22" id="uIZ-mW-iUX">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -761,11 +767,18 @@
                             <outlet property="delegate" destination="uHL-VO-cEb" id="pLe-oj-a1r"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="ALL CONTACTS" id="c3n-Go-nnK"/>
+                    <toolbarItems/>
+                    <navigationItem key="navigationItem" title="ALL CONTACTS" id="c3n-Go-nnK">
+                        <barButtonItem key="leftBarButtonItem" title="Back" id="Nct-oK-53l">
+                            <connections>
+                                <action selector="backButton:" destination="uHL-VO-cEb" id="IEC-BZ-Ong"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="B7v-6k-zUF" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3311" y="-158"/>
+            <point key="canvasLocation" x="3799" y="-164"/>
         </scene>
         <!--Table View Controller - FRIEND REQUESTS-->
         <scene sceneID="eui-2D-7pC">
@@ -824,7 +837,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="zyr-Bj-DFA" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3692" y="-159"/>
+            <point key="canvasLocation" x="4180" y="-165"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="xsT-Eb-phm">
@@ -860,7 +873,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="sAN-YN-KHh" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2069" y="80"/>
+            <point key="canvasLocation" x="2077" y="80"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="HJ8-aT-2iu">
@@ -881,6 +894,24 @@
             </objects>
             <point key="canvasLocation" x="1089" y="80"/>
         </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="5dS-sd-HE2">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="ZUl-Hd-Pvv" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="Zny-hE-X68">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="uHL-VO-cEb" kind="relationship" relationship="rootViewController" id="rP6-2R-WEq"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="zTj-cu-1T9" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3399" y="-164"/>
+        </scene>
     </scenes>
     <resources>
         <image name="cameraIcon2" width="37" height="28"/>
@@ -890,4 +921,7 @@
         <simulatedOrientationMetrics key="orientation"/>
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
+    <inferredMetricsTieBreakers>
+        <segue reference="zUt-4g-dLj"/>
+    </inferredMetricsTieBreakers>
 </document>

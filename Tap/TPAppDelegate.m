@@ -24,9 +24,9 @@
     
     //Temp
     
-    if ([PFUser currentUser]) {
-        self.myGroup = [@[[PFUser currentUser]] mutableCopy];        
-    }
+//    if ([PFUser currentUser]) {
+//        self.myGroup = [@[[PFUser currentUser]] mutableCopy];        
+//    }
 
     // Register for push notifications
     [application registerForRemoteNotificationTypes:

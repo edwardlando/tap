@@ -10,6 +10,7 @@
 #import <Parse/Parse.h>
 #import "TPProcessImage.h"
 #import "TPAppDelegate.h"
+#import "TPAllContactsViewController.h"
 
 @interface TPCameraViewController (){
  
@@ -45,15 +46,6 @@
     inboxButton.layer.cornerRadius = 5;
     
     // Login
-    PFUser *currentUser = [PFUser currentUser];
-    
-    if (currentUser) {
-        NSLog(@"Current user: %@", currentUser.username);
-    }
-    else {
-        NSLog(@"Segue time!!!!");
-        [self performSegueWithIdentifier:@"showLanding" sender:self];
-    }
 
     [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationNone];
     [self setupCameraScreen];
@@ -61,9 +53,24 @@
 }
 
 -(void)setupCameraScreen {
+    PFUser *currentUser = [PFUser currentUser];
+    
+    NSLog(@"Current user %@", [[PFUser currentUser] objectForKey:@"phoneVerified"]);
+    if (currentUser) {
+        if (![[PFUser currentUser] objectForKey:@"phoneVerified"]) {
+            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Uh Oh!" message:@"Please verify your phone number!" delegate:nil cancelButtonTitle:@"OK!" otherButtonTitles: nil];
+            [alertView show];
+            [self performSegueWithIdentifier:@"showLanding" sender:self];
+        }
+        NSLog(@"Current user: %@", currentUser.username);
+    }
+    else {
+        NSLog(@"Segue time!!!!");
+        [self performSegueWithIdentifier:@"showLanding" sender:self];
+    }
+    
     [self resetBatchId];
     taps = 0;
-    
     frontCam = NO;
     [self setupCamera];
     takingPicture = true;
@@ -102,7 +109,10 @@
 }
 
 -(void) handleNoGroup {
-    
+    NSLog(@"No Group");
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Add Friends" message:@"It seems that your group is empty, start by adding a couple of friends. If no one is using Tap, invite them!" delegate:nil cancelButtonTitle:@"OK!" otherButtonTitles: nil];
+    [alertView show];
+    [self performSegueWithIdentifier:@"showAllContacts" sender:self];
 }
 
 -(void)touch:(UITapGestureRecognizer *)recognizer
