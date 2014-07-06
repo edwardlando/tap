@@ -27,7 +27,7 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    [self fetchPhoneContacts];
+   
 }
 
 -(void) fetchPhoneContacts {
@@ -101,7 +101,7 @@
         for (NSString *key in [self.alphabeticalPhonebook allKeys]) {
             [[self.alphabeticalPhonebook objectForKey:key ] sortUsingDescriptors:[NSArray arrayWithObject:sort]];
         }
-        if (DEBUG)  NSLog(@"alphabetical phonebook %@", self.alphabeticalPhonebook);
+        NSLog(@"alphabetical phonebook %@", self.alphabeticalPhonebook);
         //        [self.phonebook sortUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
         allPeople = nil;
         NSArray *temp = [[PFUser currentUser]objectForKey:@"contacts"];
@@ -109,6 +109,8 @@
             [[PFUser currentUser]setObject:self.phonebook forKey:@"contacts"];
             [[PFUser currentUser]saveInBackground];
         }
+        
+        [self dismissViewControllerAnimated:YES completion:nil];
     }
 }
 
@@ -117,6 +119,7 @@
 
 
 - (IBAction)askForContacts:(id)sender {
+     [self fetchPhoneContacts];
     
 }
 @end
