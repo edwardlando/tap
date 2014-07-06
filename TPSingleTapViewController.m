@@ -7,10 +7,13 @@
 //
 
 #import "TPSingleTapViewController.h"
+#import "TPCameraViewController.h"
 
 
-
-@interface TPSingleTapViewController ()
+@interface TPSingleTapViewController () {
+    int taps;
+}
+@property (strong, nonatomic) IBOutlet UILabel *tapsLabel;
 
 @end
 
@@ -22,16 +25,32 @@
 {
     [super viewDidLoad];
     [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationNone];
-    [self setupTap];
+
+    taps = [@(self.objects.count) intValue];
+    NSLog(@"self.objects.count %d", taps);
+    if (taps == 0) {
+        [self noMoreTaps];
+    } else {
+        [self setupTap];
+        
+        NSLog(@"objects %@", self.objects);
+        [self showTap];
+    }
+}
+
+-(void) showTap {
+    self.tapsLabel.text = [NSString stringWithFormat:@"%d", taps];
+    if (taps - 1 < 0) {
+        [self noMoreTaps];
+        return;
+    }
     
-    NSLog(@"objects %@", self.objects);
-    PFObject *singleTap =[self.objects objectAtIndex:0];
-    
+    PFObject *singleTap =[self.objects objectAtIndex:taps - 1];
     PFFile *file = [singleTap objectForKey:@"img"];
     
-//    [self markAsRead:singleTap];
-    // self.imageView = [[PFImageView alloc] init];
+    [self markAsRead:singleTap];
     
+//    self.imageView = [[PFImageView alloc] init];
     self.imageView.file = file;
     
     [self.imageView loadInBackground:^(UIImage *image, NSError *error) {
@@ -40,7 +59,7 @@
         } else {
             NSLog(@"Error: %@", error);
         }
-
+        
     }];
 }
 
@@ -58,6 +77,21 @@
 }
 
 -(void) tap:(UITapGestureRecognizer *)recognizer {
+    if (taps >= 1) {
+        taps--;
+        [self showTap];
+    } else {
+        [self noMoreTaps];
+    }
+
+}
+
+-(void)noMoreTaps {
+//    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+//    TPCameraViewController *camera = (TPCameraViewController*)[storyboard instantiateViewControllerWithIdentifier:@"camera"];
+//    [self presentViewController:camera animated:NO completion:^{
+//        //
+//    }];
     [self dismissViewControllerAnimated:NO completion:nil];
 }
 

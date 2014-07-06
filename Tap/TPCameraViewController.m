@@ -41,6 +41,9 @@
     [super viewDidLoad];
     [[self navigationController] setNavigationBarHidden:YES animated:NO];
     
+    UIButton *inboxButton = (UIButton *)[self.view viewWithTag:10];
+    inboxButton.layer.cornerRadius = 5;
+    
     // Login
     PFUser *currentUser = [PFUser currentUser];
     
@@ -129,15 +132,20 @@
     
     CGSize newSize = CGSizeMake(newWidth, newHeight);
     UIGraphicsBeginImageContext(newSize);
+
     [[captureManager stillImage] drawInRect:CGRectMake(0,0,newSize.width,newSize.height)];
     UIImage* newImage = UIGraphicsGetImageFromCurrentImageContext();
+    
     UIGraphicsEndImageContext();
+    
+    NSData *dataForJPEGFile = UIImageJPEGRepresentation(newImage, 0.6);
+//    UIImage *optimizedImage = [UIImage imageWithData:dataForJPEGFile];
     NSString *batchIdString = [NSString stringWithFormat:@"%ld", batchId];
     if (taps == 0) {
         [TPProcessImage createSprayTo:self.appDelegate.myGroup withBatchId:batchIdString withNumOfTaps:0];
     }
     
-    [TPProcessImage sendTapTo:self.appDelegate.myGroup andImage:newImage inBatch:batchIdString  completed:^(BOOL success) {
+    [TPProcessImage sendTapTo:self.appDelegate.myGroup andImage:dataForJPEGFile inBatch:batchIdString withImageId: taps completed:^(BOOL success) {
         NSLog(@"HOly shit it saved?");
     }];
     

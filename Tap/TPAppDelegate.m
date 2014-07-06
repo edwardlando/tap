@@ -22,7 +22,10 @@
     
     //Temp
     
-    self.myGroup = [@[[PFUser currentUser]] mutableCopy];
+    if ([PFUser currentUser]) {
+        self.myGroup = [@[[PFUser currentUser]] mutableCopy];        
+    }
+
     
     return YES;
 }

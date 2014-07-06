@@ -101,7 +101,7 @@
      
     PFQuery *tapsQuery = [[PFQuery alloc] initWithClassName:@"Message"];
     [tapsQuery whereKey:@"batchId" equalTo:[object objectForKey:@"batchId"]];
-    [tapsQuery orderByDescending:@"createdAt"];
+    [tapsQuery orderByDescending:@"imageId"];
     [tapsQuery whereKey:@"recipients" equalTo:[PFUser currentUser]];
     [tapsQuery whereKey:@"readArray" notEqualTo:[[PFUser currentUser] objectId]];
 
@@ -110,7 +110,7 @@
             [self.allTaps setObject:objects forKey:[object objectForKey:@"batchId"]];
             
             if ([objects count] > 0) {
-                cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:18.0];
+                cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:18.0];
             }
             cell.detailTextLabel.text = [NSString stringWithFormat:@"%lu taps • TIMESTAMP", (unsigned long)[objects count]];
             [ind stopAnimating];
@@ -127,7 +127,12 @@
 
     NSMutableArray *batchTaps = [self.allTaps objectForKey:[[self.objects objectAtIndex:indexPath.row] objectForKey:@"batchId" ]];
     NSLog(@"batch taps %@", batchTaps);
-    [self performSegueWithIdentifier:@"showTap" sender:batchTaps];
+    if ([batchTaps count] == 0) {
+        [self goToCamera:self];
+    } else {
+        [self performSegueWithIdentifier:@"showTap" sender:batchTaps];
+    }
+
     
 }
 
