@@ -112,6 +112,9 @@
     }
 }
 
+// Put this somewhere
+// [self dismissViewControllerAnimated:YES completion:nil]
+
 
 - (IBAction)askForContacts:(id)sender {
     
