@@ -48,7 +48,20 @@
         // Do I need to initialize the PFUser?
         self.user.username = username;
         self.user.password = password;
-       [self performSegueWithIdentifier:@"showPhone" sender:self];
+        
+        
+        // Finally save this user
+        [self.user signUpInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+            if (error) {
+                UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Sorry!" message:[error.userInfo objectForKey:@"error"] delegate:nil cancelButtonTitle:@"OK!" otherButtonTitles: nil];
+                [alertView show];
+            }
+            else {
+                // Take me to the camera
+                NSLog(@"About to be taken to camera");
+                [self performSegueWithIdentifier:@"showPhone" sender:self];
+            }
+        }];
     }
 }
 
