@@ -7,7 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <Parse/Parse.h>
 
-@interface TPAllContactsViewController : UITableViewController
-
+@interface TPAllContactsViewController : PFQueryTableViewController
+@property (strong, nonatomic) NSMutableArray *contactsPhoneNumbersArray;
 @end

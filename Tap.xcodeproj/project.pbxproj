@@ -44,6 +44,8 @@
 		B6CB8EB61967CF69002996E8 /* CaptureSessionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = B6CB8EB51967CF69002996E8 /* CaptureSessionManager.m */; };
 		B6CB8EBC1967D59E002996E8 /* TPProcessImage.m in Sources */ = {isa = PBXBuildFile; fileRef = B6CB8EBB1967D59E002996E8 /* TPProcessImage.m */; };
 		B6CB8EBF1967E09A002996E8 /* TPSingleTapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B6CB8EBE1967E09A002996E8 /* TPSingleTapViewController.m */; };
+		B6CB8EC3196930AB002996E8 /* TPHandleContacts.m in Sources */ = {isa = PBXBuildFile; fileRef = B6CB8EC2196930AB002996E8 /* TPHandleContacts.m */; };
+		B6CB8EC61969C16E002996E8 /* TPFriendRequestsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B6CB8EC51969C16E002996E8 /* TPFriendRequestsViewController.m */; };
 		BC2E7CD419691C14007CB5F9 /* TPAskForContactsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BC2E7CD319691C14007CB5F9 /* TPAskForContactsViewController.m */; };
 /* End PBXBuildFile section */
 
@@ -111,6 +113,10 @@
 		B6CB8EBB1967D59E002996E8 /* TPProcessImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TPProcessImage.m; path = ../TPProcessImage.m; sourceTree = "<group>"; };
 		B6CB8EBD1967E09A002996E8 /* TPSingleTapViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TPSingleTapViewController.h; path = ../TPSingleTapViewController.h; sourceTree = "<group>"; };
 		B6CB8EBE1967E09A002996E8 /* TPSingleTapViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TPSingleTapViewController.m; path = ../TPSingleTapViewController.m; sourceTree = "<group>"; };
+		B6CB8EC1196930AB002996E8 /* TPHandleContacts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPHandleContacts.h; sourceTree = "<group>"; };
+		B6CB8EC2196930AB002996E8 /* TPHandleContacts.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TPHandleContacts.m; sourceTree = "<group>"; };
+		B6CB8EC41969C16E002996E8 /* TPFriendRequestsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPFriendRequestsViewController.h; sourceTree = "<group>"; };
+		B6CB8EC51969C16E002996E8 /* TPFriendRequestsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TPFriendRequestsViewController.m; sourceTree = "<group>"; };
 		BC2E7CD219691C14007CB5F9 /* TPAskForContactsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPAskForContactsViewController.h; sourceTree = "<group>"; };
 		BC2E7CD319691C14007CB5F9 /* TPAskForContactsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TPAskForContactsViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -202,6 +208,7 @@
 				B6CB8EBA1967D59E002996E8 /* TPProcessImage.h */,
 				B6CB8EBB1967D59E002996E8 /* TPProcessImage.m */,
 				B6CB8EB71967D20D002996E8 /* Onboarding */,
+				B6CB8EC71969C21D002996E8 /* Friend Requests */,
 				B6CB8EAD1967CC17002996E8 /* All Contacts */,
 				B6CB8EB01967CC3F002996E8 /* Login */,
 				B6CB8EB11967CC7C002996E8 /* My Group */,
@@ -295,6 +302,8 @@
 				B6CB8EB51967CF69002996E8 /* CaptureSessionManager.m */,
 				B6CB8EA11967CB50002996E8 /* TPCameraViewController.h */,
 				B6CB8EA21967CB50002996E8 /* TPCameraViewController.m */,
+				B6CB8EC1196930AB002996E8 /* TPHandleContacts.h */,
+				B6CB8EC2196930AB002996E8 /* TPHandleContacts.m */,
 			);
 			name = Camera;
 			sourceTree = "<group>";
@@ -345,6 +354,15 @@
 				B6CB8EBE1967E09A002996E8 /* TPSingleTapViewController.m */,
 			);
 			name = "Single Tap";
+			sourceTree = "<group>";
+		};
+		B6CB8EC71969C21D002996E8 /* Friend Requests */ = {
+			isa = PBXGroup;
+			children = (
+				B6CB8EC41969C16E002996E8 /* TPFriendRequestsViewController.h */,
+				B6CB8EC51969C16E002996E8 /* TPFriendRequestsViewController.m */,
+			);
+			name = "Friend Requests";
 			sourceTree = "<group>";
 		};
 		BC2E7CD519691C19007CB5F9 /* Ask for contacts */ = {
@@ -455,6 +473,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B6CB8E941967CAE4002996E8 /* TPSignUpViewController.m in Sources */,
+				B6CB8EC61969C16E002996E8 /* TPFriendRequestsViewController.m in Sources */,
 				B6CB8E971967CAFB002996E8 /* TPPhoneNumberViewController.m in Sources */,
 				B6CB8EA61967CB68002996E8 /* TPInboxViewController.m in Sources */,
 				B6CB8E9A1967CB0A002996E8 /* TPVerifyViewController.m in Sources */,
@@ -466,6 +485,7 @@
 				B6CB8EA01967CB3F002996E8 /* TPLoginViewController.m in Sources */,
 				B6CB8EBF1967E09A002996E8 /* TPSingleTapViewController.m in Sources */,
 				B6CB8EBC1967D59E002996E8 /* TPProcessImage.m in Sources */,
+				B6CB8EC3196930AB002996E8 /* TPHandleContacts.m in Sources */,
 				BC2E7CD419691C14007CB5F9 /* TPAskForContactsViewController.m in Sources */,
 				B6CB8E521967C41C002996E8 /* main.m in Sources */,
 				B6CB8EAC1967CBA4002996E8 /* TPAllContactsViewController.m in Sources */,

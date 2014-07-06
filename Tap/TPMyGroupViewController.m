@@ -8,9 +8,12 @@
 
 #import "TPMyGroupViewController.h"
 #import "TPAppDelegate.h"
+#import <Parse/Parse.h>
 
 @interface TPMyGroupViewController ()
+
 @property (strong, nonatomic) TPAppDelegate *appDelegate;
+@property (strong, nonatomic) NSArray *friendsArray;
 
 @end
 
@@ -38,11 +41,20 @@
 {
     [super viewDidLoad];
     
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
+    for (PFUser *requester in [[PFUser currentUser] objectForKey:@"friendRequestsArray"]) {
+        [requester fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+            //
+        }];
+    }
+    /*self.friendsArray =*/
+    ;
     
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+//    for (PFUser *friend in [[PFUser currentUser] objectForKey:@"friendArray"]) {
+//        [friend fetchIfNeeded];
+//    }
+    
+
+    
 }
 
 - (void)didReceiveMemoryWarning
@@ -55,50 +67,88 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-#warning Potentially incomplete method implementation.
+
     // Return the number of sections.
-    return 0;
+    if ([[[PFUser currentUser] objectForKey:@"friendRequestsArray"] count] > 0) {
+        return 3;
+    }
+    return 2;
 }
+
+
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-#warning Incomplete method implementation.
+
+//    NSInteger totalFriends = [[[PFUser currentUser] objectForKey:@"friendsArray"] count];
+    NSInteger totalFriends = [self.appDelegate.friendsPhoneNumbersArray count];
+    NSInteger inMyGrounp = [[[PFUser currentUser] objectForKey:@"myGroup"] count];
+    
     // Return the number of rows in the section.
-    return 0;
+    if (section == 0) {
+        return 1;
+    } else if (section == 1) {
+        return inMyGrounp;
+    } else {
+        return totalFriends - inMyGrounp;
+    }
+
 }
 
-/*
+
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:<#@"reuseIdentifier"#> forIndexPath:indexPath];
     
-    // Configure the cell...
-    
-    return cell;
-}
-*/
+    if (indexPath.section == 0) {
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"friendRequests" forIndexPath:indexPath];
+        cell.textLabel.text = [NSString stringWithFormat:@"Friends Requests (%ld)", [[[PFUser currentUser] objectForKey:@"friendRequestsArray"] count]];
+        
+        
+        
+        return cell;
+        
+    } else if (indexPath.section == 1) {
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"friendInGroupCell" forIndexPath:indexPath];
+        
+        return cell;
+    } else {
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"friendCell" forIndexPath:indexPath];
+//        NSString *friendPhoneNumber = ;
+//        NSString *friendName =
+//        PFUser *friend = [[[PFUser currentUser] objectForKey:@"friendArray"] objectAtIndex:indexPath.row];
+//        [friend fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+//            NSLog(@"friends %@", object);
+        
+//            NSString *friendPhoneNumber = [object objectForKey:@"phoneNumber"];
+//            NSString *friendNameInMyContacts = [self.appDelegate.contactsDict objectForKey:friendPhoneNumber];
+//            
+//            if ([friendNameInMyContacts isEqual:@""]) {
+//                cell.textLabel.text = [object objectForKey:@"username"];
+//    //            cell.detailTextLabel.text = friendPhoneNumber;
+//            } else {
+//                cell.textLabel.text = friendNameInMyContacts;
+//                cell.detailTextLabel.text = [object objectForKey:@"username"];
+//            }
+//        }];
+        return cell;
+    }
 
-/*
-// Override to support conditional editing of the table view.
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    // Return NO if you do not want the specified item to be editable.
-    return YES;
 }
-*/
 
-/*
-// Override to support editing the table view.
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        // Delete the row from the data source
-        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    } else if (editingStyle == UITableViewCellEditingStyleInsert) {
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-    }   
+
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section{
+    if (section == 0) {
+        return @"Friend Requests";
+    }
+    else if (section == 1){
+        return @"My Group";
+    }
+    else{
+        return @"All Friends";
+    }
 }
-*/
+
 
 /*
 // Override to support rearranging the table view.

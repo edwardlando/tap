@@ -11,16 +11,27 @@
 #import <AddressBook/AddressBook.h>
 #import <AddressBook/ABPerson.h>
 #import <AddressBook/ABAddressBook.h>
+#import "TPAppDelegate.h"
 
 
 @interface TPAskForContactsViewController ()
 @property (nonatomic, strong) NSMutableArray *phonebook;
 @property (nonatomic, strong) NSMutableDictionary *alphabeticalPhonebook;
 @property (nonatomic, strong) NSArray *sections;
+@property (strong, nonatomic) TPAppDelegate *appDelegate;
 
 @end
 
 @implementation TPAskForContactsViewController
+
+- (TPAppDelegate *)appDelegate
+{
+    if (!_appDelegate) {
+        _appDelegate = (TPAppDelegate *)[[UIApplication sharedApplication] delegate];
+    }
+    
+    return _appDelegate;
+}
 
 
 - (void)viewDidLoad
@@ -87,6 +98,28 @@
                     
                 }
                 
+                if (![self.appDelegate.contactsPhoneNumbersArray containsObject:phone]) {
+                    
+                    NSString *strippedPhone = [phone stringByReplacingOccurrencesOfString:@"[^0-9]" withString:@"" options:NSRegularExpressionSearch range:NSMakeRange(0, [phone length])];
+                    if ([strippedPhone isEqual:@""]) continue;
+                    if([strippedPhone characterAtIndex:0] != '1'){
+                        NSString *temp = @"1";
+                        strippedPhone = [temp stringByAppendingString:strippedPhone];
+                        //                        NSLog(@"strippedPhone %@", strippedPhone);
+                    }
+                    
+                    [self.appDelegate.contactsPhoneNumbersArray addObject:strippedPhone];
+                    if (!self.appDelegate.contactsDict) {
+                        [self.appDelegate.contactsDict setObject:compositeName forKey:strippedPhone];
+                    }
+                    
+                    
+                    //                    NSString *firstLetter = [[[contact objectForKey:@"name"] substringToIndex:1] uppercaseString];
+                    //                    [[self.alphabeticalPhonebook valueForKey:firstLetter] addObject:contact];
+                    
+                }
+
+                
             }
         }
         CFRelease(addressBook);
@@ -101,9 +134,18 @@
         NSArray *temp = [[PFUser currentUser]objectForKey:@"contacts"];
         if(temp == nil || temp == NULL){
             [[PFUser currentUser]setObject:self.phonebook forKey:@"contacts"];
+            [[PFUser currentUser]setObject:[[NSMutableArray alloc] init] forKey:@"friendRequestsArray"];
+            [[PFUser currentUser]setObject:[[NSMutableArray alloc] init] forKey:@"friendsArray"];
+            [[PFUser currentUser]setObject:[[NSMutableArray alloc] init] forKey:@"myGroupArray"];
             [[PFUser currentUser]saveInBackground];
         }
         
+        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Great Success!" message:@"Welcome to Tap" delegate:nil cancelButtonTitle:nil otherButtonTitles:@"FUCK YEAH!", nil];
+        [alert show];
+        
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"onboardingFinished"
+                                                            object:nil
+                                                          userInfo:nil];
         [self dismissViewControllerAnimated:YES completion:nil];
     }
 }

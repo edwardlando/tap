@@ -8,15 +8,25 @@
 
 #import "TPInboxViewController.h"
 #import "TPSingleTapViewController.h"
+#import "TPAppDelegate.h"
 
 @interface TPInboxViewController ()
 - (IBAction)goToCamera:(id)sender;
 @property (strong, nonatomic) NSMutableDictionary *allTaps;
 @property (strong, nonatomic) PFObject *selectedSpray;
+@property (strong, nonatomic) TPAppDelegate *appDelegate;
+
 @end
 
 @implementation TPInboxViewController
-
+- (TPAppDelegate *)appDelegate
+{
+    if (!_appDelegate) {
+        _appDelegate = (TPAppDelegate *)[[UIApplication sharedApplication] delegate];
+    }
+    
+    return _appDelegate;
+}
 
 -(NSMutableDictionary *)allTaps {
     if (!_allTaps) {
@@ -101,7 +111,7 @@
     }
     
     PFQuery *query = [PFQuery queryWithClassName:self.parseClassName];
-    [query setLimit:0];
+//    [query setLimit:0];
     [query whereKey:@"recipients" equalTo:[PFUser currentUser]];
 //    [query whereKey:@"read" notEqualTo:[PFUser currentUser]];
     [query orderByDescending:@"createdAt"];
@@ -118,7 +128,13 @@
     UIActivityIndicatorView *ind = (UIActivityIndicatorView *)[cell viewWithTag:5];
     [ind startAnimating];
     [ind hidesWhenStopped];
-    cell.textLabel.text = [[object objectForKey:@"sender"] objectForKey:@"username"];
+    
+    NSString *friendPhoneNumber = [[object objectForKey:@"sender"] objectForKey:@"phoneNumber"];
+     
+    NSString *friendNameInMyContacts = [self.appDelegate.contactsDict objectForKey:friendPhoneNumber];
+     
+    NSString *username = [[object objectForKey:@"sender"] objectForKey:@"username"];
+     cell.textLabel.text = (![friendNameInMyContacts isEqual:@""]) ? friendNameInMyContacts : username ;
     cell.detailTextLabel.textColor = [UIColor grayColor];
      
     PFQuery *tapsQuery = [[PFQuery alloc] initWithClassName:@"Message"];

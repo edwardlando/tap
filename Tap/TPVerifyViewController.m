@@ -31,11 +31,6 @@
     // Twilio
     [PFCloud callFunctionInBackground:@"verifyCode" withParameters:@{@"code": code} block:^(id object, NSError *error) {
         if(!error && ![object isEqual: @"false"]){
-            UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Great Success!" message:@"Welcome to Tap" delegate:nil cancelButtonTitle:nil otherButtonTitles:@"FUCK YEAH!", nil];
-            [alert show];
-            [[NSNotificationCenter defaultCenter] postNotificationName:@"onboardingFinished"
-                                                                object:nil
-                                                              userInfo:nil];
             //[self dismissViewControllerAnimated:YES completion:nil];
             
             [self performSegueWithIdentifier:@"showAsk" sender:self];

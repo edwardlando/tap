@@ -11,6 +11,9 @@
 #import "TPProcessImage.h"
 #import "TPAppDelegate.h"
 #import "TPAllContactsViewController.h"
+#import <AddressBook/AddressBook.h>
+#import <AddressBook/ABPerson.h>
+#import <AddressBook/ABAddressBook.h>
 
 @interface TPCameraViewController (){
  
@@ -37,10 +40,18 @@
     return _appDelegate;
 }
 
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     [[self navigationController] setNavigationBarHidden:YES animated:NO];
+    
+//    if (1 == 2) {
+        [self fetchPhoneContacts];
+//    }
+    
+
+    
     
     UIButton *inboxButton = (UIButton *)[self.view viewWithTag:10];
     inboxButton.layer.cornerRadius = 5;
@@ -205,6 +216,101 @@
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     NSLog(@"segue performed");
     [self resetBatch];
+    if ([segue.identifier isEqual:@"showAllContacts"]) {
+//        TPAllContactsViewController *allConView = (TPAllContactsViewController*)segue.destinationViewController;
+//        allConView.contactsPhoneNumbersArray
+    }
+}
+
+-(void) fetchPhoneContacts {
+    CFErrorRef error;
+    ABAddressBookRef addressBook = ABAddressBookCreateWithOptions(NULL, &error);
+    
+    __block BOOL accessGranted = NO;
+    
+    if (ABAddressBookRequestAccessWithCompletion != NULL) { // we're on iOS 6
+        dispatch_semaphore_t sema = dispatch_semaphore_create(0);
+        
+        ABAddressBookRequestAccessWithCompletion(addressBook, ^(bool granted, CFErrorRef error) {
+            accessGranted = granted;
+            dispatch_semaphore_signal(sema);
+        });
+        
+        dispatch_semaphore_wait(sema, DISPATCH_TIME_FOREVER);
+        //        dispatch_release(sema);
+    }
+    else { // we're on iOS 5 or older
+        accessGranted = YES;
+    }
+    
+    
+    if (!accessGranted) {
+        //
+    } else {
+        
+        NSArray *allPeople = (__bridge_transfer NSArray*)ABAddressBookCopyArrayOfAllPeople(addressBook);
+        
+        self.appDelegate.contactsPhoneNumbersArray = [[NSMutableArray alloc] initWithCapacity:[allPeople count]]; // capacity is only a rough guess, but better than nothing
+
+        for (id record in allPeople) {
+            CFTypeRef phoneProperty = ABRecordCopyValue((__bridge ABRecordRef)record, kABPersonPhoneProperty);
+            NSArray *phones = (__bridge NSArray *)ABMultiValueCopyArrayOfAllValues(phoneProperty);
+            CFRelease(phoneProperty);
+            for (NSString *phone in phones) {
+                NSString* compositeName = (__bridge NSString *)ABRecordCopyCompositeName((__bridge ABRecordRef)record);
+                NSMutableDictionary *contact = [[NSMutableDictionary alloc] init];
+                if(compositeName == nil)
+                {
+                    continue;
+                }
+                if(phone == nil){
+                    continue;
+                }
+//                [contact setObject:compositeName forKey:@"name"];
+//                [contact setObject:phone forKey:@"phone"];
+                NSString *strippedPhone = [phone stringByReplacingOccurrencesOfString:@"[^0-9]" withString:@"" options:NSRegularExpressionSearch range:NSMakeRange(0, [phone length])];
+
+                if (![self.appDelegate.contactsPhoneNumbersArray containsObject:phone]) {
+                    
+                    if ([strippedPhone isEqual:@""]) continue;
+                    if([strippedPhone characterAtIndex:0] != '1'){
+                        NSString *temp = @"1";
+                        strippedPhone = [temp stringByAppendingString:strippedPhone];
+                        //                        NSLog(@"strippedPhone %@", strippedPhone);
+                    }
+                    
+                    [self.appDelegate.contactsPhoneNumbersArray addObject:strippedPhone];
+                    
+                    
+                    
+                    
+                }
+                
+//                if (![self.appDelegate.contactsDict objectForKey:compositeName]) {
+//                NSLog(@"composite name: %@      stripped phone: %@", compositeName, strippedPhone);
+                [self.appDelegate.contactsDict setObject:compositeName forKey:strippedPhone];
+//                }
+
+                
+
+                
+            }
+        }
+        CFRelease(addressBook);
+//        NSLog(@"contacts dict %@", self.appDelegate.contactsDict);
+//        NSSortDescriptor *sort = [NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES];
+//        for (id contact in self.appDelegate.contactsPhoneNumbersArray) {
+//            [self.appDelegate.contactsPhoneNumbersArray sortUsingDescriptors:[NSArray arrayWithObject:sort]];
+//        }
+
+        //        [self.phonebook sortUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
+        allPeople = nil;
+//        NSArray *temp = [[PFUser currentUser]objectForKey:@"contacts"];
+//        if(temp == nil || temp == NULL){
+//            [[PFUser currentUser]setObject:self.phonebook forKey:@"contacts"];
+//            [[PFUser currentUser]saveInBackground];
+//        }
+    }
 }
 
 @end

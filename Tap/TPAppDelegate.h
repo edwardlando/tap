@@ -12,5 +12,8 @@
 
 @property (strong, nonatomic) UIWindow *window;
 @property (strong, nonatomic) NSMutableArray *myGroup;
+@property (strong, nonatomic) NSMutableArray *contactsPhoneNumbersArray;
+@property (strong, nonatomic) NSMutableArray *friendsPhoneNumbersArray;
+@property (strong, nonatomic) NSMutableDictionary *contactsDict;
 
 @end

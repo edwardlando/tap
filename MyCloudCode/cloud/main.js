@@ -42,6 +42,11 @@ var textVerification = function(phoneNumber,code){
     );
 }
 
+Parse.Cloud.define("addAsFriend", function(request, response) {
+    var approvingUser = request.user;
+    var requestingUserId = request.params.reqUserId;
+    
+})
 
 
 //Verify Text Code

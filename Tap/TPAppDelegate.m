@@ -11,6 +11,36 @@
 
 @implementation TPAppDelegate
 
+
+- (void)loadFriends{
+    if([PFUser currentUser].isAuthenticated){
+        NSLog(@"Here");
+//        [[[PFUser currentUser] objectForKey:@"friendsArray"] fetchIfNeeded];
+        NSArray *friendsArray = [[PFUser currentUser] objectForKey:@"friendsArray"];
+        
+        if ([friendsArray count] > 0) {
+            for (PFUser *friend in friendsArray) {
+                [friend fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+                    [self.friendsPhoneNumbersArray addObject:[object objectForKey:@"phoneNumber"]];
+                }];
+
+            }
+        }
+    }
+}
+
+
+-(void) tempLoadFriends {
+    if([PFUser currentUser].isAuthenticated){
+        NSLog(@"Here");
+        NSArray *friendsArray = [[PFUser currentUser] objectForKey:@"friendRequestsArray"];
+        self.myGroup = [friendsArray mutableCopy];
+    }
+}
+
+
+
+
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     // Override point for customization after application launch.
@@ -21,7 +51,10 @@
     [PFAnalytics trackAppOpenedWithLaunchOptions:launchOptions];
     
     NSDictionary *notificationPayload = launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey];
+    self.contactsDict = [[NSMutableDictionary alloc] init];
     
+    [self loadFriends];
+//    [self tempLoadFriends];
     //Temp
     
 //    if ([PFUser currentUser]) {

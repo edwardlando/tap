@@ -10,4 +10,6 @@
 
 @interface TPMyGroupViewController : UITableViewController
 
+@property (strong, nonatomic) NSArray *friendsRequests;
+
 @end

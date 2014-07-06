@@ -8,116 +8,275 @@
 
 #import "TPAllContactsViewController.h"
 
+#import <AddressBook/AddressBook.h>
+#import <AddressBook/ABPerson.h>
+#import <AddressBook/ABAddressBook.h>
+#import "TPAppDelegate.h"
+
 @interface TPAllContactsViewController ()
 - (IBAction)backButton:(id)sender;
+
+@property (nonatomic, strong) NSMutableArray *phonebook;
+@property (nonatomic, strong) NSMutableDictionary *alphabeticalPhonebook;
+@property (nonatomic, strong) NSArray *sections;
+@property (nonatomic, strong) TPAppDelegate *appDelegate;
 
 @end
 
 @implementation TPAllContactsViewController
 
-- (id)initWithStyle:(UITableViewStyle)style
-{
-    self = [super initWithStyle:style];
+-(TPAppDelegate *)appDelegate {
+    if (!_appDelegate) {
+        _appDelegate = (TPAppDelegate *)[[UIApplication sharedApplication] delegate];
+    }
+    return _appDelegate;
+}
+
+- (id)initWithCoder:(NSCoder *)aCoder {
+    self = [super initWithCoder:aCoder];
     if (self) {
-        // Custom initialization
+        // Customize the table
+        
+        // The className to query on
+        self.parseClassName = @"User";
+        
+        // The key of the PFObject to display in the label of the default cell style
+        // self.textKey = @"text";
+        
+        // Uncomment the following line to specify the key of a PFFile on the PFObject to display in the imageView of the default cell style
+        // self.imageKey = @"image";
+        
+        // Whether the built-in pull-to-refresh is enabled
+        self.pullToRefreshEnabled = NO;
+        
+        // Whether the built-in pagination is enabled
+        self.paginationEnabled = NO;
+        
+        // The number of objects to show per page
+//        self.objectsPerPage = 40;
+        
+        
     }
     return self;
 }
 
+
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
-    
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+//    NSLog(@"self.appdel %@", self.appDelegate.contactsPhoneNumbersArray);
+    self.tableView.sectionIndexBackgroundColor = [UIColor clearColor];
+    self.tableView.sectionIndexTrackingBackgroundColor = [UIColor lightGrayColor];
+    self.tableView.sectionIndexColor = [UIColor darkGrayColor];
+    self.sections = @[@"My Friends on Tap", @"Invite Friends"];
 }
 
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
 
 #pragma mark - Table view data source
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
-{
-#warning Potentially incomplete method implementation.
-    // Return the number of sections.
-    return 0;
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+//    NSString *sectionTitle = [self.sections objectAtIndex:section];
+//    NSArray *sectionContacts = [self.alphabeticalPhonebook objectForKey:sectionTitle];
+//    if (section == 0) {
+//    NSLog(@"self.objects %@", self.objects);
+        return [self.objects count];
+//    } else {
+//        return [self.appDelegate.contactsPhoneNumbersArray count] - self.objects.count ;
+//    }
+
 }
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
-#warning Incomplete method implementation.
-    // Return the number of rows in the section.
-    return 0;
-}
-
-/*
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:<#@"reuseIdentifier"#> forIndexPath:indexPath];
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath object:(PFObject *)object{
+    static NSString *CellIdentifier = @"userCell";
     
-    // Configure the cell...
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+    if (cell == nil) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault
+                                      reuseIdentifier:CellIdentifier];
+    }
+    
+    cell.detailTextLabel.textColor = [UIColor grayColor];
+    int index = indexPath.row;
+    
+    UIButton *addAsFriendButton = (UIButton *) [cell viewWithTag:1];
+    [addAsFriendButton addTarget:self action:@selector(addAsFriend:) forControlEvents:UIControlEventTouchUpInside];
+//    NSString *sectionTitle = [self.sections objectAtIndex:indexPath.section];
+//    NSArray *sectionContacts = [self.alphabeticalPhonebook objectForKey:sectionTitle];
+    
+//    if([self.selectedPeople containsObject:[sectionContacts objectAtIndex:index]]){
+//        [cell setAccessoryType:UITableViewCellAccessoryCheckmark];
+//    }
+//    else{
+//        [cell setAccessoryType:UITableViewCellAccessoryNone];
+//    }
+    
+//    NSString *name = [[sectionContacts objectAtIndex:index]objectForKey:@"name"];
+//    NSString *phone = [[sectionContacts objectAtIndex:index]objectForKey:@"phone"];
+    
+    cell.textLabel.text = [object objectForKey:@"username"];
+    cell.detailTextLabel.text = [object objectForKey:@"phoneNumber"];
     
     return cell;
 }
-*/
 
-/*
-// Override to support conditional editing of the table view.
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    // Return NO if you do not want the specified item to be editable.
-    return YES;
+
+//- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+//{
+//    // Return the number of sections.
+//    return [self.sections count];
+//}
+//
+//- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+//{
+//    return [self.sections objectAtIndex:section];
+//}
+//
+
+//- (NSArray *)sectionIndexTitlesForTableView:(UITableView *)tableView
+//{
+//    return self.sections;
+//}
+
+//- (NSInteger)tableView:(UITableView *)tableView sectionForSectionIndexTitle:(NSString *)title atIndex:(NSInteger)index
+//{
+//    return [self.sections indexOfObject:title];
+//}
+
+//- (void)tableView:(UITableView *)tableView willDisplayHeaderView:(UIView *)view forSection:(NSInteger)section
+//{
+//    // Background color
+//    //    if (section == 0) {
+//    view.tintColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"pink"]];
+//    
+//    // Text Color
+//    UITableViewHeaderFooterView *header = (UITableViewHeaderFooterView *)view;
+//    [header.textLabel setTextColor:[UIColor whiteColor]];
+//    //    }
+//}
+
+- (PFQuery *)queryForTable {
+    
+    if (![PFUser currentUser]) {
+        return nil;
+    }
+    
+    PFQuery *query = [PFUser query];
+//    [query includeKey:@"phoneNumber"];
+    
+//    [query setLimit:0];
+    
+    [query whereKey:@"phoneNumber" containedIn:self.appDelegate.contactsPhoneNumbersArray];
+    [query whereKey:@"phoneNumber" notContainedIn:self.appDelegate.friendsPhoneNumbersArray];
+    
+//    [query orderByDescending:@"createdAt"];
+
+    return query;
+    
 }
-*/
 
-/*
-// Override to support editing the table view.
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        // Delete the row from the data source
-        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    } else if (editingStyle == UITableViewCellEditingStyleInsert) {
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-    }   
-}
-*/
-
-/*
-// Override to support rearranging the table view.
-- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
-{
-}
-*/
-
-/*
-// Override to support conditional rearranging of the table view.
-- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    // Return NO if you do not want the item to be re-orderable.
-    return YES;
-}
-*/
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 - (IBAction)backButton:(id)sender {
     [self dismissViewControllerAnimated:YES completion:nil];
 }
+
+
+-(void) fetchPhoneContacts {
+    CFErrorRef error;
+    ABAddressBookRef addressBook = ABAddressBookCreateWithOptions(NULL, &error);
+    
+    __block BOOL accessGranted = NO;
+    
+    if (ABAddressBookRequestAccessWithCompletion != NULL) { // we're on iOS 6
+        dispatch_semaphore_t sema = dispatch_semaphore_create(0);
+        
+        ABAddressBookRequestAccessWithCompletion(addressBook, ^(bool granted, CFErrorRef error) {
+            accessGranted = granted;
+            dispatch_semaphore_signal(sema);
+        });
+        
+        dispatch_semaphore_wait(sema, DISPATCH_TIME_FOREVER);
+        //        dispatch_release(sema);
+    }
+    else { // we're on iOS 5 or older
+        accessGranted = YES;
+    }
+    
+    
+    if (!accessGranted) {
+        //
+    } else {
+        
+        NSArray *allPeople = (__bridge_transfer NSArray*)ABAddressBookCopyArrayOfAllPeople(addressBook);
+        
+        self.phonebook = [[NSMutableArray alloc] initWithCapacity:[allPeople count]]; // capacity is only
+        
+
+        for (id record in allPeople) {
+            CFTypeRef phoneProperty = ABRecordCopyValue((__bridge ABRecordRef)record, kABPersonPhoneProperty);
+            NSArray *phones = (__bridge NSArray *)ABMultiValueCopyArrayOfAllValues(phoneProperty);
+            CFRelease(phoneProperty);
+            for (NSString *phone in phones) {
+                NSString* compositeName = (__bridge NSString *)ABRecordCopyCompositeName((__bridge ABRecordRef)record);
+                NSMutableDictionary *contact = [[NSMutableDictionary alloc] init];
+                if(compositeName == nil)
+                {
+                    continue;
+                }
+                if(phone == nil){
+                    continue;
+                }
+                
+                [contact setObject:compositeName forKey:phone];
+                
+                if (![self.phonebook containsObject:contact]) {
+                    [self.phonebook addObject:contact];
+                }
+                
+            }
+        }
+        CFRelease(addressBook);
+        
+//        NSSortDescriptor *sort = [NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES];
+//        //        for (id contact in self.appDelegate.contactsPhoneNumbersArray) {
+//        [self.phonebook sortUsingDescriptors:[NSArray arrayWithObject:sort]];
+        //        }
+        [self.phonebook sortUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
+
+        allPeople = nil;
+        //        NSArray *temp = [[PFUser currentUser]objectForKey:@"contacts"];
+        //        if(temp == nil || temp == NULL){
+        //            [[PFUser currentUser]setObject:self.phonebook forKey:@"contacts"];
+        //            [[PFUser currentUser]saveInBackground];
+        //        }
+    }
+}
+
+
+-(void)addAsFriend:(id )sender {
+    UIView *senderButton = (UIView*) sender;
+    NSIndexPath *indexPath = [self.tableView indexPathForCell: (UITableViewCell *)[[[senderButton superview]superview] superview]];
+
+    PFUser *user = [self.objects objectAtIndex:indexPath.row];
+    
+    if (![[[PFUser currentUser] objectForKey:@"friendsArray"] containsObject:user]) {
+        
+        PFUser *currentUser = [PFUser currentUser];
+//        if (![currentUser objectForKey:@"friendsArray"]) {
+//            [currentUser objectForKey:@"friendsArray"] = [[NSMutableArray alloc] init];
+//        }
+        [[currentUser objectForKey:@"friendRequestsArray"] addObject:user];
+        
+//        [self.appDelegate.friendsPhoneNumbersArray addObject:[user objectForKey:@"phoneNumber"]];
+        [currentUser saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+            if (succeeded) {
+                NSLog(@"added as friend");
+            } else {
+                NSLog(@"Error: %@", error);
+            }
+
+        }];
+    }
+}
+
 @end
