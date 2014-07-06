@@ -36,9 +36,16 @@
         NSLog(@"Phone not length 0");
         [self.user setObject:phone forKey:@"phone"];
         NSLog(@"%@", self.user);
-        [self performSegueWithIdentifier:@"showVerify" sender:self];
-
         
+        
+        [PFCloud callFunctionInBackground:@"sendVerificationCode" withParameters:@{@"user":self.user,@"phoneNumber":phone} block:^(id object, NSError *error) {
+            if (error) {
+                NSLog(@"Error sending verification code");
+            } else {
+                [self performSegueWithIdentifier:@"showVerify" sender:self];
+            }
+            //
+        }];
     }
 }
 

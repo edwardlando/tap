@@ -26,11 +26,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Tap/TPSignUpViewController.m"
-            timestampString = "426287025.832614"
+            timestampString = "426313978.676978"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "51"
-            endingLineNumber = "51"
+            startingLineNumber = "64"
+            endingLineNumber = "64"
             landmarkName = "-signup"
             landmarkType = "5">
          </BreakpointContent>
