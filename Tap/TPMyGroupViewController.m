@@ -8,12 +8,15 @@
 
 #import "TPMyGroupViewController.h"
 #import "TPAppDelegate.h"
-#import <Parse/Parse.h>
 
-@interface TPMyGroupViewController ()
+
+@interface TPMyGroupViewController () {
+    BOOL pendingFriendReqs;
+}
 
 @property (strong, nonatomic) TPAppDelegate *appDelegate;
 @property (strong, nonatomic) NSArray *friendsArray;
+- (IBAction)backToCamera:(id)sender;
 
 @end
 
@@ -40,12 +43,17 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+
+    [self.appDelegate loadFriends];
     
     for (PFUser *requester in [[PFUser currentUser] objectForKey:@"friendRequestsArray"]) {
-        [requester fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
-            //
-        }];
+        [requester fetchIfNeeded];
     }
+
+    for (PFUser *friendInGroup in [[PFUser currentUser] objectForKey:@"myGroupArray"]) {
+        [friendInGroup fetchIfNeeded];
+    }
+    
     /*self.friendsArray =*/
     ;
     
@@ -70,9 +78,13 @@
 
     // Return the number of sections.
     if ([[[PFUser currentUser] objectForKey:@"friendRequestsArray"] count] > 0) {
+        pendingFriendReqs = YES;
         return 3;
+    } else {
+        pendingFriendReqs = NO;
     }
-    return 2;
+    
+    return 3;
 }
 
 
@@ -82,24 +94,25 @@
 
 //    NSInteger totalFriends = [[[PFUser currentUser] objectForKey:@"friendsArray"] count];
     NSInteger totalFriends = [self.appDelegate.friendsPhoneNumbersArray count];
-    NSInteger inMyGrounp = [[[PFUser currentUser] objectForKey:@"myGroup"] count];
+    NSInteger inMyGroup = [[[PFUser currentUser] objectForKey:@"myGroupArray"] count];
     
     // Return the number of rows in the section.
     if (section == 0) {
-        return 1;
+        if (pendingFriendReqs) return 1;
+        return 0;
     } else if (section == 1) {
-        return inMyGrounp;
+        return inMyGroup;
     } else {
-        return totalFriends - inMyGrounp;
+        return totalFriends - inMyGroup;
     }
 
 }
 
 
 
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    
     if (indexPath.section == 0) {
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"friendRequests" forIndexPath:indexPath];
         cell.textLabel.text = [NSString stringWithFormat:@"Friends Requests (%ld)", [[[PFUser currentUser] objectForKey:@"friendRequestsArray"] count]];
@@ -110,11 +123,17 @@
         
     } else if (indexPath.section == 1) {
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"friendInGroupCell" forIndexPath:indexPath];
-        
+        PFUser *friendInGroup = [[[PFUser currentUser] objectForKey:@"myGroupArray"] objectAtIndex:indexPath.row];
+        NSString *friendPhoneNumber = [friendInGroup objectForKey:@"phoneNumber"];
+        NSString *friendUsername = [friendInGroup objectForKey:@"username"];
+        NSString *friendName = [self.appDelegate.contactsDict objectForKey:friendPhoneNumber];
+        cell.textLabel.text = friendName;
+        cell.detailTextLabel.text = friendUsername;
         return cell;
     } else {
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"friendCell" forIndexPath:indexPath];
-//        NSString *friendPhoneNumber = ;
+        NSString *friendPhoneNumber = [self.appDelegate.friendsPhoneNumbersArray objectAtIndex:indexPath.row];
+        NSString *friendName = [self.appDelegate.contactsDict objectForKey:friendPhoneNumber];
 //        NSString *friendName =
 //        PFUser *friend = [[[PFUser currentUser] objectForKey:@"friendArray"] objectAtIndex:indexPath.row];
 //        [friend fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
@@ -122,11 +141,16 @@
         
 //            NSString *friendPhoneNumber = [object objectForKey:@"phoneNumber"];
 //            NSString *friendNameInMyContacts = [self.appDelegate.contactsDict objectForKey:friendPhoneNumber];
-//            
-//            if ([friendNameInMyContacts isEqual:@""]) {
-//                cell.textLabel.text = [object objectForKey:@"username"];
-//    //            cell.detailTextLabel.text = friendPhoneNumber;
-//            } else {
+//
+        UIButton *addToGroupButton = (UIButton *)[cell viewWithTag:10];
+        
+        [addToGroupButton addTarget:self action:@selector(addToGroup:) forControlEvents:UIControlEventTouchUpInside];
+        
+            if (![friendName isEqual:@""]) {
+                cell.textLabel.text = friendName;
+                cell.detailTextLabel.text = [self.appDelegate.numbersToUsernamesDict objectForKey:friendPhoneNumber];
+            }
+//            else {
 //                cell.textLabel.text = friendNameInMyContacts;
 //                cell.detailTextLabel.text = [object objectForKey:@"username"];
 //            }
@@ -149,6 +173,39 @@
     }
 }
 
+
+
+-(void) addToGroup:(id) sender {
+    UIView *senderButton = (UIView*) sender;
+    NSIndexPath *indexPath = [self.tableView indexPathForCell: (UITableViewCell *)[[[senderButton superview]superview] superview]];
+    PFUser *friendToAdd = [self.appDelegate.friendsObjectsDict objectForKey:[self.appDelegate.friendsPhoneNumbersArray objectAtIndex:indexPath.row]];
+    [[[PFUser currentUser] objectForKey:@"myGroupArray"] addObject:friendToAdd];
+    [[PFUser currentUser] saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+        NSLog(@"Added to group");
+        [self.tableView reloadData];
+    }];
+}
+
+
+//- (PFQuery *)queryForTable {
+//    
+//    if (![PFUser currentUser]) {
+//        return nil;
+//    }
+//    
+//    PFQuery *query = [PFUser query];
+//    //    [query includeKey:@"phoneNumber"];
+//    
+//    //    [query setLimit:0];
+//    
+//    [query whereKey:@"phoneNumber" containedIn:self.appDelegate.contactsPhoneNumbersArray];
+//    [query whereKey:@"phoneNumber" notContainedIn:self.appDelegate.friendsPhoneNumbersArray];
+//    
+//    //    [query orderByDescending:@"createdAt"];
+//    
+//    return query;
+//    
+//}
 
 /*
 // Override to support rearranging the table view.
@@ -177,4 +234,7 @@
 }
 */
 
+- (IBAction)backToCamera:(id)sender {
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
 @end

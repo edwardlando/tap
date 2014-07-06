@@ -15,5 +15,8 @@
 @property (strong, nonatomic) NSMutableArray *contactsPhoneNumbersArray;
 @property (strong, nonatomic) NSMutableArray *friendsPhoneNumbersArray;
 @property (strong, nonatomic) NSMutableDictionary *contactsDict;
+@property (strong, nonatomic) NSMutableDictionary *numbersToUsernamesDict;
+@property (strong, nonatomic) NSMutableDictionary *friendsObjectsDict;
 
+-(void)loadFriends;
 @end
