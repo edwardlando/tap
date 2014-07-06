@@ -44,6 +44,7 @@
 		B6CB8EB61967CF69002996E8 /* CaptureSessionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = B6CB8EB51967CF69002996E8 /* CaptureSessionManager.m */; };
 		B6CB8EBC1967D59E002996E8 /* TPProcessImage.m in Sources */ = {isa = PBXBuildFile; fileRef = B6CB8EBB1967D59E002996E8 /* TPProcessImage.m */; };
 		B6CB8EBF1967E09A002996E8 /* TPSingleTapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B6CB8EBE1967E09A002996E8 /* TPSingleTapViewController.m */; };
+		BC2E7CD419691C14007CB5F9 /* TPAskForContactsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BC2E7CD319691C14007CB5F9 /* TPAskForContactsViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -110,6 +111,8 @@
 		B6CB8EBB1967D59E002996E8 /* TPProcessImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TPProcessImage.m; path = ../TPProcessImage.m; sourceTree = "<group>"; };
 		B6CB8EBD1967E09A002996E8 /* TPSingleTapViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TPSingleTapViewController.h; path = ../TPSingleTapViewController.h; sourceTree = "<group>"; };
 		B6CB8EBE1967E09A002996E8 /* TPSingleTapViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TPSingleTapViewController.m; path = ../TPSingleTapViewController.m; sourceTree = "<group>"; };
+		BC2E7CD219691C14007CB5F9 /* TPAskForContactsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPAskForContactsViewController.h; sourceTree = "<group>"; };
+		BC2E7CD319691C14007CB5F9 /* TPAskForContactsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TPAskForContactsViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -308,6 +311,7 @@
 		B6CB8EB71967D20D002996E8 /* Onboarding */ = {
 			isa = PBXGroup;
 			children = (
+				BC2E7CD519691C19007CB5F9 /* Ask for contacts */,
 				B6CB8EB91967D24C002996E8 /* Phone Verify */,
 				B6CB8EB81967D240002996E8 /* Phone */,
 				B6CB8EAE1967CC26002996E8 /* Username+Password */,
@@ -341,6 +345,15 @@
 				B6CB8EBE1967E09A002996E8 /* TPSingleTapViewController.m */,
 			);
 			name = "Single Tap";
+			sourceTree = "<group>";
+		};
+		BC2E7CD519691C19007CB5F9 /* Ask for contacts */ = {
+			isa = PBXGroup;
+			children = (
+				BC2E7CD219691C14007CB5F9 /* TPAskForContactsViewController.h */,
+				BC2E7CD319691C14007CB5F9 /* TPAskForContactsViewController.m */,
+			);
+			name = "Ask for contacts";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -453,6 +466,7 @@
 				B6CB8EA01967CB3F002996E8 /* TPLoginViewController.m in Sources */,
 				B6CB8EBF1967E09A002996E8 /* TPSingleTapViewController.m in Sources */,
 				B6CB8EBC1967D59E002996E8 /* TPProcessImage.m in Sources */,
+				BC2E7CD419691C14007CB5F9 /* TPAskForContactsViewController.m in Sources */,
 				B6CB8E521967C41C002996E8 /* main.m in Sources */,
 				B6CB8EAC1967CBA4002996E8 /* TPAllContactsViewController.m in Sources */,
 			);
@@ -667,6 +681,7 @@
 				B6CB8E761967C41C002996E8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		B6CB8E771967C41C002996E8 /* Build configuration list for PBXNativeTarget "TapTests" */ = {
 			isa = XCConfigurationList;
@@ -675,6 +690,7 @@
 				B6CB8E791967C41C002996E8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
