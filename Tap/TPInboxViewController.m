@@ -146,15 +146,15 @@
     cell.detailTextLabel.textColor = [UIColor grayColor];
      
     PFQuery *tapsQuery = [[PFQuery alloc] initWithClassName:@"Message"];
-     [tapsQuery includeKey:@"img"];
     [tapsQuery whereKey:@"batchId" equalTo:[object objectForKey:@"batchId"]];
     [tapsQuery orderByDescending:@"imageId"];
     [tapsQuery whereKey:@"recipients" equalTo:[PFUser currentUser]];
     [tapsQuery whereKey:@"readArray" notEqualTo:[[PFUser currentUser] objectId]];
-
+    
     [tapsQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         if (!error) {
-            [self.allTaps setObject:objects forKey:[object objectForKey:@"batchId"]];
+            NSString *batchId = [object objectForKey:@"batchId"];
+            [self.allTaps setObject:objects forKey:batchId];
             
             if ([objects count] > 0) {
                 cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:20.0];
@@ -163,21 +163,51 @@
                 cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:20.0];
                 cell.detailTextLabel.text = [NSString stringWithFormat:@"2m ago - tap to reply"/*, (unsigned long)[objects count]*/];
             }
+            UILabel *tapsCounter = (UILabel *)[cell viewWithTag:11];
+
+            tapsCounter.frame = CGRectMake(tapsCounter.frame.origin.x, tapsCounter.frame.origin.y, 31 ,21 );
+            NSMutableArray *allPhotosInBatch = [[NSMutableArray alloc] init];
+            int iterations = 0;
             
             for (PFObject *tap in objects) {
 //                self.allTapsImages
+                iterations++;
                 PFFile *image = [tap objectForKey:@"img"];
-                NSURL *tapImageUrl = image.url;
+                NSLog(@"tap %@", tap);
                 
+                NSURL *tapImageUrl = [[NSURL alloc] initWithString:image.url];
                 
+                NSLog(@"tap image url %@", tapImageUrl);
                 
+                NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:tapImageUrl];
+                [NSURLConnection sendAsynchronousRequest:request
+                                                   queue:[NSOperationQueue mainQueue]
+                                       completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+                                           if ( !error )
+                                           {
+                                               UIImage *image = [[UIImage alloc] initWithData:data];
+                                               [allPhotosInBatch addObject:image];
+                                               NSLog(@"git this pic %@", image);
+//                                              completionBlock(YES,image);
+                                           } else{
+//                                               completionBlock(NO,nil);
+                                           }
+                                       }];
+                
+                if (iterations == [objects count]) {
+                    NSLog(@"Done Looping");
+                    
+                    
+                    [self.allTapsImages setObject:allPhotosInBatch forKey:batchId];
+                    NSLog(@"All taps images %@", self.allTapsImages);
+                    [ind stopAnimating];
+                    [ind setHidden:YES];
+                    tapsCounter.text = [NSString stringWithFormat:@"%ld",(unsigned long)[objects count]];
+                }
             }
+            
+            
 
-            [ind stopAnimating];
-            [ind setHidden:YES];
-            UILabel *tapsCounter = (UILabel *)[cell viewWithTag:11];
-            tapsCounter.frame = CGRectMake(tapsCounter.frame.origin.x, tapsCounter.frame.origin.y, 31 ,21 );
-            tapsCounter.text = [NSString stringWithFormat:@"%ld",(unsigned long)[objects count]];
             
             tapsCounter.layer.cornerRadius = 5;
             tapsCounter.clipsToBounds = YES;
@@ -185,6 +215,8 @@
             if ([objects count] > 0) {
                 [tapsCounter setHidden:NO];
             } else {
+                [ind stopAnimating];
+                [ind setHidden:YES];
                 [tapsCounter setHidden:YES];
             }
 
@@ -197,11 +229,28 @@
     return cell;
 }
 
+- (void)downloadImageWithURL:(NSURL *)url completionBlock:(void (^)(BOOL succeeded, UIImage *image))completionBlock
+{
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
+    [NSURLConnection sendAsynchronousRequest:request
+                                       queue:[NSOperationQueue mainQueue]
+                           completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+                               if ( !error )
+                               {
+                                   UIImage *image = [[UIImage alloc] initWithData:data];
+                                   completionBlock(YES,image);
+                               } else{
+                                   completionBlock(NO,nil);
+                               }
+                           }];
+}
+
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
 
     self.selectedSpray =[self.objects objectAtIndex:indexPath.row];
     NSMutableArray *batchTaps = [self.allTaps objectForKey:[self.selectedSpray objectForKey:@"batchId" ]];
-    NSLog(@"batch taps %@", batchTaps);
+    NSMutableArray *batchTapsImages = [self.allTapsImages objectForKey:[self.selectedSpray objectForKey:@"batchId" ]];
+//    NSLog(@"batch taps %@", batchTaps);
     UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
     UILabel *tapsCounter = (UILabel *)[cell viewWithTag:11];
     [tapsCounter setHidden:YES];
@@ -209,7 +258,7 @@
     if ([batchTaps count] == 0) {
         [self goToCamera:self];
     } else {
-        [self performSegueWithIdentifier:@"showTap" sender:batchTaps];
+        [self performSegueWithIdentifier:@"showTap" sender:@{@"batchImages" :batchTapsImages, @"allTapObjects": batchTaps}];
     }
 
     
@@ -223,7 +272,8 @@
     if ([segue.identifier isEqual:@"showTap"]) {
         TPSingleTapViewController *vc = (TPSingleTapViewController *)segue.destinationViewController;
         vc.spray = self.selectedSpray;
-        vc.objects = sender;
+        vc.objects = [sender objectForKey:@"allTapObjects"];
+        vc.allBatchImages = [sender objectForKey:@"batchImages"];
     }
 }
 @end

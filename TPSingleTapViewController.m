@@ -58,21 +58,22 @@
     }
     
     PFObject *singleTap =[self.objects objectAtIndex:taps - 1];
-    PFFile *file = [singleTap objectForKey:@"img"];
-    
+//    PFFile *file = [singleTap objectForKey:@"img"];
+    UIImage *singleTapImage = [self.allBatchImages objectAtIndex:taps - 1];
+
     [self markAsRead:singleTap];
     
 //    self.imageView = [[PFImageView alloc] init];
-    self.imageView.file = file;
+    self.imageView.image = singleTapImage;
     
-    [self.imageView loadInBackground:^(UIImage *image, NSError *error) {
-        if (!error) {
-            NSLog(@"Finished Loading Image");
-        } else {
-            NSLog(@"Error: %@", error);
-        }
-        
-    }];
+//    [self.imageView loadInBackground:^(UIImage *image, NSError *error) {
+//        if (!error) {
+//            NSLog(@"Finished Loading Image");
+//        } else {
+//            NSLog(@"Error: %@", error);
+//        }
+//        
+//    }];
 }
 
 

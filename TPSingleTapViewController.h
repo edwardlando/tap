@@ -12,6 +12,7 @@
 @interface TPSingleTapViewController : UIViewController <UIGestureRecognizerDelegate>
 
 @property (strong, nonatomic) NSMutableArray *objects;
+@property (strong, nonatomic) NSMutableArray *allBatchImages;
 @property (strong, nonatomic) PFObject *spray;
 @property (strong, nonatomic) IBOutlet PFImageView *imageView;
 
