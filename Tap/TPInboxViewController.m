@@ -71,7 +71,7 @@
         self.paginationEnabled = YES;
         
         // The number of objects to show per page
-        self.objectsPerPage = 40;
+        self.objectsPerPage = 10;
         
         
     }

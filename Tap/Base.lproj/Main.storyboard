@@ -313,7 +313,7 @@
                         <outlet property="imageView" destination="fcU-79-8tM" id="ULg-60-MwU"/>
                         <outlet property="tapsCounter" destination="Lja-cq-arR" id="09W-eF-Yvl"/>
                         <segue destination="kV9-w9-b9A" kind="modal" identifier="showLanding" animates="NO" id="pSg-CV-kRm"/>
-                        <segue destination="ZUl-Hd-Pvv" kind="modal" identifier="showAllContacts" id="psx-2p-ncc"/>
+                        <segue destination="sRn-tg-WCP" kind="modal" identifier="showAllContacts" id="v7N-Hp-VWO"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="c5p-QK-JY3" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -378,7 +378,7 @@
                     <navigationItem key="navigationItem" title="tap" id="WsJ-wj-uDx">
                         <barButtonItem key="leftBarButtonItem" title="People" id="jHS-mL-yYr">
                             <connections>
-                                <segue destination="gsb-gx-nt3" kind="push" id="fq7-Jp-RlX"/>
+                                <segue destination="sRn-tg-WCP" kind="modal" animates="NO" id="fq7-Jp-RlX"/>
                             </connections>
                         </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" image="cameraIcon2" id="Cjm-e8-eYp">
@@ -558,15 +558,15 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="friendRequests" textLabel="QhD-J9-pjU" rowHeight="48" style="IBUITableViewCellStyleDefault" id="Io1-hY-MFY">
-                                <rect key="frame" x="0.0" y="86" width="320" height="48"/>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="friendRequests" textLabel="QhD-J9-pjU" rowHeight="52" style="IBUITableViewCellStyleDefault" id="Io1-hY-MFY">
+                                <rect key="frame" x="0.0" y="86" width="320" height="52"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Io1-hY-MFY" id="32o-Sm-MaQ">
-                                    <rect key="frame" x="0.0" y="0.0" width="287" height="47"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="287" height="51"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Friend Requests" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="QhD-J9-pjU">
-                                            <rect key="frame" x="15" y="0.0" width="270" height="47"/>
+                                            <rect key="frame" x="15" y="0.0" width="270" height="51"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
@@ -574,12 +574,13 @@
                                         </label>
                                     </subviews>
                                 </tableViewCellContentView>
+                                <inset key="separatorInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 <connections>
                                     <segue destination="RSO-S3-LAp" kind="push" id="jio-1k-R0R"/>
                                 </connections>
                             </tableViewCell>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="friendInGroupCell" textLabel="6wb-vh-cB5" detailTextLabel="3uf-DJ-v37" rowHeight="67" style="IBUITableViewCellStyleSubtitle" id="eS9-nW-Tog">
-                                <rect key="frame" x="0.0" y="134" width="320" height="67"/>
+                                <rect key="frame" x="0.0" y="138" width="320" height="67"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="eS9-nW-Tog" id="rKg-2O-gio">
                                     <rect key="frame" x="0.0" y="0.0" width="320" height="66"/>
@@ -599,7 +600,7 @@
                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xof-8y-HTJ">
+                                        <button opaque="NO" tag="54" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xof-8y-HTJ">
                                             <rect key="frame" x="159" y="18" width="160" height="30"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <state key="normal" title="Remove from Group">
@@ -608,9 +609,10 @@
                                         </button>
                                     </subviews>
                                 </tableViewCellContentView>
+                                <inset key="separatorInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                             </tableViewCell>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="friendCell" textLabel="ZbG-gz-VQ1" detailTextLabel="WbS-ZC-JKT" rowHeight="67" style="IBUITableViewCellStyleSubtitle" id="gmh-HG-Lfp">
-                                <rect key="frame" x="0.0" y="201" width="320" height="67"/>
+                                <rect key="frame" x="0.0" y="205" width="320" height="67"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="gmh-HG-Lfp" id="3d4-KQ-pa5">
                                     <rect key="frame" x="0.0" y="0.0" width="320" height="66"/>
@@ -630,7 +632,7 @@
                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="DV3-HA-bcm">
+                                        <button opaque="NO" tag="10" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="DV3-HA-bcm">
                                             <rect key="frame" x="217" y="18" width="93" height="30"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <state key="normal" title="Add to Group">
@@ -639,6 +641,7 @@
                                         </button>
                                     </subviews>
                                 </tableViewCellContentView>
+                                <inset key="separatorInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                             </tableViewCell>
                         </prototypes>
                         <connections>
@@ -646,18 +649,25 @@
                             <outlet property="delegate" destination="gsb-gx-nt3" id="EA1-P8-AdE"/>
                         </connections>
                     </tableView>
+                    <toolbarItems/>
                     <navigationItem key="navigationItem" title="MY GROUP" id="aws-sb-gjj">
+                        <barButtonItem key="leftBarButtonItem" title="Dismiss" id="swD-fo-qSE">
+                            <color key="tintColor" red="0.12941176469999999" green="0.75686274509999996" blue="0.97647058819999999" alpha="0.88" colorSpace="calibratedRGB"/>
+                            <connections>
+                                <action selector="backToCamera:" destination="gsb-gx-nt3" id="yPN-eA-Yv8"/>
+                            </connections>
+                        </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" title="Find Friends" id="Dsm-ya-4qf">
                             <connections>
-                                <segue destination="ZUl-Hd-Pvv" kind="modal" animates="NO" id="zUt-4g-dLj"/>
+                                <segue destination="uHL-VO-cEb" kind="push" id="FOV-nO-OJA"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
-                    <nil key="simulatedBottomBarMetrics"/>
+                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="7h3-wr-Y9c" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2917" y="-158"/>
+            <point key="canvasLocation" x="3795" y="-164"/>
         </scene>
         <!--All Contacts View Controller - ALL CONTACTS-->
         <scene sceneID="Ybt-9o-LBm">
@@ -742,18 +752,11 @@
                         </connections>
                     </tableView>
                     <toolbarItems/>
-                    <navigationItem key="navigationItem" title="ALL CONTACTS" id="c3n-Go-nnK">
-                        <barButtonItem key="leftBarButtonItem" title="Back" id="Nct-oK-53l">
-                            <connections>
-                                <action selector="backButton:" destination="uHL-VO-cEb" id="IEC-BZ-Ong"/>
-                            </connections>
-                        </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" title="Refresh" id="heO-0j-Ki5"/>
-                    </navigationItem>
+                    <navigationItem key="navigationItem" title="ALL CONTACTS" id="c3n-Go-nnK"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="B7v-6k-zUF" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3799" y="-164"/>
+            <point key="canvasLocation" x="4325" y="-164"/>
         </scene>
         <!--Friend Requests View Controller - FRIEND REQUESTS-->
         <scene sceneID="eui-2D-7pC">
@@ -871,22 +874,24 @@
             <point key="canvasLocation" x="1089" y="80"/>
         </scene>
         <!--Navigation Controller-->
-        <scene sceneID="5dS-sd-HE2">
+        <scene sceneID="rSO-MP-yPB">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="ZUl-Hd-Pvv" sceneMemberID="viewController">
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="sRn-tg-WCP" sceneMemberID="viewController">
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="Zny-hE-X68">
+                    <navigationItem key="navigationItem" id="bve-tk-IbG"/>
+                    <nil key="simulatedBottomBarMetrics"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="LqV-r2-b3a">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>
-                        <segue destination="uHL-VO-cEb" kind="relationship" relationship="rootViewController" id="rP6-2R-WEq"/>
+                        <segue destination="gsb-gx-nt3" kind="relationship" relationship="rootViewController" id="f4b-L2-kjg"/>
                     </connections>
                 </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="zTj-cu-1T9" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="6x2-ED-spC" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3399" y="-164"/>
+            <point key="canvasLocation" x="3269" y="-164"/>
         </scene>
     </scenes>
     <resources>
@@ -898,6 +903,6 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="zUt-4g-dLj"/>
+        <segue reference="fq7-Jp-RlX"/>
     </inferredMetricsTieBreakers>
 </document>

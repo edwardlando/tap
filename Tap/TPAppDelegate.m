@@ -18,10 +18,30 @@
 //        [[[PFUser currentUser] objectForKey:@"friendsArray"] fetchIfNeeded];
         NSArray *friendsArray = [[PFUser currentUser] objectForKey:@"friendsArray"];
         
+        self.friendsPhoneNumbersArray = [[NSMutableArray alloc] init];
+        
+        self.numbersToUsernamesDict = [[NSMutableDictionary alloc] init];
+
+        self.friendsObjectsDict = [[NSMutableDictionary alloc] init];
+        
+        self.myGroup = [[PFUser currentUser] objectForKey:@"myGroupArray"];
+        
         if ([friendsArray count] > 0) {
             for (PFUser *friend in friendsArray) {
                 [friend fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
-                    [self.friendsPhoneNumbersArray addObject:[object objectForKey:@"phoneNumber"]];
+                    
+                    [self.friendsObjectsDict setObject:object forKey:[object objectForKey:@"phoneNumber"]];
+                    
+                    if (![self.friendsPhoneNumbersArray containsObject:[object objectForKey:@"phoneNumber"]]) {
+                        [self.friendsPhoneNumbersArray addObject:[object objectForKey:@"phoneNumber"]];
+                        NSLog(@"added this friend's phone nubmer %@", [object objectForKey:@"phoneNumber"]);
+                    }
+                
+                    if (![self.numbersToUsernamesDict objectForKey:[object objectForKey:@"username"]]) {
+                        [self.numbersToUsernamesDict setObject:[object objectForKey:@"username"] forKey:[object objectForKey:@"phoneNumber"]];                        
+                    }
+                    
+
                 }];
 
             }
@@ -51,9 +71,16 @@
     [PFAnalytics trackAppOpenedWithLaunchOptions:launchOptions];
     
     NSDictionary *notificationPayload = launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey];
+    
     self.contactsDict = [[NSMutableDictionary alloc] init];
     
+    self.numbersToUsernamesDict = [[NSMutableDictionary alloc] init];
+    
+
+    
     [self loadFriends];
+    
+    NSLog(@"friends array %@", self.friendsPhoneNumbersArray);
 //    [self tempLoadFriends];
     //Temp
     
