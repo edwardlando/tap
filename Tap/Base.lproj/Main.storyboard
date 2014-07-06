@@ -558,15 +558,15 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="friendRequests" textLabel="QhD-J9-pjU" rowHeight="48" style="IBUITableViewCellStyleDefault" id="Io1-hY-MFY">
-                                <rect key="frame" x="0.0" y="86" width="320" height="48"/>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="friendRequests" textLabel="QhD-J9-pjU" rowHeight="52" style="IBUITableViewCellStyleDefault" id="Io1-hY-MFY">
+                                <rect key="frame" x="0.0" y="86" width="320" height="52"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Io1-hY-MFY" id="32o-Sm-MaQ">
-                                    <rect key="frame" x="0.0" y="0.0" width="287" height="47"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="287" height="51"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Friend Requests" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="QhD-J9-pjU">
-                                            <rect key="frame" x="15" y="0.0" width="270" height="47"/>
+                                            <rect key="frame" x="15" y="0.0" width="270" height="51"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
@@ -574,12 +574,13 @@
                                         </label>
                                     </subviews>
                                 </tableViewCellContentView>
+                                <inset key="separatorInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 <connections>
                                     <segue destination="RSO-S3-LAp" kind="push" id="jio-1k-R0R"/>
                                 </connections>
                             </tableViewCell>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="friendInGroupCell" textLabel="6wb-vh-cB5" detailTextLabel="3uf-DJ-v37" rowHeight="67" style="IBUITableViewCellStyleSubtitle" id="eS9-nW-Tog">
-                                <rect key="frame" x="0.0" y="134" width="320" height="67"/>
+                                <rect key="frame" x="0.0" y="138" width="320" height="67"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="eS9-nW-Tog" id="rKg-2O-gio">
                                     <rect key="frame" x="0.0" y="0.0" width="320" height="66"/>
@@ -599,7 +600,7 @@
                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xof-8y-HTJ">
+                                        <button opaque="NO" tag="54" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xof-8y-HTJ">
                                             <rect key="frame" x="159" y="18" width="160" height="30"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <state key="normal" title="Remove from Group">
@@ -608,9 +609,10 @@
                                         </button>
                                     </subviews>
                                 </tableViewCellContentView>
+                                <inset key="separatorInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                             </tableViewCell>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="friendCell" textLabel="ZbG-gz-VQ1" detailTextLabel="WbS-ZC-JKT" rowHeight="67" style="IBUITableViewCellStyleSubtitle" id="gmh-HG-Lfp">
-                                <rect key="frame" x="0.0" y="201" width="320" height="67"/>
+                                <rect key="frame" x="0.0" y="205" width="320" height="67"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="gmh-HG-Lfp" id="3d4-KQ-pa5">
                                     <rect key="frame" x="0.0" y="0.0" width="320" height="66"/>
@@ -639,6 +641,7 @@
                                         </button>
                                     </subviews>
                                 </tableViewCellContentView>
+                                <inset key="separatorInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                             </tableViewCell>
                         </prototypes>
                         <connections>
@@ -648,7 +651,7 @@
                     </tableView>
                     <toolbarItems/>
                     <navigationItem key="navigationItem" title="MY GROUP" id="aws-sb-gjj">
-                        <barButtonItem key="leftBarButtonItem" title="Inbox" id="swD-fo-qSE">
+                        <barButtonItem key="leftBarButtonItem" title="Dismiss" id="swD-fo-qSE">
                             <color key="tintColor" red="0.12941176469999999" green="0.75686274509999996" blue="0.97647058819999999" alpha="0.88" colorSpace="calibratedRGB"/>
                             <connections>
                                 <action selector="backToCamera:" destination="gsb-gx-nt3" id="yPN-eA-Yv8"/>
@@ -749,9 +752,7 @@
                         </connections>
                     </tableView>
                     <toolbarItems/>
-                    <navigationItem key="navigationItem" title="ALL CONTACTS" id="c3n-Go-nnK">
-                        <barButtonItem key="rightBarButtonItem" title="Refresh" id="heO-0j-Ki5"/>
-                    </navigationItem>
+                    <navigationItem key="navigationItem" title="ALL CONTACTS" id="c3n-Go-nnK"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="B7v-6k-zUF" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
