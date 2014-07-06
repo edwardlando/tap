@@ -29,6 +29,10 @@
 {
     [super viewDidLoad];
     self.passwordField.secureTextEntry = YES;
+    
+    if ([PFUser currentUser]) {
+        [self.navigationController performSegueWithIdentifier:@"showPhone" sender:self];
+    }
     // self.user = [PFUser user];
     // Do any additional setup after loading the view.
 }

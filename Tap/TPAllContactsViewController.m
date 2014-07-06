@@ -9,6 +9,7 @@
 #import "TPAllContactsViewController.h"
 
 @interface TPAllContactsViewController ()
+- (IBAction)backButton:(id)sender;
 
 @end
 
@@ -116,4 +117,7 @@
 }
 */
 
+- (IBAction)backButton:(id)sender {
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
 @end
