@@ -36,7 +36,9 @@
             [[NSNotificationCenter defaultCenter] postNotificationName:@"onboardingFinished"
                                                                 object:nil
                                                               userInfo:nil];
-            [self dismissViewControllerAnimated:YES completion:nil];
+            //[self dismissViewControllerAnimated:YES completion:nil];
+            
+            [self performSegueWithIdentifier:@"showAsk" sender:self];
             
 
             

@@ -27,7 +27,7 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    [self fetchPhoneContacts];
+   
 }
 
 -(void) fetchPhoneContacts {
@@ -103,11 +103,17 @@
             [[PFUser currentUser]setObject:self.phonebook forKey:@"contacts"];
             [[PFUser currentUser]saveInBackground];
         }
+        
+        [self dismissViewControllerAnimated:YES completion:nil];
     }
 }
 
+// Put this somewhere
+// [self dismissViewControllerAnimated:YES completion:nil]
+
 
 - (IBAction)askForContacts:(id)sender {
+     [self fetchPhoneContacts];
     
 }
 @end
