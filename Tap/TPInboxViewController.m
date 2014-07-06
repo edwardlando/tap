@@ -15,6 +15,7 @@
 @property (strong, nonatomic) NSMutableDictionary *allTaps;
 @property (strong, nonatomic) PFObject *selectedSpray;
 @property (strong, nonatomic) TPAppDelegate *appDelegate;
+@property (strong, nonatomic) NSMutableDictionary *allTapsImages;
 
 @end
 
@@ -33,6 +34,13 @@
         _allTaps = [[NSMutableDictionary alloc] init];
     }
     return _allTaps;
+}
+
+-(NSMutableDictionary *)allTapsImages {
+    if (!_allTapsImages) {
+        _allTapsImages = [[NSMutableDictionary alloc] init];
+    }
+    return _allTapsImages;
 }
 
 -(PFObject *) selectedSpray {
@@ -138,6 +146,7 @@
     cell.detailTextLabel.textColor = [UIColor grayColor];
      
     PFQuery *tapsQuery = [[PFQuery alloc] initWithClassName:@"Message"];
+     [tapsQuery includeKey:@"img"];
     [tapsQuery whereKey:@"batchId" equalTo:[object objectForKey:@"batchId"]];
     [tapsQuery orderByDescending:@"imageId"];
     [tapsQuery whereKey:@"recipients" equalTo:[PFUser currentUser]];
@@ -154,7 +163,15 @@
                 cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:20.0];
                 cell.detailTextLabel.text = [NSString stringWithFormat:@"2m ago - tap to reply"/*, (unsigned long)[objects count]*/];
             }
-
+            
+            for (PFObject *tap in objects) {
+//                self.allTapsImages
+                PFFile *image = [tap objectForKey:@"img"];
+                NSURL *tapImageUrl = image.url;
+                
+                
+                
+            }
 
             [ind stopAnimating];
             [ind setHidden:YES];
