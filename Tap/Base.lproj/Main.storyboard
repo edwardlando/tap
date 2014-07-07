@@ -313,7 +313,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationWidth="0.0" reuseIdentifier="recievedTap" textLabel="fsg-W2-SDc" detailTextLabel="4hC-rc-dPm" rowHeight="68" style="IBUITableViewCellStyleSubtitle" id="1IL-M9-ac4">
+                            <tableViewCell userInteractionEnabled="NO" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationWidth="0.0" reuseIdentifier="recievedTap" textLabel="fsg-W2-SDc" detailTextLabel="4hC-rc-dPm" rowHeight="68" style="IBUITableViewCellStyleSubtitle" id="1IL-M9-ac4" customClass="TPViewCell">
                                 <rect key="frame" x="0.0" y="86" width="320" height="68"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="1IL-M9-ac4" id="RV6-1T-9zH">
@@ -377,6 +377,7 @@
                     <connections>
                         <segue destination="sx4-49-ihh" kind="modal" identifier="showTap" animates="NO" id="6fd-lM-wCn"/>
                         <segue destination="VtX-dh-37U" kind="push" id="dVD-i1-Gfu"/>
+                        <segue destination="mMY-s0-lSu" kind="modal" identifier="showCamera" animates="NO" id="PM3-J0-NI8"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="aeg-Bb-Y7z" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -926,7 +927,8 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="v7N-Hp-VWO"/>
+        <segue reference="PM3-J0-NI8"/>
         <segue reference="8Fy-Ee-6NR"/>
+        <segue reference="v7N-Hp-VWO"/>
     </inferredMetricsTieBreakers>
 </document>

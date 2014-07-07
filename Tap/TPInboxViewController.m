@@ -9,6 +9,8 @@
 #import "TPInboxViewController.h"
 #import "TPSingleTapViewController.h"
 #import "TPAppDelegate.h"
+#import "TPViewCell.h"
+#import "TPCameraViewController.h"
 
 @interface TPInboxViewController ()
 - (IBAction)goToCamera:(id)sender;
@@ -160,15 +162,15 @@
     PFQuery *all = [PFQuery orQueryWithSubqueries:@[query, mySprays]];
     [all orderByDescending:@"createdAt"];
     [all includeKey:@"sender"];
-    
+    all.cachePolicy = kPFCachePolicyCacheThenNetwork;
     return all;
     
 }
 
- - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath object:(PFObject *)object {
+ - (TPViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath object:(PFObject *)object {
      static NSString *CellIdentifier = @"recievedTap";
 
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
+    TPViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
     
     UIActivityIndicatorView *ind = (UIActivityIndicatorView *)[cell viewWithTag:5];
     [ind startAnimating];
@@ -179,6 +181,7 @@
     NSString *friendNameInMyContacts = [self.appDelegate.contactsDict objectForKey:friendPhoneNumber];
      
     NSString *username = [[object objectForKey:@"sender"] objectForKey:@"username"];
+     cell.sendingUser = [object objectForKey:@"sender"];
      cell.textLabel.text = (![friendNameInMyContacts isEqual:@""]) ? friendNameInMyContacts : username ;
     cell.detailTextLabel.textColor = [UIColor grayColor];
 
@@ -211,6 +214,7 @@
             } else {
                 cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:20.0];
                 cell.detailTextLabel.text = [NSString stringWithFormat:@"tap to reply directly"/*, (unsigned long)[objects count]*/];
+                cell.userInteractionEnabled = YES;
             }
             UILabel *tapsCounter = (UILabel *)[cell viewWithTag:11];
 
@@ -244,6 +248,7 @@
 //                                                   NSLog(@"All taps images %@", self.allTapsImages);
                                                    [ind stopAnimating];
                                                    [ind setHidden:YES];
+                                                   cell.userInteractionEnabled = YES;
                                                    tapsCounter.text = [NSString stringWithFormat:@"%ld",(unsigned long)[objects count] ];
                                                    [tapsCounter setHidden:NO];
                                                }
@@ -326,12 +331,16 @@
     
 //    NSLog(@"batch taps %@", batchTaps);
     
-    UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
+    TPViewCell *cell = (TPViewCell*)[self.tableView cellForRowAtIndexPath:indexPath];
     UILabel *tapsCounter = (UILabel *)[cell viewWithTag:11];
     [tapsCounter setHidden:YES];
     
+
     if ([batchTaps count] == 0) {
-        [self goToCamera:self];
+        PFUser *userToReply = cell.sendingUser;
+        [self performSegueWithIdentifier:@"showCamera" sender:userToReply];
+//        [self goToCamera:self];
+        
     } else {
         
         NSSortDescriptor *imageIdDescriptor = [[NSSortDescriptor alloc] initWithKey:@"imageId" ascending:NO];
@@ -343,7 +352,9 @@
 //        NSLog(@"batch taps %@", batchTaps);
         
         NSDictionary *senderObject = @{@"batchImages" :sortedImagesArray, @"allTapObjects": batchTaps};
+        
         [self performSegueWithIdentifier:@"showTap" sender:senderObject];
+        
     }
 
 }
@@ -358,6 +369,11 @@
         vc.spray = self.selectedSpray;
         vc.objects = [sender objectForKey:@"allTapObjects"];
         vc.allBatchImages = [sender objectForKey:@"batchImages"];
+        
+    } else if ([segue.identifier isEqual:@"showCamera"]) {
+        TPCameraViewController *vc = (TPCameraViewController *)segue.destinationViewController;
+        vc.isReply = [NSNumber numberWithBool:YES];
+        vc.directRecipient = sender;
     }
 }
 @end

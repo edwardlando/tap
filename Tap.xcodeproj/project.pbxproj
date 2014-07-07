@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B6B3E16C196B59620095BEF9 /* TPViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B6B3E16B196B59620095BEF9 /* TPViewCell.m */; };
 		B6CB8E461967C41C002996E8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B6CB8E451967C41C002996E8 /* Foundation.framework */; };
 		B6CB8E481967C41C002996E8 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B6CB8E471967C41C002996E8 /* CoreGraphics.framework */; };
 		B6CB8E4A1967C41C002996E8 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B6CB8E491967C41C002996E8 /* UIKit.framework */; };
@@ -60,6 +61,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		B6B3E16A196B59620095BEF9 /* TPViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPViewCell.h; sourceTree = "<group>"; };
+		B6B3E16B196B59620095BEF9 /* TPViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TPViewCell.m; sourceTree = "<group>"; };
 		B6CB8E421967C41C002996E8 /* Tap.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tap.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B6CB8E451967C41C002996E8 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		B6CB8E471967C41C002996E8 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -352,6 +355,8 @@
 			children = (
 				B6CB8EBD1967E09A002996E8 /* TPSingleTapViewController.h */,
 				B6CB8EBE1967E09A002996E8 /* TPSingleTapViewController.m */,
+				B6B3E16A196B59620095BEF9 /* TPViewCell.h */,
+				B6B3E16B196B59620095BEF9 /* TPViewCell.m */,
 			);
 			name = "Single Tap";
 			sourceTree = "<group>";
@@ -479,6 +484,7 @@
 				B6CB8EC61969C16E002996E8 /* TPFriendRequestsViewController.m in Sources */,
 				B6CB8E971967CAFB002996E8 /* TPPhoneNumberViewController.m in Sources */,
 				B6CB8EA61967CB68002996E8 /* TPInboxViewController.m in Sources */,
+				B6B3E16C196B59620095BEF9 /* TPViewCell.m in Sources */,
 				B6CB8E9A1967CB0A002996E8 /* TPVerifyViewController.m in Sources */,
 				B6CB8E561967C41C002996E8 /* TPAppDelegate.m in Sources */,
 				B6CB8EB61967CF69002996E8 /* CaptureSessionManager.m in Sources */,

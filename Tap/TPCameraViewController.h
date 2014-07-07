@@ -11,6 +11,7 @@
 #import "CaptureSessionManager.h"
 #import <MobileCoreServices/MobileCoreServices.h>
 //#import <GPUImage/GPUImage.h>
+#import <Parse/Parse.h>
 #import <ImageIO/ImageIO.h>
 
 @interface TPCameraViewController : UIViewController <UIGestureRecognizerDelegate>
@@ -19,5 +20,7 @@
 @property (nonatomic,retain) CaptureSessionManager *captureManager;
 @property (nonatomic,retain) UIImage *selectedImage;
 @property (strong, nonatomic) IBOutlet UIImageView *imageView;
+@property (strong, nonatomic) NSNumber *isReply;
+@property (strong, nonatomic) PFUser *directRecipient;
 
 @end

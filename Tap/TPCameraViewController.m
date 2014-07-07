@@ -7,7 +7,7 @@
 //
 
 #import "TPCameraViewController.h"
-#import <Parse/Parse.h>
+
 #import "TPProcessImage.h"
 #import "TPAppDelegate.h"
 #import "TPAllContactsViewController.h"
@@ -45,6 +45,16 @@
 {
     [super viewDidLoad];
     [[self navigationController] setNavigationBarHidden:YES animated:NO];
+    
+    NSString *directPhoneNumber = [self.directRecipient objectForKey:@"phoneNumber"];
+    NSString *nameInContacts = [self.appDelegate.contactsDict objectForKey:directPhoneNumber];
+    NSString *replyMsg = [NSString stringWithFormat:@"You are replying directly to %@", nameInContacts];
+    if (self.isReply) {
+        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Direct Reply" message:replyMsg delegate:nil cancelButtonTitle:nil otherButtonTitles:@"FUCK YEAH!", nil];
+        [alert show];
+    }
+
+    
     
 //    if (1 == 2) {
         [self fetchPhoneContacts];
@@ -182,10 +192,17 @@
         [TPProcessImage createSprayTo:self.appDelegate.myGroup withBatchId:batchIdString withNumOfTaps:0];
     }
     
+    NSMutableArray *recipients = [[NSMutableArray alloc] init];
+    
+    if (self.isReply) {
+        [recipients addObject:self.directRecipient];
+    } else {
+        recipients = self.appDelegate.myGroup;
+    }
+    
     [TPProcessImage sendTapTo:self.appDelegate.myGroup andImage:dataForJPEGFile inBatch:batchIdString withImageId: taps completed:^(BOOL success) {
         NSLog(@"HOly shit it saved?");
     }];
-    
 }
 
 -(void) resetBatch {
