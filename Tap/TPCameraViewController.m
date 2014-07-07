@@ -128,7 +128,7 @@
 
 -(void)touch:(UITapGestureRecognizer *)recognizer
 {
-    if (!self.appDelegate.myGroup) {
+    if ([self.appDelegate.myGroup count] <= 0) {
         [self handleNoGroup];
         return;
     }

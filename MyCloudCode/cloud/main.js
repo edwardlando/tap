@@ -5,6 +5,17 @@
 var ACCOUNT_SID = "AC86b279230f26f7ca6293af12e5713e9d";
 var AUTH_TOKEN = "17d74223b2e0e2dff89e7b35b52eb9ac";
 
+Array.prototype.contains = function(obj) {
+    var i = this.length;
+    while (i--) {
+        if (this[i] === obj) {
+            return true;
+        }
+    }
+    return false;
+}
+
+
 Parse.Cloud.define("sendVerificationCode",function(request,response){
   var code = (Math.floor(Math.random()*9000)+1000).toString();
 
@@ -42,11 +53,81 @@ var textVerification = function(phoneNumber,code){
     );
 }
 
-Parse.Cloud.define("addAsFriend", function(request, response) {
+Parse.Cloud.define("confirmFriendRequest", function(request, response) {
     var approvingUser = request.user;
     var requestingUserId = request.params.reqUserId;
-    
-})
+    approvingUser.fetch({
+        success: function(user) {
+            // user is user approving the friends request
+            Parse.Cloud.useMasterKey();
+            query = new Parse.Query(Parse.User);
+            query.get(requestingUserId, {
+                success: function (object) {
+                    // object is user requesting the friends request
+                    var friendsArray = object.get("friendsArray");
+                    var friendsPhones = object.get("friendsPhones");
+                    if (!friendsArray.contains(user) && !friendsPhones.contains(user.phoneNumber)) {
+                        friendsArray.push(user);
+                        friendsPhones.push(user.phoneNumber);
+                    } else {
+                        return;
+                    }
+                    
+                    object.save().then(
+                        function (res) {
+                            response.success("added " + user + " to friendsArray of " + object);
+                            console.log(response);
+                        }, function ( error) {
+                             response.error(error);
+                        });
+                }, error: function (object, error) {
+                    response.error(error);
+                
+                }    
+            });
+        }, 
+        error: function(object, error) {
+            response.error(error);
+        }
+    })
+});
+
+Parse.Cloud.define("sendFriendRequest", function(request, response) {
+    var requestingUserId = request.user;
+    var  targetUser = request.params.targetUserId;
+    requestingUserId.fetch({
+        success: function(user) {
+            // user is user approving the friends request
+            Parse.Cloud.useMasterKey();
+            query = new Parse.Query(Parse.User);
+            query.get(targetUser, {
+                success: function (object) {
+                    // object is user requesting the friends request
+                    var friendRequestsArray = object.get("friendRequestsArray");
+                    if (!friendRequestsArray.contains(user)) {
+                        friendRequestsArray.push(user);    
+                    } else {
+                        return;
+                    }
+                    
+                    object.save().then(
+                        function (res) {
+                            response.success("this guy " + user + " sent a friends req to this guy " + object);
+                            console.log(response);
+                        }, function ( error) {
+                             response.error(error);
+                        });
+                }, error: function (object, error) {
+                    response.error(error);
+                
+                }    
+            });
+        }, 
+        error: function(object, error) {
+            response.error(error);
+        }
+    })
+});
 
 
 //Verify Text Code

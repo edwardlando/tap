@@ -82,6 +82,32 @@
 {
     [super viewDidLoad];
     [self registerForNotifications];
+    [self setTapLogo];
+    [self setupNavBarStyle];
+//    [self.navigationController.navigationBar setTintColor:[UIColor whiteColor]];
+
+}
+
+-(void) setupNavBarStyle {
+    [self.navigationController.navigationBar setBackgroundImage:[UIImage new]
+                                                  forBarMetrics:UIBarMetricsDefault];
+    self.navigationController.navigationBar.shadowImage = [UIImage imageNamed:@""];
+    self.navigationController.navigationBar.translucent = NO;
+    [self.navigationController.navigationBar setBackgroundImage:[UIImage imageNamed: @"white"] forBarMetrics:UIBarMetricsDefault];
+}
+
+-(void) setTapLogo {
+    UIButton *titleLabel = [UIButton buttonWithType:UIButtonTypeCustom];
+    [titleLabel setImage:[UIImage imageNamed:@"logo"] forState:UIControlStateNormal];
+    titleLabel.frame = CGRectMake(0, 0, 70, 44);
+    self.navigationItem.titleView = titleLabel;
+}
+
+
+-(void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+//    self.tapsCounterOutlet.frame = CGRectMake(self.tapsCounterOutlet.frame.origin.x, self.tapsCounterOutlet.frame.origin.y, 40, 40);
+//    [self.tapsCounterOutlet setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"pink"]]];
 }
 
 -(void) registerForNotifications {
@@ -119,12 +145,23 @@
     }
     
     PFQuery *query = [PFQuery queryWithClassName:self.parseClassName];
-//    [query setLimit:0];
+    PFQuery *mySprays = [PFQuery queryWithClassName:self.parseClassName];
+    
+    [mySprays whereKey:@"sender" equalTo:[PFUser currentUser]];
+    [mySprays whereKey:@"read" notEqualTo:[PFUser currentUser]];
+
+    
     [query whereKey:@"recipients" equalTo:[PFUser currentUser]];
 //    [query whereKey:@"read" notEqualTo:[PFUser currentUser]];
-    [query orderByDescending:@"createdAt"];
-    [query includeKey:@"sender"];
-    return query;
+    // without user's own taps
+    [query whereKey:@"sender" notEqualTo:[PFUser currentUser]];
+
+
+    PFQuery *all = [PFQuery orQueryWithSubqueries:@[query, mySprays]];
+    [all orderByDescending:@"createdAt"];
+    [all includeKey:@"sender"];
+    
+    return all;
     
 }
 
@@ -144,8 +181,10 @@
     NSString *username = [[object objectForKey:@"sender"] objectForKey:@"username"];
      cell.textLabel.text = (![friendNameInMyContacts isEqual:@""]) ? friendNameInMyContacts : username ;
     cell.detailTextLabel.textColor = [UIColor grayColor];
+
+
      
-    PFQuery *tapsQuery = [[PFQuery alloc] initWithClassName:@"Message"];
+     PFQuery *tapsQuery = [[PFQuery alloc] initWithClassName:@"Message"];
     [tapsQuery whereKey:@"batchId" equalTo:[object objectForKey:@"batchId"]];
     [tapsQuery orderByDescending:@"imageId"];
     [tapsQuery whereKey:@"recipients" equalTo:[PFUser currentUser]];
@@ -154,30 +193,35 @@
     [tapsQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         if (!error) {
             NSString *batchId = [object objectForKey:@"batchId"];
+//            NSLog(@"Found %ld objects", [objects count]);
             [self.allTaps setObject:objects forKey:batchId];
             
             if ([objects count] > 0) {
                 cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:20.0];
-                cell.detailTextLabel.text = [NSString stringWithFormat:@"2m ago - tap to open"/*, (unsigned long)[objects count]*/];
+                NSDate *created = [object createdAt];
+                NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
+                [dateFormat setDateFormat:@"EEE, dd MMM yy HH:mm:ss VVVV"];
+                
+
+                cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ ago - tap to open",
+                                             [self dateDiff:[dateFormat stringFromDate:created]]];
+                
+//                cell.detailTextLabel.text = [NSString stringWithFormat:@"2m ago - tap to open"/*, (unsigned long)[objects count]*/];
+
             } else {
                 cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:20.0];
-                cell.detailTextLabel.text = [NSString stringWithFormat:@"2m ago - tap to reply"/*, (unsigned long)[objects count]*/];
+                cell.detailTextLabel.text = [NSString stringWithFormat:@"tap to reply directly"/*, (unsigned long)[objects count]*/];
             }
             UILabel *tapsCounter = (UILabel *)[cell viewWithTag:11];
 
-            tapsCounter.frame = CGRectMake(tapsCounter.frame.origin.x, tapsCounter.frame.origin.y, 31 ,21 );
             NSMutableArray *allPhotosInBatch = [[NSMutableArray alloc] init];
-            int iterations = 0;
+
+            __block int iterations = 0;
             
             for (PFObject *tap in objects) {
-//                self.allTapsImages
-                iterations++;
                 PFFile *image = [tap objectForKey:@"img"];
-                NSLog(@"tap %@", tap);
                 
                 NSURL *tapImageUrl = [[NSURL alloc] initWithString:image.url];
-                
-                NSLog(@"tap image url %@", tapImageUrl);
                 
                 NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:tapImageUrl];
                 [NSURLConnection sendAsynchronousRequest:request
@@ -185,36 +229,44 @@
                                        completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
                                            if ( !error )
                                            {
+
                                                UIImage *image = [[UIImage alloc] initWithData:data];
-                                               [allPhotosInBatch addObject:image];
-                                               NSLog(@"git this pic %@", image);
+                                               [allPhotosInBatch addObject:@{@"image": image, @"imageId": [tap objectForKey:@"imageId"]}];
+//                                               NSLog(@"allPhotosInBatch %@", allPhotosInBatch);
+                                               
+                                               if (iterations == [objects count] - 1) {
+                                                   
+                                                   NSLog(@"Done Looping with %d iterations %ld", iterations, (unsigned long)[objects count]);
+                                                   
+                                                   
+                                                   [self.allTapsImages setObject:allPhotosInBatch forKey:batchId];
+                                                   //                [self.allTapsImages setValue:allPhotosInBatch forKey:batchId];
+//                                                   NSLog(@"All taps images %@", self.allTapsImages);
+                                                   [ind stopAnimating];
+                                                   [ind setHidden:YES];
+                                                   tapsCounter.text = [NSString stringWithFormat:@"%ld",(unsigned long)[objects count] ];
+                                                   [tapsCounter setHidden:NO];
+                                               }
+                                              iterations++;
+                                               
 //                                              completionBlock(YES,image);
                                            } else{
 //                                               completionBlock(NO,nil);
                                            }
                                        }];
                 
-                if (iterations == [objects count]) {
-                    NSLog(@"Done Looping");
-                    
-                    
-                    [self.allTapsImages setObject:allPhotosInBatch forKey:batchId];
-                    NSLog(@"All taps images %@", self.allTapsImages);
-                    [ind stopAnimating];
-                    [ind setHidden:YES];
-                    tapsCounter.text = [NSString stringWithFormat:@"%ld",(unsigned long)[objects count]];
-                }
-            }
-            
-            
 
+            }
             
             tapsCounter.layer.cornerRadius = 5;
             tapsCounter.clipsToBounds = YES;
             
             if ([objects count] > 0) {
-                [tapsCounter setHidden:NO];
+//                cell.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"lightGray"]];
             } else {
+
+                
+                cell.backgroundColor = [UIColor whiteColor];
                 [ind stopAnimating];
                 [ind setHidden:YES];
                 [tapsCounter setHidden:YES];
@@ -225,32 +277,55 @@
             NSLog(@"Error: %@", error);
         }
     }];
+
+
     
     return cell;
 }
 
-- (void)downloadImageWithURL:(NSURL *)url completionBlock:(void (^)(BOOL succeeded, UIImage *image))completionBlock
-{
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
-    [NSURLConnection sendAsynchronousRequest:request
-                                       queue:[NSOperationQueue mainQueue]
-                           completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
-                               if ( !error )
-                               {
-                                   UIImage *image = [[UIImage alloc] initWithData:data];
-                                   completionBlock(YES,image);
-                               } else{
-                                   completionBlock(NO,nil);
-                               }
-                           }];
+-(NSString *)dateDiff:(NSString *)origDate {
+    NSDateFormatter *df = [[NSDateFormatter alloc] init];
+    [df setFormatterBehavior:NSDateFormatterBehavior10_4];
+    [df setDateFormat:@"EEE, dd MMM yy HH:mm:ss VVVV"];
+    NSDate *convertedDate = [df dateFromString:origDate];
+    NSDate *todayDate = [NSDate date];
+    double ti = [convertedDate timeIntervalSinceDate:todayDate];
+    ti = ti * -1;
+    if(ti < 1) {
+    	return @"just now";
+    } else if (ti < 60) {
+    	return [NSString stringWithFormat:@"%ds", [@(ti) intValue] ];
+    } else if (ti >= 60 && ti < 120) {
+        return @"1m";
+    } else if (ti >= 120 && ti < 3600) {
+    	int diff = round(ti / 60);
+    	return [NSString stringWithFormat:@"%dm", diff];
+    } else if (ti > 3600 && ti < 7200) {
+    	return @"1h";
+    } else if (ti >= 7200 && ti < 86400) {
+    	int diff = round(ti / 60 / 60);
+    	return[NSString stringWithFormat:@"%dh", diff];
+    }
+    else if (ti >= 86400 && ti < 172800) {
+        return @"1d";
+    }
+    else if (ti >= 172800 && ti < 2629743) {
+    	int diff = round(ti / 60 / 60 / 24);
+    	return[NSString stringWithFormat:@"%dd", diff];
+    } else {
+    	return @"";
+    }
 }
+
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
 
     self.selectedSpray =[self.objects objectAtIndex:indexPath.row];
     NSMutableArray *batchTaps = [self.allTaps objectForKey:[self.selectedSpray objectForKey:@"batchId" ]];
-    NSMutableArray *batchTapsImages = [self.allTapsImages objectForKey:[self.selectedSpray objectForKey:@"batchId" ]];
+    NSMutableArray *batchTapsImages = [self.allTapsImages objectForKey:[self.selectedSpray objectForKey:@"batchId"]];
+    
 //    NSLog(@"batch taps %@", batchTaps);
+    
     UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
     UILabel *tapsCounter = (UILabel *)[cell viewWithTag:11];
     [tapsCounter setHidden:YES];
@@ -258,10 +333,19 @@
     if ([batchTaps count] == 0) {
         [self goToCamera:self];
     } else {
-        [self performSegueWithIdentifier:@"showTap" sender:@{@"batchImages" :batchTapsImages, @"allTapObjects": batchTaps}];
+        
+        NSSortDescriptor *imageIdDescriptor = [[NSSortDescriptor alloc] initWithKey:@"imageId" ascending:NO];
+        NSArray *sortDescriptors = @[imageIdDescriptor];
+        NSArray *sortedImagesArray = [batchTapsImages sortedArrayUsingDescriptors:sortDescriptors];
+        
+//        NSLog(@"batch images array %@", batchTapsImages);
+//        NSLog(@"sorted batch images array %@", sortedImagesArray);
+//        NSLog(@"batch taps %@", batchTaps);
+        
+        NSDictionary *senderObject = @{@"batchImages" :sortedImagesArray, @"allTapObjects": batchTaps};
+        [self performSegueWithIdentifier:@"showTap" sender:senderObject];
     }
 
-    
 }
 
 - (IBAction)goToCamera:(id)sender {

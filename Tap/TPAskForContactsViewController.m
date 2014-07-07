@@ -137,6 +137,9 @@
             [[PFUser currentUser]setObject:[[NSMutableArray alloc] init] forKey:@"friendRequestsArray"];
             [[PFUser currentUser]setObject:[[NSMutableArray alloc] init] forKey:@"friendsArray"];
             [[PFUser currentUser]setObject:[[NSMutableArray alloc] init] forKey:@"myGroupArray"];
+            
+            [[PFUser currentUser]setObject:[[NSMutableArray alloc] init] forKey:@"friendsPhones"];
+            
             [[PFUser currentUser]saveInBackground];
         }
         

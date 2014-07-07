@@ -8,7 +8,7 @@
 
 #import "TPMyGroupViewController.h"
 #import "TPAppDelegate.h"
-
+        #import <QuartzCore/QuartzCore.h>
 
 @interface TPMyGroupViewController () {
     BOOL pendingFriendReqs;
@@ -45,24 +45,45 @@
     [super viewDidLoad];
 
     [self.appDelegate loadFriends];
-    
-    for (PFUser *requester in [[PFUser currentUser] objectForKey:@"friendRequestsArray"]) {
-        [requester fetchIfNeeded];
-    }
+    [[PFUser currentUser] refreshInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+
+        [self.tableView reloadData];
+    }];
 
     for (PFUser *friendInGroup in [[PFUser currentUser] objectForKey:@"myGroupArray"]) {
         [friendInGroup fetchIfNeeded];
     }
     
-    /*self.friendsArray =*/
-    ;
-    
-//    for (PFUser *friend in [[PFUser currentUser] objectForKey:@"friendArray"]) {
-//        [friend fetchIfNeeded];
-//    }
-    
+    [self setupNavBarStyle];
+    [self setNavbarIcon];
+}
 
-    
+-(void) setNavbarIcon {
+    NSShadow* shadow = [NSShadow new];
+    shadow.shadowOffset = CGSizeMake(0.0f, 0.0f);
+    shadow.shadowColor = [UIColor whiteColor];
+    [self.navigationController.navigationBar setTitleTextAttributes: @{
+                                                                       NSForegroundColorAttributeName: [UIColor colorWithPatternImage:[UIImage imageNamed:@"blue"]],
+                                                                       NSFontAttributeName: [UIFont fontWithName:@"HelveticaNeue" size:23.0f],
+                                                                       NSShadowAttributeName: shadow
+                                                                       }];
+}
+
+-(void) setupNavBarStyle {
+    [self.navigationController.navigationBar setBackgroundImage:[UIImage new]
+                                                  forBarMetrics:UIBarMetricsDefault];
+    self.navigationController.navigationBar.shadowImage = [UIImage imageNamed:@""];
+    self.navigationController.navigationBar.translucent = NO;
+    [self.navigationController.navigationBar setBackgroundImage:[UIImage imageNamed: @"white"] forBarMetrics:UIBarMetricsDefault];
+}
+
+-(void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+//    [self.appDelegate loadFriends];
+    [[PFUser currentUser] refreshInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+        [self.tableView reloadData];
+    }];
+
 }
 
 - (void)didReceiveMemoryWarning
@@ -87,7 +108,13 @@
     return 3;
 }
 
-
+-(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
+    if ([tableView.dataSource tableView:tableView numberOfRowsInSection:section] == 0) {
+        return 0;
+    } else {
+        return 25.0f;
+    }
+}
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
@@ -99,10 +126,13 @@
     // Return the number of rows in the section.
     if (section == 0) {
         if (pendingFriendReqs) return 1;
+        
         return 0;
     } else if (section == 1) {
+        
         return inMyGroup;
     } else {
+        NSLog(@"section 2: %ld", totalFriends - inMyGroup );
         return totalFriends - inMyGroup;
     }
 
@@ -123,12 +153,21 @@
         
     } else if (indexPath.section == 1) {
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"friendInGroupCell" forIndexPath:indexPath];
-        PFUser *friendInGroup = [[[PFUser currentUser] objectForKey:@"myGroupArray"] objectAtIndex:indexPath.row];
+        PFUser *friendInGroup = [self.appDelegate.myGroup objectAtIndex:indexPath.row];
         NSString *friendPhoneNumber = [friendInGroup objectForKey:@"phoneNumber"];
         NSString *friendUsername = [friendInGroup objectForKey:@"username"];
         NSString *friendName = [self.appDelegate.contactsDict objectForKey:friendPhoneNumber];
         cell.textLabel.text = friendName;
         cell.detailTextLabel.text = friendUsername;
+        UIButton *removeFromGroupButton = (UIButton *)[cell viewWithTag:11];
+        removeFromGroupButton.layer.cornerRadius = 5;
+
+        
+//        [removeFromGroupButton.layer setBorderColor:[UIColor blueColor].CGColor];
+//        [removeFromGroupButton.layer setBorderWidth:2.0f];
+        
+        [removeFromGroupButton addTarget:self action:@selector(removeFromGroup:) forControlEvents:UIControlEventTouchUpInside];
+        
         return cell;
     } else {
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"friendCell" forIndexPath:indexPath];
@@ -143,8 +182,17 @@
 //            NSString *friendNameInMyContacts = [self.appDelegate.contactsDict objectForKey:friendPhoneNumber];
 //
         UIButton *addToGroupButton = (UIButton *)[cell viewWithTag:10];
+//        [addToGroupButton setBackgroundImage: forState:UIControlStateNormal];
+        [addToGroupButton setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"pink"]] ];
         
+        addToGroupButton.layer.cornerRadius = 5;
+        
+//        [addToGroupButton.layer setBorderColor:[UIColor purpleColor].CGColor];
+//        [addToGroupButton.layer setBorderWidth:2.0f];
+
         [addToGroupButton addTarget:self action:@selector(addToGroup:) forControlEvents:UIControlEventTouchUpInside];
+
+
         
             if (![friendName isEqual:@""]) {
                 cell.textLabel.text = friendName;
@@ -178,14 +226,50 @@
 -(void) addToGroup:(id) sender {
     UIView *senderButton = (UIView*) sender;
     NSIndexPath *indexPath = [self.tableView indexPathForCell: (UITableViewCell *)[[[senderButton superview]superview] superview]];
+    
+    UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
+    
+    UIActivityIndicatorView *ind = (UIActivityIndicatorView *)[cell viewWithTag:9];
+    [senderButton setHidden:YES];
+    [ind startAnimating];
+    [ind setHidden:NO];
+    
     PFUser *friendToAdd = [self.appDelegate.friendsObjectsDict objectForKey:[self.appDelegate.friendsPhoneNumbersArray objectAtIndex:indexPath.row]];
     [[[PFUser currentUser] objectForKey:@"myGroupArray"] addObject:friendToAdd];
+    [self.appDelegate.myGroup addObject:friendToAdd];
     [[PFUser currentUser] saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         NSLog(@"Added to group");
+        [ind stopAnimating];
+        [ind setHidden:YES];
         [self.tableView reloadData];
     }];
 }
 
+-(void) removeFromGroup:(id) sender {
+    NSLog(@"Remove from group method");
+    UIView *senderButton = (UIView*) sender;
+    
+    NSIndexPath *indexPath = [self.tableView indexPathForCell: (UITableViewCell *)[[[senderButton superview]superview] superview]];
+    
+    UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
+    UIActivityIndicatorView *ind = (UIActivityIndicatorView *)[cell viewWithTag:9];
+    [senderButton setHidden:YES];
+    [ind startAnimating];
+    [ind setHidden:NO];
+    
+    PFUser *friendToRemove = [self.appDelegate.friendsObjectsDict objectForKey:[self.appDelegate.friendsPhoneNumbersArray objectAtIndex:indexPath.row]];
+    [[[PFUser currentUser] objectForKey:@"myGroupArray"] removeObject:friendToRemove];
+    [self.appDelegate.myGroup removeObject:friendToRemove];
+    [[PFUser currentUser] saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+        NSLog(@"Removed from group");
+
+        [ind stopAnimating];
+        [ind setHidden:YES];
+        
+        [self.tableView reloadData];
+        
+    }];
+}
 
 //- (PFQuery *)queryForTable {
 //    

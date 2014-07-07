@@ -14,6 +14,8 @@
 @property (strong, nonatomic) NSArray *friendRequests;
 @property (strong, nonatomic) TPAppDelegate *appDelegate;
 
+- (IBAction)goBack:(id)sender;
+
 @end
 
 @implementation TPFriendRequestsViewController
@@ -25,6 +27,10 @@
     }
     
     return _appDelegate;
+}
+
+- (IBAction)goBack:(id)sender {
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 - (void)viewDidLoad
@@ -69,23 +75,23 @@
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"friendRequest" forIndexPath:indexPath];
     
     PFUser *friendsRequester = [self.friendRequests objectAtIndex:indexPath.row];
-//    [friendsRequester fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
-    NSString *friendRequesterPhoneNumber = [friendsRequester objectForKey:@"phoneNumber"];
-    NSString *friendRequesterNameInMyContacts = [self.appDelegate.contactsDict objectForKey:friendRequesterPhoneNumber];
+    [friendsRequester fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+        NSString *friendRequesterPhoneNumber = [object objectForKey:@"phoneNumber"];
+        NSString *friendRequesterNameInMyContacts = [self.appDelegate.contactsDict objectForKey:friendRequesterPhoneNumber];
 
-    if ([friendRequesterNameInMyContacts isEqual:@""]) {
-        cell.textLabel.text = [friendsRequester objectForKey:@"username"];
-        cell.detailTextLabel.text = friendRequesterPhoneNumber;
-    } else {
-        cell.textLabel.text = friendRequesterNameInMyContacts;
-        cell.detailTextLabel.text = [friendsRequester objectForKey:@"username"];
-    }
+        if ([friendRequesterNameInMyContacts isEqual:@""]) {
+            cell.textLabel.text = [object objectForKey:@"username"];
+            cell.detailTextLabel.text = friendRequesterPhoneNumber;
+        } else {
+            cell.textLabel.text = friendRequesterNameInMyContacts;
+            cell.detailTextLabel.text = [object objectForKey:@"username"];
+        }
 
-    UIButton *addButton = (UIButton *)[cell viewWithTag:55];
-    [addButton addTarget:self action:@selector(addAsFriend:) forControlEvents:UIControlEventTouchUpInside];
+        UIButton *addButton = (UIButton *)[cell viewWithTag:55];
+    [addButton addTarget:self action:@selector(confirmFriendRequest:) forControlEvents:UIControlEventTouchUpInside];
     
 //        NSLog(@"ob %@", object);
-//    }];
+    }];
 
     // Configure the cell...
     
@@ -94,7 +100,7 @@
 
 
 
--(void)addAsFriend:(id)sender {
+-(void)confirmFriendRequest:(id)sender {
     UIView *senderButton = (UIView*) sender;
     NSIndexPath *indexPath = [self.tableView indexPathForCell: (UITableViewCell *)[[[senderButton superview]superview] superview]];
     
@@ -106,7 +112,8 @@
         PFUser *currentUser = [PFUser currentUser];
         
         [[currentUser objectForKey:@"friendsArray"] addObject:user];
-
+        [[currentUser objectForKey:@"friendsPhones"] addObject:[user objectForKey:@"phoneNumber"] ];
+        
 //        [[user objectForKey:@"friendsArray"] addObject:currentUser];
         [[currentUser objectForKey:@"friendRequestsArray"] removeObject:user];
         
@@ -114,8 +121,20 @@
         
         [currentUser saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
             if (succeeded) {
-                NSLog(@"added as friend");
-//                [user saveInBackground];
+                NSLog(@"Approved Friend Request");
+                [PFCloud callFunctionInBackground:@"confirmFriendRequest"
+                    withParameters:@{@"reqUserId":[user objectId]}
+                    block:^(id object, NSError *error) {
+                        if (error) {
+                            NSLog(@"Error: %@", error);
+                        } else {
+                            UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Accepted Friend Request" message:@"You're now friends with this dude" delegate:nil cancelButtonTitle:nil otherButtonTitles:@"FUCK YEAH!", nil];
+                            [alert show];
+                            [self.tableView reloadData];
+                            [self.appDelegate loadFriends];
+                        }
+                        //
+                }];
             } else {
                 NSLog(@"Error: %@", error);
             }

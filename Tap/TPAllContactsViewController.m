@@ -15,6 +15,7 @@
 
 @interface TPAllContactsViewController ()
 - (IBAction)backButton:(id)sender;
+- (IBAction)refreshPage:(id)sender;
 
 @property (nonatomic, strong) NSMutableArray *phonebook;
 @property (nonatomic, strong) NSMutableDictionary *alphabeticalPhonebook;
@@ -70,6 +71,28 @@
     self.tableView.sectionIndexTrackingBackgroundColor = [UIColor lightGrayColor];
     self.tableView.sectionIndexColor = [UIColor darkGrayColor];
     self.sections = @[@"My Friends on Tap", @"Invite Friends"];
+    NSLog(@"self.friends numbers %@", self.appDelegate.friendsPhoneNumbersArray );
+    [self setNavbarIcon];
+    [self setupNavBarStyle];
+}
+
+-(void) setNavbarIcon {
+    NSShadow* shadow = [NSShadow new];
+    shadow.shadowOffset = CGSizeMake(0.0f, 0.0f);
+    shadow.shadowColor = [UIColor whiteColor];
+    [self.navigationController.navigationBar setTitleTextAttributes: @{
+                                                                       NSForegroundColorAttributeName: [UIColor colorWithPatternImage:[UIImage imageNamed:@"blue"]],
+                                                                       NSFontAttributeName: [UIFont fontWithName:@"HelveticaNeue" size:23.0f],
+                                                                       NSShadowAttributeName: shadow
+                                                                       }];
+}
+
+-(void) setupNavBarStyle {
+    [self.navigationController.navigationBar setBackgroundImage:[UIImage new]
+                                                  forBarMetrics:UIBarMetricsDefault];
+    self.navigationController.navigationBar.shadowImage = [UIImage imageNamed:@""];
+    self.navigationController.navigationBar.translucent = NO;
+    [self.navigationController.navigationBar setBackgroundImage:[UIImage imageNamed: @"white"] forBarMetrics:UIBarMetricsDefault];
 }
 
 
@@ -100,60 +123,30 @@
     int index = indexPath.row;
     
     UIButton *addAsFriendButton = (UIButton *) [cell viewWithTag:1];
-    [addAsFriendButton addTarget:self action:@selector(addAsFriend:) forControlEvents:UIControlEventTouchUpInside];
-//    NSString *sectionTitle = [self.sections objectAtIndex:indexPath.section];
-//    NSArray *sectionContacts = [self.alphabeticalPhonebook objectForKey:sectionTitle];
+    [addAsFriendButton addTarget:self action:@selector(sendFriendRequest:) forControlEvents:UIControlEventTouchUpInside];
     
-//    if([self.selectedPeople containsObject:[sectionContacts objectAtIndex:index]]){
-//        [cell setAccessoryType:UITableViewCellAccessoryCheckmark];
-//    }
-//    else{
-//        [cell setAccessoryType:UITableViewCellAccessoryNone];
-//    }
+    addAsFriendButton.layer.cornerRadius = 5;
     
-//    NSString *name = [[sectionContacts objectAtIndex:index]objectForKey:@"name"];
-//    NSString *phone = [[sectionContacts objectAtIndex:index]objectForKey:@"phone"];
     
-    cell.textLabel.text = [object objectForKey:@"username"];
+    NSString *username = [object objectForKey:@"username"];
+    cell.textLabel.text = username;
     cell.detailTextLabel.text = [object objectForKey:@"phoneNumber"];
+    
+    NSString *friendPhoneNumber = [object objectForKey:@"phoneNumber"];
+    
+    NSString *friendNameInMyContacts = [self.appDelegate.contactsDict objectForKey:friendPhoneNumber];
+    
+    if (![friendNameInMyContacts isEqual:@""]) {
+        cell.textLabel.text = friendNameInMyContacts;
+        cell.detailTextLabel.text = username;
+    }
+    
+
     
     return cell;
 }
 
 
-//- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
-//{
-//    // Return the number of sections.
-//    return [self.sections count];
-//}
-//
-//- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
-//{
-//    return [self.sections objectAtIndex:section];
-//}
-//
-
-//- (NSArray *)sectionIndexTitlesForTableView:(UITableView *)tableView
-//{
-//    return self.sections;
-//}
-
-//- (NSInteger)tableView:(UITableView *)tableView sectionForSectionIndexTitle:(NSString *)title atIndex:(NSInteger)index
-//{
-//    return [self.sections indexOfObject:title];
-//}
-
-//- (void)tableView:(UITableView *)tableView willDisplayHeaderView:(UIView *)view forSection:(NSInteger)section
-//{
-//    // Background color
-//    //    if (section == 0) {
-//    view.tintColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"pink"]];
-//    
-//    // Text Color
-//    UITableViewHeaderFooterView *header = (UITableViewHeaderFooterView *)view;
-//    [header.textLabel setTextColor:[UIColor whiteColor]];
-//    //    }
-//}
 
 - (PFQuery *)queryForTable {
     
@@ -177,7 +170,15 @@
 
 
 - (IBAction)backButton:(id)sender {
-    [self dismissViewControllerAnimated:YES completion:nil];
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
+- (IBAction)refreshPage:(id)sender {
+//    [self.tableView reloadData];
+//    [self loadView];
+//    [self refreshPage:self];
+    [self viewDidLoad];
+    
 }
 
 
@@ -253,29 +254,32 @@
 }
 
 
--(void)addAsFriend:(id )sender {
+-(void)sendFriendRequest:(id )sender {
     UIView *senderButton = (UIView*) sender;
     NSIndexPath *indexPath = [self.tableView indexPathForCell: (UITableViewCell *)[[[senderButton superview]superview] superview]];
 
+    UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
+    UIActivityIndicatorView *ind = (UIActivityIndicatorView *)[cell viewWithTag:55];
+    [ind startAnimating];
+    [senderButton setHidden:YES];
+    [ind setHidden:NO];
+    
     PFUser *user = [self.objects objectAtIndex:indexPath.row];
     
     if (![[[PFUser currentUser] objectForKey:@"friendsArray"] containsObject:user]) {
-        
-        PFUser *currentUser = [PFUser currentUser];
-//        if (![currentUser objectForKey:@"friendsArray"]) {
-//            [currentUser objectForKey:@"friendsArray"] = [[NSMutableArray alloc] init];
-//        }
-        [[currentUser objectForKey:@"friendRequestsArray"] addObject:user];
-        
-//        [self.appDelegate.friendsPhoneNumbersArray addObject:[user objectForKey:@"phoneNumber"]];
-        [currentUser saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-            if (succeeded) {
-                NSLog(@"added as friend");
-            } else {
+        [PFCloud callFunctionInBackground:@"sendFriendRequest" withParameters:@{@"targetUserId":[user objectId]} block:^(id object, NSError *error) {
+            if (error) {
                 NSLog(@"Error: %@", error);
+            } else {
+                [ind stopAnimating];
+                [ind setHidden:YES];
+                UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Friend Request Sent" message:@"Succesfuly sent friend request to this dude" delegate:nil cancelButtonTitle:nil otherButtonTitles:@"FUCK YEAH!", nil];
+                [alert show];
             }
-
+            //
         }];
+        
+
     }
 }
 

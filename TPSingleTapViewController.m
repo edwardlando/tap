@@ -35,13 +35,13 @@
         tapsLabel.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"pink"]];
     }
 
-    NSLog(@"self.objects.count %d", taps);
+//    NSLog(@"self.objects.count %d", taps);
     if (taps == 0) {
         [self noMoreTaps];
     } else {
         [self setupTap];
         
-        NSLog(@"objects %@", self.objects);
+//        NSLog(@"objects %@", self.objects);
         [self showTap];
     }
 }
@@ -57,10 +57,11 @@
         return;
     }
     
+    
+    
     PFObject *singleTap =[self.objects objectAtIndex:taps - 1];
 //    PFFile *file = [singleTap objectForKey:@"img"];
-    UIImage *singleTapImage = [self.allBatchImages objectAtIndex:taps - 1];
-
+    UIImage *singleTapImage = [[self.allBatchImages objectAtIndex:taps - 1] objectForKey:@"image"];
     [self markAsRead:singleTap];
     
 //    self.imageView = [[PFImageView alloc] init];

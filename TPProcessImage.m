@@ -23,6 +23,7 @@
         PFObject *msg = [PFObject objectWithClassName:@"Message"];
         msg[@"img"] = file;
         msg[@"sender"] = [PFUser currentUser];
+//        [recipients addObject:[PFUser currentUser]];
         msg[@"recipients"] = recipients;
         msg[@"read"] = [[NSMutableDictionary alloc] init];
         msg[@"readArray"] = [[NSMutableArray alloc] init];
@@ -51,6 +52,7 @@
     PFObject *spray = [PFObject objectWithClassName:@"Spray"];
     spray[@"sender"] = [PFUser currentUser];
     spray[@"recipients"] = recipients;
+    [recipients addObject:[PFUser currentUser]];    
     spray[@"batchId"] = batchId;
     spray[@"numOfTaps"] = @(numOfTaps);
     spray[@"read"] = [[NSMutableArray alloc] init];

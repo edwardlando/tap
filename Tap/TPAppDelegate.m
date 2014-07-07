@@ -23,8 +23,13 @@
         self.numbersToUsernamesDict = [[NSMutableDictionary alloc] init];
 
         self.friendsObjectsDict = [[NSMutableDictionary alloc] init];
-        
-        self.myGroup = [[PFUser currentUser] objectForKey:@"myGroupArray"];
+//        if ([[PFUser currentUser] objectForKey:@"myGroupArray"])  {
+//            [[[PFUser currentUser] objectForKey:@"myGroupArray"] fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+                self.myGroup = [[PFUser currentUser] objectForKey:@"myGroupArray"] ;
+//            }];
+            
+//        }
+
         
         if ([friendsArray count] > 0) {
             for (PFUser *friend in friendsArray) {
@@ -50,14 +55,6 @@
 }
 
 
--(void) tempLoadFriends {
-    if([PFUser currentUser].isAuthenticated){
-        NSLog(@"Here");
-        NSArray *friendsArray = [[PFUser currentUser] objectForKey:@"friendRequestsArray"];
-        self.myGroup = [friendsArray mutableCopy];
-    }
-}
-
 
 
 
@@ -76,7 +73,11 @@
     
     self.numbersToUsernamesDict = [[NSMutableDictionary alloc] init];
     
-
+    if ([PFUser currentUser]) {
+        [[PFUser currentUser] refreshInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+            //
+        }];
+    }
     
     [self loadFriends];
     
