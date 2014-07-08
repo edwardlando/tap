@@ -156,6 +156,7 @@
     } else if (indexPath.section == 1) {
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"friendInGroupCell" forIndexPath:indexPath];
         PFUser *friendInGroup = [self.appDelegate.myGroup objectAtIndex:indexPath.row];
+        NSLog(@"friend in group %@", [friendInGroup objectForKey:@"username"]);
         NSString *friendPhoneNumber = [friendInGroup objectForKey:@"phoneNumber"];
         NSString *friendUsername = [friendInGroup objectForKey:@"username"];
         NSString *friendName = [self.appDelegate.contactsDict objectForKey:friendPhoneNumber];
@@ -174,6 +175,8 @@
         return cell;
     } else {
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"friendCell" forIndexPath:indexPath];
+//        PFUser *friend = self.appDelegate.
+        
         NSString *friendPhoneNumber = [self.appDelegate.friendsPhoneNumbersArray objectAtIndex:indexPath.row];
         NSString *friendName = [self.appDelegate.contactsDict objectForKey:friendPhoneNumber];
 //        NSString *friendName =
@@ -257,13 +260,19 @@
     
     UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
     UIActivityIndicatorView *ind = (UIActivityIndicatorView *)[cell viewWithTag:9];
+    
     [senderButton setHidden:YES];
     [ind startAnimating];
     [ind setHidden:NO];
+
+    PFUser *friendToRemove = [self.appDelegate.myGroup objectAtIndex:indexPath.row];
+//     = [self.appDelegate.friendsObjectsDict objectForKey:[];
     
-    PFUser *friendToRemove = [self.appDelegate.friendsObjectsDict objectForKey:[self.appDelegate.friendsPhoneNumbersArray objectAtIndex:indexPath.row]];
     [[[PFUser currentUser] objectForKey:@"myGroupArray"] removeObject:friendToRemove];
-    [self.appDelegate.myGroup removeObject:friendToRemove];
+//    if ([self.appDelegate.myGroup containsObject:friendToRemove]) {
+        [self.appDelegate.myGroup removeObject:friendToRemove];
+//    }
+
     [[PFUser currentUser] saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         NSLog(@"Removed from group");
 

@@ -69,6 +69,9 @@
             [msg saveEventually:^(BOOL succeeded, NSError *error) {
                 if(succeeded){
                     NSLog(@"Succeded");
+                    
+
+
                 } else {
                     NSLog(@"Error: %@", error);
                 }
@@ -115,4 +118,93 @@
     }];
 }
 
++ (void) updateInteractions:(NSMutableArray *)recipients withBatchId:(NSString *)batchId {
+    
+    PFQuery *interactionQuery = [[PFQuery alloc] initWithClassName:@"Interaction"];
+    [interactionQuery whereKey:@"sender" equalTo:[PFUser currentUser]];
+    [interactionQuery whereKey:@"recipient" containedIn:recipients];
+    [interactionQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        NSLog(@"Found %ld Interactions", [objects count]);
+        NSMutableArray *allRecipients = [[NSMutableArray alloc] init];
+        NSMutableArray *allInteractions = [[NSMutableArray alloc] init];
+        for (PFObject *interaction in objects) {
+            [allInteractions addObject:interaction];
+            [interaction[@"batchIds"] addObject:batchId];
+            [allRecipients addObject:[[interaction objectForKey:@"recipient"] objectId]];
+            
+        }
+        
+        for (PFUser *recipient in recipients) {
+            if (![allRecipients containsObject:[recipient objectId]]) {
+                NSLog(@"%@ is not contained in %@", [recipient objectId], allRecipients);
+                PFObject *interaction = [PFObject objectWithClassName:@"Interaction"];
+                interaction[@"sender"] = [PFUser currentUser];
+                interaction[@"recipient"] = recipient;
+                interaction[@"batchIds"] = [[NSMutableArray alloc] init];
+                [interaction[@"batchIds"] addObject:batchId];
+                [allInteractions addObject:interaction];
+            }
+        }
+        [PFObject saveAllInBackground:allInteractions block:^(BOOL succeeded, NSError *error) {
+            if (succeeded) {
+                NSLog(@"updated all interactions");
+                NSMutableArray *recipientsObjectIds = [[NSMutableArray alloc] init];
+                for (PFUser *recipient in recipients) {
+                    [recipientsObjectIds addObject:[recipient objectId]];
+                }
+                if(succeeded){
+                    NSLog(@"saved interactions and sendSprayPushNotifications");
+                    [PFCloud callFunctionInBackground:@"sendSprayPushNotifications" withParameters:@{@"recipients":recipientsObjectIds} block:^(id object, NSError *error) {
+                        if (error) {
+                            NSLog(@"Error: %@", error);
+                        } else {
+                            
+                        }
+                    }];
+                } else {
+                    NSLog(@"Error: %@", error);
+                }
+            }
+        }];
+        
+    }];
+
+//    [recipients addObject:[PFUser currentUser]];
+    
+//    spray[@"batchId"] = batchId;
+    
+//    interaction[@"numOfTaps"] = @(numOfTaps);
+    
+//    interaction[@"read"] = [[NSMutableArray alloc] init];
+    
+//    if (isDirect) {
+//        spray[@"direct"] = [NSNumber numberWithBool:YES];
+//    }
+    
+    
+    
+    
+    
+    
+    
+//    NSMutableArray *recipientsObjectIds = [[NSMutableArray alloc] init];
+//    for (PFUser *recipient in recipients) {
+//        [recipientsObjectIds addObject:[recipient objectId]];
+//    }
+//    [spray saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+//        if(succeeded){
+//            NSLog(@"Saved spray");
+//            //            sendSprayPushNotifications
+//            [PFCloud callFunctionInBackground:@"sendSprayPushNotifications" withParameters:@{@"recipients":recipientsObjectIds} block:^(id object, NSError *error) {
+//                if (error) {
+//                    NSLog(@"Error: %@", error);
+//                } else {
+//                    
+//                }
+//            }];
+//        } else {
+//            NSLog(@"Error: %@", error);
+//        }
+//    }];
+}
 @end

@@ -239,7 +239,10 @@
         
         // create the spray on the first one, should really be on the last one
         
-        [TPProcessImage createSprayTo:recipients withBatchId:batchIdString withNumOfTaps:0 withDirect:[self.isReply boolValue]];
+//        [TPProcessImage createSprayTo:recipients withBatchId:batchIdString withNumOfTaps:0 withDirect:[self.isReply boolValue]];
+        
+        NSLog(@"Recipients are %@", recipients);
+        [TPProcessImage updateInteractions:recipients withBatchId:batchIdString];
     }
     
 
