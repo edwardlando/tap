@@ -148,6 +148,7 @@
 
 -(void)didDismissSingleTapView {
     NSLog(@"Dismissed single tap view");
+//    NSLog(@"self.selectd %@", self.selectedInteraction setObject:<#(id)#> forKey:<#(NSString *)#>);
     [self.tableView reloadData];
 }
 
@@ -222,6 +223,19 @@
      cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ ago - Tap to reply directy",
                                   [self dateDiff:[dateFormat stringFromDate:created]]];/*, (unsigned long)[objects count]*/
      cell.userInteractionEnabled = YES;
+     @try {
+         if ([object isEqual:self.selectedInteraction]) {
+             NSLog(@"Just returned from watching this interactions, marking as read");
+             return cell;
+         }
+     }
+     @catch (NSException *exception) {
+         NSLog(@"Exceptions : %@", exception);
+     }
+     @finally {
+         
+     }
+
      
      PFQuery *tapsQuery = [[PFQuery alloc] initWithClassName:@"Message"];
 //     NSLog(@"batchIds %@", [object objectForKey:@"batchIds"]);
