@@ -14,16 +14,17 @@
     int taps;
 }
 @property (strong, nonatomic) IBOutlet UILabel *tapsLabel;
+@property (strong, nonatomic) NSMutableArray *tapsToSave;
 
 @end
 
 @implementation TPSingleTapViewController
 
 
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    self.tapsToSave = [[NSMutableArray alloc] init];
     [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationNone];
 
     UILabel *tapsLabel = (UILabel *)[self.view viewWithTag:10];
@@ -57,24 +58,10 @@
         return;
     }
     
-    
-    
     PFObject *singleTap =[self.objects objectAtIndex:taps - 1];
-//    PFFile *file = [singleTap objectForKey:@"img"];
     UIImage *singleTapImage = [[self.allBatchImages objectAtIndex:taps - 1] objectForKey:@"image"];
     [self markAsRead:singleTap];
-    
-//    self.imageView = [[PFImageView alloc] init];
     self.imageView.image = singleTapImage;
-    
-//    [self.imageView loadInBackground:^(UIImage *image, NSError *error) {
-//        if (!error) {
-//            NSLog(@"Finished Loading Image");
-//        } else {
-//            NSLog(@"Error: %@", error);
-//        }
-//        
-//    }];
 }
 
 
@@ -113,6 +100,23 @@
     [[self.spray objectForKey:@"read"] addObject:[PFUser currentUser]];
     [self.spray saveEventually];
     
+    if ([self.tapsToSave count] > 0) {
+        [PFObject saveAllInBackground:self.tapsToSave block:^(BOOL succeeded, NSError *error) {
+            if (succeeded) {
+                NSLog(@"just saved in background like a boss");
+            } else {
+                NSLog(@"Error: %@", error);
+            }
+
+        }];
+    }
+    
+    PFInstallation *currentInstallation = [PFInstallation currentInstallation];
+    currentInstallation.badge = (currentInstallation.badge - 1 >= 0) ? currentInstallation.badge - 1 : 0;
+    [currentInstallation saveEventually:^(BOOL succeeded, NSError *error) {
+        NSLog(@"decremented installation badge to %ld", currentInstallation.badge);
+    }];
+    
     [[NSNotificationCenter defaultCenter] postNotificationName:@"singleTapViewDismissed"
                                                         object:nil
                                                       userInfo:nil];
@@ -123,14 +127,15 @@
 -(void) markAsRead:(PFObject *)message {
     [[message objectForKey:@"read"] setObject:[NSNumber numberWithBool:YES] forKey:[[PFUser currentUser] objectId]] ;
     [[message objectForKey:@"readArray"] addObject:[[PFUser currentUser] objectId]];
-    [message saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-        if (succeeded) {
-            NSLog(@"marked as read");
-        } else {
-            NSLog(@"Error: %@", error);
-        }
-
-    }];
+    [self.tapsToSave addObject:message];
+//    [message saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+//        if (succeeded) {
+//            NSLog(@"marked message as read");
+//        } else {
+//            NSLog(@"Error: %@", error);
+//        }
+//
+//    }];
 }
 
 /*

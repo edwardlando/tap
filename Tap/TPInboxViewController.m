@@ -70,10 +70,10 @@
         self.pullToRefreshEnabled = YES;
         
         // Whether the built-in pagination is enabled
-        self.paginationEnabled = YES;
+        self.paginationEnabled = NO;
         
         // The number of objects to show per page
-        self.objectsPerPage = 10;
+        self.objectsPerPage = 0;
         
         
     }
@@ -117,6 +117,27 @@
                                              selector:@selector(didDismissSingleTapView)
                                                  name:@"singleTapViewDismissed"
                                                object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(handleNewTaps)
+                                                 name:@"newTaps"
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(goToCameraInstantaneous)
+                                                 name:@"appEnteredForeground"
+                                               object:nil];
+}
+
+-(void)goToCameraInstantaneous {
+    [self dismissViewControllerAnimated:NO completion:nil];
+}
+-(void)handleNewTaps {
+    NSLog(@"handle new taps");
+//    [self queryForTable];
+//    self.view ref
+//    [self.tableView reloadData];
+    [self viewDidLoad];
 }
 
 -(void)didDismissSingleTapView {
@@ -162,7 +183,7 @@
     PFQuery *all = [PFQuery orQueryWithSubqueries:@[query, mySprays]];
     [all orderByDescending:@"createdAt"];
     [all includeKey:@"sender"];
-    all.cachePolicy = kPFCachePolicyCacheThenNetwork;
+//    all.cachePolicy = kPFCachePolicyCacheThenNetwork;
     return all;
     
 }
@@ -173,7 +194,8 @@
     TPViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
     
     UIActivityIndicatorView *ind = (UIActivityIndicatorView *)[cell viewWithTag:5];
-    [ind startAnimating];
+
+     [ind startAnimating];
     [ind hidesWhenStopped];
     
     NSString *friendPhoneNumber = [[object objectForKey:@"sender"] objectForKey:@"phoneNumber"];
@@ -197,6 +219,9 @@
     
     [tapsQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         if (!error) {
+            if ([objects count] > 0) {
+                [ind setHidden:NO];
+            }
             NSString *batchId = [object objectForKey:@"batchId"];
 //            NSLog(@"Found %ld objects", [objects count]);
             [self.allTaps setObject:objects forKey:batchId];

@@ -313,32 +313,32 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell userInteractionEnabled="NO" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationWidth="0.0" reuseIdentifier="recievedTap" textLabel="fsg-W2-SDc" detailTextLabel="4hC-rc-dPm" rowHeight="68" style="IBUITableViewCellStyleSubtitle" id="1IL-M9-ac4" customClass="TPViewCell">
+                            <tableViewCell userInteractionEnabled="NO" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationWidth="0.0" reuseIdentifier="recievedTap" textLabel="DeO-Lq-Ti5" detailTextLabel="qJ2-XX-4Y9" rowHeight="68" style="IBUITableViewCellStyleSubtitle" id="yH8-Ae-Kxp" customClass="TPViewCell">
                                 <rect key="frame" x="0.0" y="86" width="320" height="68"/>
                                 <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="1IL-M9-ac4" id="RV6-1T-9zH">
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="yH8-Ae-Kxp" id="KpF-rj-oNn">
                                     <rect key="frame" x="0.0" y="0.0" width="320" height="67"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Edward" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="fsg-W2-SDc">
+                                        <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Edward" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="DeO-Lq-Ti5">
                                             <rect key="frame" x="15" y="14" width="69" height="24"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="20"/>
                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Loading..." lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="4hC-rc-dPm">
+                                        <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Loading..." lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="qJ2-XX-4Y9">
                                             <rect key="frame" x="15" y="38" width="56" height="15"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <activityIndicatorView opaque="NO" tag="5" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" id="rbW-TS-YFb">
+                                        <activityIndicatorView opaque="NO" tag="5" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" id="ehC-tb-JX0">
                                             <rect key="frame" x="280" y="24" width="20" height="20"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         </activityIndicatorView>
-                                        <label hidden="YES" autoresizesSubviews="NO" opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="11" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Vsi-70-HUq">
+                                        <label hidden="YES" autoresizesSubviews="NO" opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="11" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="3RR-S4-RTu">
                                             <rect key="frame" x="270.5" y="14" width="40" height="40"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <color key="backgroundColor" red="0.12941176469999999" green="0.75686274509999996" blue="0.97647058819999999" alpha="1" colorSpace="calibratedRGB"/>
@@ -377,7 +377,7 @@
                     <connections>
                         <segue destination="sx4-49-ihh" kind="modal" identifier="showTap" animates="NO" id="6fd-lM-wCn"/>
                         <segue destination="VtX-dh-37U" kind="push" id="dVD-i1-Gfu"/>
-                        <segue destination="mMY-s0-lSu" kind="modal" identifier="showCamera" animates="NO" id="PM3-J0-NI8"/>
+                        <segue destination="mMY-s0-lSu" kind="modal" identifier="showCamera" id="PM3-J0-NI8"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="aeg-Bb-Y7z" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -929,6 +929,6 @@
     <inferredMetricsTieBreakers>
         <segue reference="PM3-J0-NI8"/>
         <segue reference="8Fy-Ee-6NR"/>
-        <segue reference="v7N-Hp-VWO"/>
+        <segue reference="fq7-Jp-RlX"/>
     </inferredMetricsTieBreakers>
 </document>

@@ -82,7 +82,7 @@
 }
 
 
-+ (void) createSprayTo:(NSMutableArray *)recipients withBatchId: (NSString *) batchId withNumOfTaps: (NSUInteger) numOfTaps {
++ (void) createSprayTo:(NSMutableArray *)recipients withBatchId: (NSString *) batchId withNumOfTaps: (NSUInteger) numOfTaps withDirect: (BOOL) isDirect {
     PFObject *spray = [PFObject objectWithClassName:@"Spray"];
     spray[@"sender"] = [PFUser currentUser];
     spray[@"recipients"] = recipients;
@@ -90,11 +90,25 @@
     spray[@"batchId"] = batchId;
     spray[@"numOfTaps"] = @(numOfTaps);
     spray[@"read"] = [[NSMutableArray alloc] init];
+    if (isDirect) {
+        spray[@"direct"] = [NSNumber numberWithBool:YES];
+    }
     
+    NSMutableArray *recipientsObjectIds = [[NSMutableArray alloc] init];
+    for (PFUser *recipient in recipients) {
+        [recipientsObjectIds addObject:[recipient objectId]];
+    }
     [spray saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         if(succeeded){
             NSLog(@"Saved spray");
-            
+//            sendSprayPushNotifications
+            [PFCloud callFunctionInBackground:@"sendSprayPushNotifications" withParameters:@{@"recipients":recipientsObjectIds} block:^(id object, NSError *error) {
+                if (error) {
+                    NSLog(@"Error: %@", error);
+                } else {
+                    
+                }
+            }];
         } else {
             NSLog(@"Error: %@", error);
         }

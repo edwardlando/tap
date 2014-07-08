@@ -143,6 +143,8 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+
+    
     if (indexPath.section == 0) {
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"friendRequests" forIndexPath:indexPath];
         cell.textLabel.text = [NSString stringWithFormat:@"Friends Requests (%ld)", [[[PFUser currentUser] objectForKey:@"friendRequestsArray"] count]];
@@ -160,6 +162,7 @@
         cell.textLabel.text = friendName;
         cell.detailTextLabel.text = friendUsername;
         UIButton *removeFromGroupButton = (UIButton *)[cell viewWithTag:11];
+        [removeFromGroupButton setHidden:NO];
         removeFromGroupButton.layer.cornerRadius = 5;
 
         
@@ -182,7 +185,8 @@
 //            NSString *friendNameInMyContacts = [self.appDelegate.contactsDict objectForKey:friendPhoneNumber];
 //
         UIButton *addToGroupButton = (UIButton *)[cell viewWithTag:10];
-//        [addToGroupButton setBackgroundImage: forState:UIControlStateNormal];
+        [addToGroupButton setHidden:NO];
+        //        [addToGroupButton setBackgroundImage: forState:UIControlStateNormal];
         [addToGroupButton setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"pink"]] ];
         
         addToGroupButton.layer.cornerRadius = 5;

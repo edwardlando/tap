@@ -44,6 +44,24 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    taps = 0;
+    self.tapsCounter.text = [NSString stringWithFormat:@"%d", taps];
+    
+    [self registerForNotifications];
+    
+    UIButton *inboxButton = (UIButton *)[self.view viewWithTag:10];
+    PFInstallation *currentInstallation = [PFInstallation currentInstallation];
+//    currentInstallation.badge = 0;
+    if (currentInstallation.badge != 0) {
+        // turn button to red
+        [self makeMainMenuPink];
+    } else {
+        [inboxButton setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"blue"]]];
+    }
+    
+    
+    
     [[self navigationController] setNavigationBarHidden:YES animated:NO];
     
     NSString *directPhoneNumber = [self.directRecipient objectForKey:@"phoneNumber"];
@@ -63,7 +81,7 @@
 
     
     
-    UIButton *inboxButton = (UIButton *)[self.view viewWithTag:10];
+
     inboxButton.layer.cornerRadius = 5;
     
     // Login
@@ -148,6 +166,11 @@
         self.tapsCounter.text = [NSString stringWithFormat:@"%d", taps];
 }
 
+-(void) makeMainMenuPink {
+    NSLog(@"making menu pink");
+    UIButton *inboxButton = (UIButton *)[self.view viewWithTag:10];
+    [inboxButton setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"pink"]]];
+}
 -(void)takePicture{
     NSLog(@"Take Picture");
 //    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(saveImage) name:kImageCapturedSuccessfully object:nil];
@@ -162,12 +185,29 @@
                                              selector:@selector(setupCameraScreen)
                                                  name:@"onboardingFinished"
                                                object:nil];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(makeMainMenuPink)
+                                                 name:@"newTaps"
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(viewDidDisappear:)
+                                                 name:@"appEnteredBackground"
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(viewDidLoad)
+                                                 name:@"appEnteredForeground"
+                                               object:nil];
+    
 }
 
 -(void)swapCamera {
     frontCam = !frontCam;
     [captureManager addVideoInputFrontCamera:frontCam];
 }
+
 
 -(void)saveImage{
     NSLog(@"save image");
@@ -199,7 +239,7 @@
         
         // create the spray on the first one, should really be on the last one
         
-        [TPProcessImage createSprayTo:recipients withBatchId:batchIdString withNumOfTaps:0];
+        [TPProcessImage createSprayTo:recipients withBatchId:batchIdString withNumOfTaps:0 withDirect:[self.isReply boolValue]];
     }
     
 
