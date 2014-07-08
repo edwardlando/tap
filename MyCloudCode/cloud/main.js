@@ -33,7 +33,36 @@ Parse.Cloud.define("sendVerificationCode",function(request,response){
   });
 });
 
+var getContactNameFromObjectId = function(senderObejectId, recipientObjId, callback) {
+    console.log("getContactNameFromObjectId");
+    // console.log ("senderObejectId " + senderObejectId);
+    // console.log ("recipientObjId " + recipientObjId);
 
+    Parse.Cloud.useMasterKey();
+    query = new Parse.Query (Parse.User);
+    query.get(recipientObjId, {
+      success: function(object) {
+        console.log("success");
+        console.log(object);
+        var friendsArray = object.friendsArray;
+        console.log("friendsArray: ");
+        console.log(friendsArray);
+        for (var i = 0; i < friendsArray.length; i++) {
+            var friend = friendsArray[i];
+            if (friend.id === senderObejectId) {
+                callback(friend.username);
+            }
+        }
+      },
+
+      error: function(object, error) {
+        console.log("error");
+        console.log(error);
+        // error is an instance of Parse.Error.
+      }
+    });
+
+}
 
 var textVerification = function(phoneNumber,code){
     var client = require('twilio')(ACCOUNT_SID, AUTH_TOKEN);
@@ -51,6 +80,71 @@ var textVerification = function(phoneNumber,code){
             }
         }
     );
+}
+
+
+
+Parse.Cloud.beforeSave("Spray", function(request, response) {
+    var subscribersArray = request.object.get("recipients");
+    console.log("before save Spray");
+    console.log(subscribersArray);
+
+    if (subscribersArray.length < 1) {
+        response.error("No recipients");
+    } else {
+        var username = request.user.get("username");
+        for (var i = 0; i < subscribersArray.length; i++) {
+            var recipient = subscribersArray[i];
+            // var recipientUser = recipient.fetch();
+            var id = recipient.id;
+            if (id === request.user.id) continue;
+            var channel = "tap" + id;
+            // getContactNameFromObjectId(request.user.id ,id, function(name) {
+            
+            sendDefaultPush(channel, "From " + username);
+            // (function(name) {
+            //     console.log("anon function running");
+            //     Parse.Cloud.useMasterKey();
+            //     query = new Parse.Query(Parse.User);
+            //     query.get(id, {
+            //       success: function(object) {
+            //         console.log("success");
+            //         console.log(object);
+            //         var friendsArray = object.friendsArray;
+            //         console.log("friendsArray: ");
+            //         console.log(friendsArray);
+            //         for (var i = 0; i < friendsArray.length; i++) {
+            //             var friend = friendsArray[i];
+            //             if (friend.id === senderObejectId) {
+            //                 sendDefaultPush(channel, "From " + name); 
+            //             }
+            //         }
+            //       },
+            //       error: function(object, error) {
+            //         console.log("error");
+            //         console.log(error);
+            //         // error is an instance of Parse.Error.
+            //       }
+            //     });
+            // })();    
+            
+            // });
+            
+        }
+        response.success();   
+    }
+});
+
+var sendDefaultPush = function(channel, alert) {
+    Parse.Push.send({
+        channels: [channel],
+        data: {
+            "alert": alert,
+            "sound": "default",
+            "badge": "Increment"//,
+            // "postId": post.id,
+        }
+    });
 }
 
 Parse.Cloud.define("confirmFriendRequest", function(request, response) {
@@ -91,6 +185,10 @@ Parse.Cloud.define("confirmFriendRequest", function(request, response) {
         }
     })
 });
+
+
+
+
 
 Parse.Cloud.define("sendFriendRequest", function(request, response) {
     var requestingUserId = request.user;

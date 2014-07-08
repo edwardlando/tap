@@ -181,8 +181,10 @@
     NSString *friendNameInMyContacts = [self.appDelegate.contactsDict objectForKey:friendPhoneNumber];
      
     NSString *username = [[object objectForKey:@"sender"] objectForKey:@"username"];
-     cell.sendingUser = [object objectForKey:@"sender"];
-     cell.textLabel.text = (![friendNameInMyContacts isEqual:@""]) ? friendNameInMyContacts : username ;
+     NSLog(@"username %@", username);
+     NSLog(@"name %@", friendNameInMyContacts);
+    cell.sendingUser = [object objectForKey:@"sender"];
+    cell.textLabel.text = (friendNameInMyContacts) ? friendNameInMyContacts : username ;
     cell.detailTextLabel.textColor = [UIColor grayColor];
 
 

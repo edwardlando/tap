@@ -188,17 +188,22 @@
     NSData *dataForJPEGFile = UIImageJPEGRepresentation(newImage, 0.6);
 //    UIImage *optimizedImage = [UIImage imageWithData:dataForJPEGFile];
     NSString *batchIdString = [NSString stringWithFormat:@"%ld", batchId];
-    if (taps == 0) {
-        [TPProcessImage createSprayTo:self.appDelegate.myGroup withBatchId:batchIdString withNumOfTaps:0];
-    }
-    
     NSMutableArray *recipients = [[NSMutableArray alloc] init];
-    
     if (self.isReply) {
         [recipients addObject:self.directRecipient];
     } else {
         recipients = self.appDelegate.myGroup;
     }
+
+    if (taps == 0) {
+        
+        // create the spray on the first one, should really be on the last one
+        
+        [TPProcessImage createSprayTo:recipients withBatchId:batchIdString withNumOfTaps:0];
+    }
+    
+
+    
     
     [TPProcessImage sendTapTo:self.appDelegate.myGroup andImage:dataForJPEGFile inBatch:batchIdString withImageId: taps completed:^(BOOL success) {
         NSLog(@"HOly shit it saved?");

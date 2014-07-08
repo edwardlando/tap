@@ -43,8 +43,11 @@
     NSString *password = [self.passwordField.text stringByTrimmingCharactersInSet:
                           [NSCharacterSet whitespaceAndNewlineCharacterSet]];
     
-    if ([username length] == 0 || [password length] == 0) {
-        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Oops!" message:@"Make sure you enter a username and a password!" delegate:nil cancelButtonTitle:@"OK!" otherButtonTitles: nil];
+    if ([username length] == 0) {
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Choose Username" message:@"Make sure you enter a username" delegate:nil cancelButtonTitle:@"OK!" otherButtonTitles: nil];
+        [alertView show];
+    } else if ([password length] < 6) {
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Password Length" message:@"Password must be more than 6 characters" delegate:nil cancelButtonTitle:@"OK!" otherButtonTitles: nil];
         [alertView show];
     }
     else {
