@@ -317,11 +317,11 @@
                                                UIImage *image = [[UIImage alloc] initWithData:data];
                                                [allPhotosInBatch addObject:@{@"image": image, @"imageId": [tap objectForKey:@"imageId"]}];
 //                                               NSLog(@"allPhotosInBatch %@", allPhotosInBatch);
-                                                   NSLog(@"%d / iterations %ld objects", iterations, (unsigned long)[objects count]);
+                                                   NSLog(@"%d iterations out of %ld objects", iterations, (unsigned long)[objects count]);
                                                
                                              
                                               iterations++;
-                                               if (iterations == [objects count] - 1) {
+                                               if (iterations == [objects count]) {
                                                    
                                                    [self.allTapsImages setObject:allPhotosInBatch forKey:interactionId];
                                                    //                [self.allTapsImages setValue:allPhotosInBatch forKey:batchId];

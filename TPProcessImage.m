@@ -55,6 +55,7 @@
         NSLog(@"Yes Image Data");
         PFFile *file = [PFFile fileWithName:@"image.png" data:imageData];
         [file saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+            NSLog(@"Saved file in background");
             PFObject *msg = [PFObject objectWithClassName:@"Message"];
             msg[@"img"] = file;
             msg[@"sender"] = [PFUser currentUser];
@@ -70,7 +71,6 @@
             [msg saveEventually:^(BOOL succeeded, NSError *error) {
                 if(succeeded){
                     NSLog(@"Succeded");
-                    
                 } else {
                     NSLog(@"Error: %@", error);
                 }
@@ -118,7 +118,7 @@
 }
 
 + (void) updateInteractions:(NSMutableArray *)recipients withBatchId:(NSString *)batchId {
-    
+    NSLog(@"Update interaction");
     PFQuery *interactionQuery = [[PFQuery alloc] initWithClassName:@"Interaction"];
     [interactionQuery whereKey:@"sender" equalTo:[PFUser currentUser]];
     [interactionQuery whereKey:@"recipient" containedIn:recipients];

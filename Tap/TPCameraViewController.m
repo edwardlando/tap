@@ -21,6 +21,7 @@
     int taps;
     BOOL frontCam;
     long batchId;
+    BOOL interactionCreated;
 }
 
 @property (strong, nonatomic) IBOutlet UILabel *tapsCounter;
@@ -165,9 +166,9 @@
         return;
     }
     NSLog(@"Tap");
-    taps++;
-    [self takePicture];
 
+    [self takePicture];
+    taps++;
     self.tapsCounter.text = [NSString stringWithFormat:@"%d", taps];
 }
 
@@ -241,8 +242,8 @@
         recipients = self.appDelegate.myGroup;
     }
 
-    if (taps == 0) {
-        
+    if (!interactionCreated) {
+        interactionCreated = YES;
         // create the spray on the first one, should really be on the last one
         // [TPProcessImage createSprayTo:recipients withBatchId:batchIdString withNumOfTaps:0 withDirect:[self.isReply boolValue]];
         NSLog(@"Creating / updating the Interaction object");
