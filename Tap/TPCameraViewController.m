@@ -45,6 +45,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    NSLog(@"Camera did load");
     [self setupCameraScreen];
     taps = 0;
     self.tapsCounter.text = [NSString stringWithFormat:@"%d", taps];
@@ -72,12 +73,7 @@
         UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Direct Reply" message:replyMsg delegate:nil cancelButtonTitle:nil otherButtonTitles:@"FUCK YEAH!", nil];
         [alert show];
     }
-
-    
-    
-//    if (1 == 2) {
-        [self fetchPhoneContacts];
-//    }
+    [self fetchPhoneContacts];
     
 
     
@@ -90,6 +86,11 @@
     [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationNone];
 
     
+}
+
+-(void) viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    [self setupCameraScreen];
 }
 
 -(void)setupCameraScreen {
@@ -248,11 +249,7 @@
 
     if (!interactionCreated) {
         interactionCreated = YES;
-        // create the spray on the first one, should really be on the last one
-        // [TPProcessImage createSprayTo:recipients withBatchId:batchIdString withNumOfTaps:0 withDirect:[self.isReply boolValue]];
         NSLog(@"Creating / updating the Interaction object");
-//        NSLog(@"Recipients are %@", recipients);
-        
         [TPProcessImage updateInteractions:recipients withBatchId:batchIdString];
 
     }
