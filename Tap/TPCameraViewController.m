@@ -46,7 +46,8 @@
 {
     [super viewDidLoad];
     NSLog(@"Camera did load");
-    [self setupCameraScreen];
+    [self setupCamera];
+//    [self setupCameraScreen];
     taps = 0;
     self.tapsCounter.text = [NSString stringWithFormat:@"%d", taps];
     
@@ -62,8 +63,6 @@
         [inboxButton setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"blue"]]];
     }
     
-    
-    
     [[self navigationController] setNavigationBarHidden:YES animated:NO];
     
     NSString *directPhoneNumber = [self.directRecipient objectForKey:@"phoneNumber"];
@@ -74,10 +73,6 @@
         [alert show];
     }
     [self fetchPhoneContacts];
-    
-
-    
-    
 
     inboxButton.layer.cornerRadius = 5;
     
@@ -90,18 +85,29 @@
 
 -(void) viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    NSLog(@"View Will Appear");
     [self setupCameraScreen];
+
+}
+
+-(void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    NSLog(@"View Will Disappear");
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:kImageCapturedSuccessfully object:nil];
 }
 
 -(void)setupCameraScreen {
 
     PFUser *currentUser = [PFUser currentUser];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(saveImage)
+                                                 name:kImageCapturedSuccessfully
+                                               object:nil];
     interactionCreated = NO;
     taps = 0;
     frontCam = NO;
     [self resetBatchId];
-    [self setupCamera];
-    
+    [self setupTap];
     
 //    NSLog(@"Current user %@", [[PFUser currentUser] objectForKey:@"phoneVerified"]);
     if (currentUser) {
@@ -122,7 +128,6 @@
 
 
     takingPicture = true;
-    [self setupTap];
 }
 
 -(void)resetBatchId {
@@ -182,6 +187,7 @@
     UIButton *inboxButton = (UIButton *)[self.view viewWithTag:10];
     [inboxButton setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"pink"]]];
 }
+
 -(void)takePicture{
     NSLog(@"Take Picture");
     [[self captureManager]captureStillImage];
@@ -207,6 +213,7 @@
                                              selector:@selector(viewDidLoad)
                                                  name:@"appEnteredForeground"
                                                object:nil];
+    
     
 }
 
@@ -276,7 +283,6 @@
     if(TARGET_IPHONE_SIMULATOR){
         return;
     }
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(saveImage) name:kImageCapturedSuccessfully object:nil];
     
     [self setCaptureManager:[[CaptureSessionManager alloc] init]];
 	[[self captureManager] addVideoInputFrontCamera:NO]; // set to YES for Front Camera, No for Back camer
