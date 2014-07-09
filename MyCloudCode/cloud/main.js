@@ -33,11 +33,42 @@ Parse.Cloud.define("sendVerificationCode",function(request,response){
   });
 });
 
+
+var getContactNameFromPhoneNumber = function(userId, phoneNumber) {
+    console.log("starting getContactNameFromPhoneNumber.....");
+    Parse.Cloud.useMasterKey();
+    query = new Parse.Query(Parse.User);
+        query.get(userId, {
+            success: function (object) {
+                // object is user requesting the friends request
+                // var friendsArray = object.get("friendsArray");
+                // var friendsPhones = object.get("friendsPhones");
+                // if (!friendsArray.arrayContains(user) && !friendsPhones.arrayContains(user.phoneNumber)) {
+                //     friendsArray.push(user);
+                //     friendsPhones.push(user.phoneNumber);
+                // } else {
+                //     return;
+                // }
+                
+                // object.save().then(
+                //     function (res) {
+                response.success("getContactNameFromPhoneNumber " + object);
+                        // console.log(response);
+                    // }, function ( error) {
+                         // response.error(error);
+                    // });
+            }, error: function (object, error) {
+                response.error(error);
+            
+            }    
+        });
+
+}
+
 var getContactNameFromObjectId = function(senderObejectId, recipientObjId, callback) {
     console.log("getContactNameFromObjectId");
     // console.log ("senderObejectId " + senderObejectId);
     // console.log ("recipientObjId " + recipientObjId);
-
     Parse.Cloud.useMasterKey();
     query = new Parse.Query (Parse.User);
     query.get(recipientObjId, {
@@ -61,7 +92,6 @@ var getContactNameFromObjectId = function(senderObejectId, recipientObjId, callb
         // error is an instance of Parse.Error.
       }
     });
-
 }
 
 var textVerification = function(phoneNumber,code){
@@ -81,9 +111,6 @@ var textVerification = function(phoneNumber,code){
         }
     );
 }
-
-
-
 
 Parse.Cloud.beforeSave("Message", function(request, response) {
     console.log("Message before save request");
@@ -124,8 +151,6 @@ Parse.Cloud.beforeSave("Message", function(request, response) {
     }
 });
 
-
-
 Parse.Cloud.define("sendSprayPushNotifications", function(request, response) {
     console.log("sendSprayPushNotifications");
     var subscribersArray = request.params.recipients;
@@ -134,6 +159,8 @@ Parse.Cloud.define("sendSprayPushNotifications", function(request, response) {
         response.error("No recipients");
     } else {
         var username = request.user.get("username");
+        var senderPhoneNumber= request.user.get("phoneNumber");
+        // getContactNameFromPhoneNumber(, senderPhoneNumber);        
 
         for (var i = 0; i < subscribersArray.length; i++) {
             var recipient = subscribersArray[i];
@@ -141,6 +168,8 @@ Parse.Cloud.define("sendSprayPushNotifications", function(request, response) {
             var id = recipient;
             if (id === request.user.id) continue;
             var channel = "tap" + id;
+            // getContactNameFromPhoneNumber(id, senderPhoneNumber);
+
             // getContactNameFromObjectId(request.user.id ,id, function(name) {
             
             sendNewTapPush(channel, "From " + username);
@@ -149,20 +178,6 @@ Parse.Cloud.define("sendSprayPushNotifications", function(request, response) {
         response.success();   
     }
 });
-
-
-// var sendNewTapPush = function(channel, alert) {
-//     Parse.Push.send({
-//         channels: [channel],
-//         data: {
-//             "alert": alert,
-//             "sound": "default",
-//             "badge": "Increment",
-//             "type":"newtap",//,
-//             // "postId": post.id,
-//         }
-//     });
-// }
 
 
 var sendNewTapPush = function(channel, alert) {

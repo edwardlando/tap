@@ -105,6 +105,7 @@
     NSIndexPath *indexPath = [self.tableView indexPathForCell: (UITableViewCell *)[[[senderButton superview]superview] superview]];
     
     PFUser *user = [self.friendRequests objectAtIndex:indexPath.row];
+    NSString *friendRequesterNameInMyContacts = [self.appDelegate.contactsDict objectForKey:[user objectForKey:@"phoneNumber"]];
     
     NSLog(@"Adding this guy as a friend %@", [user objectForKey:@"username"]);
     if (![[[PFUser currentUser] objectForKey:@"friendsArray"] containsObject:user]) {
@@ -113,6 +114,7 @@
         
         [[currentUser objectForKey:@"friendsArray"] addObject:user];
         [[currentUser objectForKey:@"friendsPhones"] addObject:[user objectForKey:@"phoneNumber"] ];
+        [[currentUser objectForKey:@"friendsPhonesDict"] setObject:friendRequesterNameInMyContacts forKey:[user objectForKey:@"phoneNumber"]];
         
 //        [[user objectForKey:@"friendsArray"] addObject:currentUser];
         [[currentUser objectForKey:@"friendRequestsArray"] removeObject:user];

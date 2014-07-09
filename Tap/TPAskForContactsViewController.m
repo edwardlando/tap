@@ -100,6 +100,8 @@
                 
                 if (![self.appDelegate.contactsPhoneNumbersArray containsObject:phone]) {
                     
+                    NSLog(@"contacts Phone Number Array doesnt contain %@", phone);
+                    
                     NSString *strippedPhone = [phone stringByReplacingOccurrencesOfString:@"[^0-9]" withString:@"" options:NSRegularExpressionSearch range:NSMakeRange(0, [phone length])];
                     if ([strippedPhone isEqual:@""]) continue;
                     if([strippedPhone characterAtIndex:0] != '1'){
@@ -109,10 +111,11 @@
                     }
                     
                     [self.appDelegate.contactsPhoneNumbersArray addObject:strippedPhone];
-                    if (!self.appDelegate.contactsDict) {
+                    if (![self.appDelegate.contactsDict objectForKey:strippedPhone]) {
                         [self.appDelegate.contactsDict setObject:compositeName forKey:strippedPhone];
+                        [[[PFUser currentUser] objectForKey:@"contactsDict"] setObject:compositeName forKey:strippedPhone];
+                        
                     }
-                    
                     
                     //                    NSString *firstLetter = [[[contact objectForKey:@"name"] substringToIndex:1] uppercaseString];
                     //                    [[self.alphabeticalPhonebook valueForKey:firstLetter] addObject:contact];
@@ -131,17 +134,16 @@
         NSLog(@"alphabetical phonebook %@", self.alphabeticalPhonebook);
         //        [self.phonebook sortUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
         allPeople = nil;
-        NSArray *temp = [[PFUser currentUser]objectForKey:@"contacts"];
-        if(temp == nil || temp == NULL){
-            [[PFUser currentUser]setObject:self.phonebook forKey:@"contacts"];
-            [[PFUser currentUser]setObject:[[NSMutableArray alloc] init] forKey:@"friendRequestsArray"];
-            [[PFUser currentUser]setObject:[[NSMutableArray alloc] init] forKey:@"friendsArray"];
-            [[PFUser currentUser]setObject:[[NSMutableArray alloc] init] forKey:@"myGroupArray"];
-            
-            [[PFUser currentUser]setObject:[[NSMutableArray alloc] init] forKey:@"friendsPhones"];
-            
-            [[PFUser currentUser]saveInBackground];
-        }
+//        NSArray *temp = [[PFUser currentUser]objectForKey:@"contactsDict"];
+//        if(temp == nil || temp == NULL){
+        [[PFUser currentUser]setObject:self.appDelegate.contactsDict forKey:@"contactsDict"];
+ 
+        [[PFUser currentUser]saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+            if (succeeded) {
+                NSLog(@"Saved contacts dict which is %@", self.appDelegate.contactsDict);
+            }
+        }];
+//        }
         
         UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Great Success!" message:@"Welcome to Tap" delegate:nil cancelButtonTitle:nil otherButtonTitles:@"FUCK YEAH!", nil];
         [alert show];

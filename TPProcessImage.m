@@ -54,6 +54,7 @@
 
         NSLog(@"Yes Image Data");
         PFFile *file = [PFFile fileWithName:@"image.png" data:imageData];
+        
         [file saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
             NSLog(@"Saved file in background");
             PFObject *msg = [PFObject objectWithClassName:@"Message"];

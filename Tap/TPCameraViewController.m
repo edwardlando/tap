@@ -95,6 +95,7 @@
 -(void)setupCameraScreen {
 
     PFUser *currentUser = [PFUser currentUser];
+    interactionCreated = NO;
     taps = 0;
     frontCam = NO;
     [self resetBatchId];
@@ -103,11 +104,14 @@
     
 //    NSLog(@"Current user %@", [[PFUser currentUser] objectForKey:@"phoneVerified"]);
     if (currentUser) {
-        if (![[PFUser currentUser] objectForKey:@"phoneVerified"]) {
-            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Uh Oh!" message:@"Please verify your phone number!" delegate:nil cancelButtonTitle:@"OK!" otherButtonTitles: nil];
-            [alertView show];
-            [self performSegueWithIdentifier:@"showLanding" sender:self];
-        }
+        [currentUser refreshInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+            if (![[PFUser currentUser] objectForKey:@"phoneVerified"]) {
+                UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Uh Oh!" message:@"Please verify your phone number!" delegate:nil cancelButtonTitle:@"OK!" otherButtonTitles: nil];
+                [alertView show];
+                [self performSegueWithIdentifier:@"showLanding" sender:self];
+            }
+        }];
+        
         NSLog(@"Current user: %@", currentUser.username);
     }
     else {
@@ -216,7 +220,7 @@
 //    _imageView.image = [captureManager stillImage];
 
     _selectedImage = [captureManager stillImage];
-    NSLog(@"Selected Image %@", [captureManager stillImage]);
+//    NSLog(@"Selected Image %@", [captureManager stillImage]);
 
 //    [[[self captureManager]captureSession]stopRunning];
     CGFloat newHeight = _selectedImage.size.height / 3.0f;
@@ -225,7 +229,7 @@
     CGSize newSize = CGSizeMake(newWidth, newHeight);
     UIGraphicsBeginImageContext(newSize);
 
-    [[captureManager stillImage] drawInRect:CGRectMake(0,0,newSize.width,newSize.height)];
+    [_selectedImage drawInRect:CGRectMake(0,0,newSize.width,newSize.height)];
     
     UIImage* newImage = UIGraphicsGetImageFromCurrentImageContext();
     
@@ -250,15 +254,15 @@
 //        NSLog(@"Recipients are %@", recipients);
         
         [TPProcessImage updateInteractions:recipients withBatchId:batchIdString];
-        [TPProcessImage sendTapTo:self.appDelegate.myGroup andImage:dataForJPEGFile inBatch:batchIdString withImageId: taps completed:^(BOOL success) {
-            //        NSLog(@"HOly shit it saved?");
-        }];
-    } else {
-        [TPProcessImage sendTapTo:self.appDelegate.myGroup andImage:dataForJPEGFile inBatch:batchIdString withImageId: taps completed:^(BOOL success) {
-            //        NSLog(@"HOly shit it saved?");
-        }];
-        
+
     }
+//    NSLog(@"sending to %@", recipients);
+    
+    [TPProcessImage sendTapTo:recipients andImage:dataForJPEGFile inBatch:batchIdString withImageId: taps completed:^(BOOL success) {
+        //        NSLog(@"HOly shit it saved?");
+    }];
+        
+    
     
 
     
@@ -367,6 +371,7 @@
 //                if (![self.appDelegate.contactsDict objectForKey:compositeName]) {
 //                NSLog(@"composite name: %@      stripped phone: %@", compositeName, strippedPhone);
                 [self.appDelegate.contactsDict setObject:compositeName forKey:strippedPhone];
+                
 //                }
 
                 
