@@ -70,7 +70,7 @@
     NSDictionary *notificationPayload = launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey];
     
     self.contactsDict = [[NSMutableDictionary alloc] init];
-    
+    self.allReadTaps = [[NSMutableArray alloc] init];
     self.numbersToUsernamesDict = [[NSMutableDictionary alloc] init];
     
     if ([PFUser currentUser]) {

@@ -5,7 +5,7 @@
 var ACCOUNT_SID = "AC86b279230f26f7ca6293af12e5713e9d";
 var AUTH_TOKEN = "17d74223b2e0e2dff89e7b35b52eb9ac";
 
-Array.prototype.contains = function(obj) {
+Array.prototype.arrayContains = function(obj) {
     var i = this.length;
     while (i--) {
         if (this[i] === obj) {
@@ -84,9 +84,50 @@ var textVerification = function(phoneNumber,code){
 
 
 
+
+Parse.Cloud.beforeSave("Message", function(request, response) {
+    console.log("Message before save request");
+    // console.log(request.params);
+    var batchId = request.object.get("batchId");
+    console.log("This is the batchId " +batchId);
+    if (!batchId) {
+        response.error("No batchId");
+    } else {
+        // var username = request.user.get("username");
+        query = new Parse.Query("Interaction");
+        var batchIdArray = new Array();
+        batchIdArray.push(batchId);
+        query.equalTo("batchIds", batchId);
+        query.find({
+            success: function(results) {
+                console.log("Found " + results.length + " interactions to update");
+                var interactionsToSave = new Array();
+                for (var i = 0; i< results.length; i++) {
+                    var interaction = results[i];
+                    interaction.set("updated", true);
+                    interactionsToSave.push(interaction);
+                }
+            // results is an array of Parse.Object.
+                // console.log("found " + results.count + " interactions to update");
+                Parse.Object.saveAll(interactionsToSave).then(function(res) {
+                    console.log("succesfuly updated interactions");
+                    response.success();       
+                });
+                
+            },
+
+            error: function(error) {
+                response.error(error);
+            // error is an instance of Parse.Error.
+            }
+        });
+    }
+});
+
+
+
 Parse.Cloud.define("sendSprayPushNotifications", function(request, response) {
-    console.log("spray before save request");
-    // console.log(request);
+    console.log("sendSprayPushNotifications");
     var subscribersArray = request.params.recipients;
     
     if (subscribersArray.length < 1) {
@@ -110,7 +151,18 @@ Parse.Cloud.define("sendSprayPushNotifications", function(request, response) {
 });
 
 
-
+// var sendNewTapPush = function(channel, alert) {
+//     Parse.Push.send({
+//         channels: [channel],
+//         data: {
+//             "alert": alert,
+//             "sound": "default",
+//             "badge": "Increment",
+//             "type":"newtap",//,
+//             // "postId": post.id,
+//         }
+//     });
+// }
 
 
 var sendNewTapPush = function(channel, alert) {
@@ -139,7 +191,7 @@ Parse.Cloud.define("confirmFriendRequest", function(request, response) {
                     // object is user requesting the friends request
                     var friendsArray = object.get("friendsArray");
                     var friendsPhones = object.get("friendsPhones");
-                    if (!friendsArray.contains(user) && !friendsPhones.contains(user.phoneNumber)) {
+                    if (!friendsArray.arrayContains(user) && !friendsPhones.arrayContains(user.phoneNumber)) {
                         friendsArray.push(user);
                         friendsPhones.push(user.phoneNumber);
                     } else {
@@ -181,7 +233,7 @@ Parse.Cloud.define("sendFriendRequest", function(request, response) {
                 success: function (object) {
                     // object is user requesting the friends request
                     var friendRequestsArray = object.get("friendRequestsArray");
-                    if (!friendRequestsArray.contains(user)) {
+                    if (!friendRequestsArray.arrayContains(user)) {
                         friendRequestsArray.push(user);    
                     } else {
                         return;

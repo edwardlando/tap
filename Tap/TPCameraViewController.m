@@ -44,7 +44,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
+    [self setupCameraScreen];
     taps = 0;
     self.tapsCounter.text = [NSString stringWithFormat:@"%d", taps];
     
@@ -87,14 +87,20 @@
     // Login
 
     [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationNone];
-    [self setupCameraScreen];
+
     
 }
 
 -(void)setupCameraScreen {
+
     PFUser *currentUser = [PFUser currentUser];
+    taps = 0;
+    frontCam = NO;
+    [self resetBatchId];
+    [self setupCamera];
     
-    NSLog(@"Current user %@", [[PFUser currentUser] objectForKey:@"phoneVerified"]);
+    
+//    NSLog(@"Current user %@", [[PFUser currentUser] objectForKey:@"phoneVerified"]);
     if (currentUser) {
         if (![[PFUser currentUser] objectForKey:@"phoneVerified"]) {
             UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Uh Oh!" message:@"Please verify your phone number!" delegate:nil cancelButtonTitle:@"OK!" otherButtonTitles: nil];
@@ -107,11 +113,8 @@
         NSLog(@"Segue time!!!!");
         [self performSegueWithIdentifier:@"showLanding" sender:self];
     }
-    
-    [self resetBatchId];
-    taps = 0;
-    frontCam = NO;
-    [self setupCamera];
+
+
     takingPicture = true;
     [self setupTap];
 }
@@ -157,13 +160,15 @@
 -(void)touch:(UITapGestureRecognizer *)recognizer
 {
     if ([self.appDelegate.myGroup count] <= 0) {
+        NSLog(@"Handle no group");
         [self handleNoGroup];
         return;
     }
+    NSLog(@"Tap");
+    taps++;
+    [self takePicture];
 
-        [self takePicture];
-        taps++;
-        self.tapsCounter.text = [NSString stringWithFormat:@"%d", taps];
+    self.tapsCounter.text = [NSString stringWithFormat:@"%d", taps];
 }
 
 -(void) makeMainMenuPink {
@@ -173,11 +178,7 @@
 }
 -(void)takePicture{
     NSLog(@"Take Picture");
-//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(saveImage) name:kImageCapturedSuccessfully object:nil];
-
     [[self captureManager]captureStillImage];
-    [self saveImage];
-//    takingPicture = false;
 }
 
 -(void) registerForNotifications {
@@ -212,7 +213,10 @@
 -(void)saveImage{
     NSLog(@"save image");
 //    _imageView.image = [captureManager stillImage];
+
     _selectedImage = [captureManager stillImage];
+    NSLog(@"Selected Image %@", [captureManager stillImage]);
+
 //    [[[self captureManager]captureSession]stopRunning];
     CGFloat newHeight = _selectedImage.size.height / 3.0f;
     CGFloat newWidth = _selectedImage.size.width / 3.0f;
@@ -221,11 +225,13 @@
     UIGraphicsBeginImageContext(newSize);
 
     [[captureManager stillImage] drawInRect:CGRectMake(0,0,newSize.width,newSize.height)];
+    
     UIImage* newImage = UIGraphicsGetImageFromCurrentImageContext();
     
     UIGraphicsEndImageContext();
     
     NSData *dataForJPEGFile = UIImageJPEGRepresentation(newImage, 0.6);
+    
 //    UIImage *optimizedImage = [UIImage imageWithData:dataForJPEGFile];
     NSString *batchIdString = [NSString stringWithFormat:@"%ld", batchId];
     NSMutableArray *recipients = [[NSMutableArray alloc] init];
@@ -238,19 +244,23 @@
     if (taps == 0) {
         
         // create the spray on the first one, should really be on the last one
+        // [TPProcessImage createSprayTo:recipients withBatchId:batchIdString withNumOfTaps:0 withDirect:[self.isReply boolValue]];
+        NSLog(@"Creating / updating the Interaction object");
+//        NSLog(@"Recipients are %@", recipients);
         
-//        [TPProcessImage createSprayTo:recipients withBatchId:batchIdString withNumOfTaps:0 withDirect:[self.isReply boolValue]];
-        
-        NSLog(@"Recipients are %@", recipients);
         [TPProcessImage updateInteractions:recipients withBatchId:batchIdString];
+        [TPProcessImage sendTapTo:self.appDelegate.myGroup andImage:dataForJPEGFile inBatch:batchIdString withImageId: taps completed:^(BOOL success) {
+            //        NSLog(@"HOly shit it saved?");
+        }];
+    } else {
+        [TPProcessImage sendTapTo:self.appDelegate.myGroup andImage:dataForJPEGFile inBatch:batchIdString withImageId: taps completed:^(BOOL success) {
+            //        NSLog(@"HOly shit it saved?");
+        }];
+        
     }
     
 
     
-    
-    [TPProcessImage sendTapTo:self.appDelegate.myGroup andImage:dataForJPEGFile inBatch:batchIdString withImageId: taps completed:^(BOOL success) {
-        NSLog(@"HOly shit it saved?");
-    }];
 }
 
 -(void) resetBatch {
@@ -264,6 +274,8 @@
     if(TARGET_IPHONE_SIMULATOR){
         return;
     }
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(saveImage) name:kImageCapturedSuccessfully object:nil];
+    
     [self setCaptureManager:[[CaptureSessionManager alloc] init]];
 	[[self captureManager] addVideoInputFrontCamera:NO]; // set to YES for Front Camera, No for Back camer
     [[self captureManager] addStillImageOutput];

@@ -49,9 +49,10 @@
 //}
 
 +(void)sendTapTo:(NSMutableArray *)recipients andImage:(NSData *)imageData inBatch:(NSString *)batchId withImageId: (int) taps completed:(void (^)(BOOL success))completed{
-    
-    if(imageData){
         NSLog(@"trying to save");
+    if(imageData){
+
+        NSLog(@"Yes Image Data");
         PFFile *file = [PFFile fileWithName:@"image.png" data:imageData];
         [file saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
             PFObject *msg = [PFObject objectWithClassName:@"Message"];
@@ -70,8 +71,6 @@
                 if(succeeded){
                     NSLog(@"Succeded");
                     
-
-
                 } else {
                     NSLog(@"Error: %@", error);
                 }
@@ -80,7 +79,7 @@
         }];
     }
     else{
-        
+        NSLog(@"No Image Data");
     }
 }
 
@@ -168,43 +167,5 @@
         }];
         
     }];
-
-//    [recipients addObject:[PFUser currentUser]];
-    
-//    spray[@"batchId"] = batchId;
-    
-//    interaction[@"numOfTaps"] = @(numOfTaps);
-    
-//    interaction[@"read"] = [[NSMutableArray alloc] init];
-    
-//    if (isDirect) {
-//        spray[@"direct"] = [NSNumber numberWithBool:YES];
-//    }
-    
-    
-    
-    
-    
-    
-    
-//    NSMutableArray *recipientsObjectIds = [[NSMutableArray alloc] init];
-//    for (PFUser *recipient in recipients) {
-//        [recipientsObjectIds addObject:[recipient objectId]];
-//    }
-//    [spray saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-//        if(succeeded){
-//            NSLog(@"Saved spray");
-//            //            sendSprayPushNotifications
-//            [PFCloud callFunctionInBackground:@"sendSprayPushNotifications" withParameters:@{@"recipients":recipientsObjectIds} block:^(id object, NSError *error) {
-//                if (error) {
-//                    NSLog(@"Error: %@", error);
-//                } else {
-//                    
-//                }
-//            }];
-//        } else {
-//            NSLog(@"Error: %@", error);
-//        }
-//    }];
 }
 @end

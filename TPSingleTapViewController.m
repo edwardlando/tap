@@ -8,18 +8,27 @@
 
 #import "TPSingleTapViewController.h"
 #import "TPCameraViewController.h"
-
+#import "TPAppDelegate.h"
 
 @interface TPSingleTapViewController () {
     int taps;
 }
 @property (strong, nonatomic) IBOutlet UILabel *tapsLabel;
 @property (strong, nonatomic) NSMutableArray *tapsToSave;
+@property (strong, nonatomic) TPAppDelegate *appDelegate;
 
 @end
 
 @implementation TPSingleTapViewController
 
+- (TPAppDelegate *)appDelegate
+{
+    if (!_appDelegate) {
+        _appDelegate = (TPAppDelegate *)[[UIApplication sharedApplication] delegate];
+    }
+    
+    return _appDelegate;
+}
 
 - (void)viewDidLoad
 {
@@ -127,7 +136,10 @@
 -(void) markAsRead:(PFObject *)message {
     [[message objectForKey:@"read"] setObject:[NSNumber numberWithBool:YES] forKey:[[PFUser currentUser] objectId]] ;
     [[message objectForKey:@"readArray"] addObject:[[PFUser currentUser] objectId]];
+    [self.appDelegate.allReadTaps addObject:[message objectId]];
+    NSLog(@"message read %@", [message objectId]);
     [self.tapsToSave addObject:message];
+
 //    [message saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
 //        if (succeeded) {
 //            NSLog(@"marked message as read");
@@ -136,6 +148,7 @@
 //        }
 //
 //    }];
+
 }
 
 /*
