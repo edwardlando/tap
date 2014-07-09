@@ -57,6 +57,7 @@
         self.user.password = password;
         [self.user setObject:[[NSMutableArray alloc] init] forKey:@"friendRequestsArray"];
         [self.user setObject:[[NSMutableArray alloc] init] forKey:@"friendsArray"];
+        [self.user setObject:[[NSMutableArray alloc] init] forKey:@"friendRequestsSent"];
         [self.user setObject:[[NSMutableArray alloc] init] forKey:@"myGroupArray"];
         [self.user setObject:[[NSMutableArray alloc] init] forKey:@"friendsPhones"];
         [self.user setObject:[[NSMutableDictionary alloc] init] forKey:@"contactsDict"];

@@ -109,7 +109,6 @@
     [self resetBatchId];
     [self setupTap];
     
-//    NSLog(@"Current user %@", [[PFUser currentUser] objectForKey:@"phoneVerified"]);
     if (currentUser) {
         [currentUser refreshInBackgroundWithBlock:^(PFObject *object, NSError *error) {
             if (![[PFUser currentUser] objectForKey:@"phoneVerified"]) {
@@ -344,6 +343,7 @@
             for (NSString *phone in phones) {
                 NSString* compositeName = (__bridge NSString *)ABRecordCopyCompositeName((__bridge ABRecordRef)record);
                 NSMutableDictionary *contact = [[NSMutableDictionary alloc] init];
+
                 if(compositeName == nil)
                 {
                     continue;
@@ -351,8 +351,7 @@
                 if(phone == nil){
                     continue;
                 }
-//                [contact setObject:compositeName forKey:@"name"];
-//                [contact setObject:phone forKey:@"phone"];
+                
                 NSString *strippedPhone = [phone stringByReplacingOccurrencesOfString:@"[^0-9]" withString:@"" options:NSRegularExpressionSearch range:NSMakeRange(0, [phone length])];
 
                 if (![self.appDelegate.contactsPhoneNumbersArray containsObject:phone]) {
@@ -361,41 +360,18 @@
                     if([strippedPhone characterAtIndex:0] != '1'){
                         NSString *temp = @"1";
                         strippedPhone = [temp stringByAppendingString:strippedPhone];
-                        //                        NSLog(@"strippedPhone %@", strippedPhone);
                     }
                     
                     [self.appDelegate.contactsPhoneNumbersArray addObject:strippedPhone];
-                    
-                    
-                    
-                    
                 }
                 
-//                if (![self.appDelegate.contactsDict objectForKey:compositeName]) {
-//                NSLog(@"composite name: %@      stripped phone: %@", compositeName, strippedPhone);
-                [self.appDelegate.contactsDict setObject:compositeName forKey:strippedPhone];
-                
-//                }
-
-                
-
-                
+                if (![self.appDelegate.contactsDict objectForKey:strippedPhone]) {
+                    [self.appDelegate.contactsDict setObject:compositeName forKey:strippedPhone];
+                }
             }
         }
         CFRelease(addressBook);
-//        NSLog(@"contacts dict %@", self.appDelegate.contactsDict);
-//        NSSortDescriptor *sort = [NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES];
-//        for (id contact in self.appDelegate.contactsPhoneNumbersArray) {
-//            [self.appDelegate.contactsPhoneNumbersArray sortUsingDescriptors:[NSArray arrayWithObject:sort]];
-//        }
-
-        //        [self.phonebook sortUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
         allPeople = nil;
-//        NSArray *temp = [[PFUser currentUser]objectForKey:@"contacts"];
-//        if(temp == nil || temp == NULL){
-//            [[PFUser currentUser]setObject:self.phonebook forKey:@"contacts"];
-//            [[PFUser currentUser]saveInBackground];
-//        }
     }
 }
 

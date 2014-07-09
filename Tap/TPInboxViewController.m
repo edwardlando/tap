@@ -74,7 +74,7 @@
         self.paginationEnabled = NO;
         
         // The number of objects to show per page
-        self.objectsPerPage = 0;
+//        self.objectsPerPage = 20;
         
         
     }
@@ -84,6 +84,8 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    NSLog(@"Inbox view did load");
+    [self countFriendRequests];
     [self registerForNotifications];
     [self setTapLogo];
     [self setupNavBarStyle];
@@ -96,7 +98,7 @@
 -(void) setupNavBarStyle {
     [self.navigationController.navigationBar setBackgroundImage:[UIImage new]
                                                   forBarMetrics:UIBarMetricsDefault];
-    self.navigationController.navigationBar.shadowImage = [UIImage imageNamed:@""];
+//    self.navigationController.navigationBar.shadowImage = [UIImage imageNamed:@"lightGray"];
     self.navigationController.navigationBar.translucent = NO;
     [self.navigationController.navigationBar setBackgroundImage:[UIImage imageNamed: @"white"] forBarMetrics:UIBarMetricsDefault];
 }
@@ -111,6 +113,7 @@
 
 -(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+//    countFriendRequests
 //    self.tapsCounterOutlet.frame = CGRectMake(self.tapsCounterOutlet.frame.origin.x, self.tapsCounterOutlet.frame.origin.y, 40, 40);
 //    [self.tapsCounterOutlet setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"pink"]]];
 }
@@ -398,6 +401,18 @@
     } else {
     	return @"";
     }
+}
+
+-(void) countFriendRequests {
+    PFQuery *query = [PFQuery queryWithClassName:@"FriendRequest"];
+    [query whereKey:@"targetUser" equalTo:[PFUser currentUser] ];
+    [query whereKey:@"status" equalTo:@"pending"];
+    
+
+    [query countObjectsInBackgroundWithBlock:^(int number, NSError *error) {
+        NSLog(@"counted friend requests %d", number);
+        self.appDelegate.pendingFriendRequests = @(number);
+    }];
 }
 
 

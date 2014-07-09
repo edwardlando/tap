@@ -66,6 +66,7 @@
             msg[@"readArray"] = [[NSMutableArray alloc] init];
             msg[@"batchId"] = batchId;
             msg[@"imageId"] = @(taps);
+            msg[@"senderPhoneNumber"] = [[PFUser currentUser] objectForKey:@"phoneNumber"];
             for (id recipient in recipients) {
                 [msg[@"read"] setObject:[NSNumber numberWithBool:NO] forKey:[recipient objectId]];
             }

@@ -8,7 +8,8 @@
 
 #import "TPMyGroupViewController.h"
 #import "TPAppDelegate.h"
-        #import <QuartzCore/QuartzCore.h>
+#import <QuartzCore/QuartzCore.h>
+#import "TPFriendRequestsViewController.h"
 
 @interface TPMyGroupViewController () {
     BOOL pendingFriendReqs;
@@ -45,10 +46,12 @@
     [super viewDidLoad];
 
     [self.appDelegate loadFriends];
-    [[PFUser currentUser] refreshInBackgroundWithBlock:^(PFObject *object, NSError *error) {
-
-        [self.tableView reloadData];
-    }];
+    if ([self.appDelegate.pendingFriendRequests intValue] > 0) {
+        pendingFriendReqs = YES;
+    } else {
+        pendingFriendReqs = NO;
+    }
+    [self alertIfNoFriends]; 
 
     for (PFUser *friendInGroup in [[PFUser currentUser] objectForKey:@"myGroupArray"]) {
         [friendInGroup fetchIfNeeded];
@@ -64,7 +67,7 @@
     shadow.shadowColor = [UIColor whiteColor];
     [self.navigationController.navigationBar setTitleTextAttributes: @{
                                                                        NSForegroundColorAttributeName: [UIColor colorWithPatternImage:[UIImage imageNamed:@"blue"]],
-                                                                       NSFontAttributeName: [UIFont fontWithName:@"HelveticaNeue" size:23.0f],
+                                                                       NSFontAttributeName: [UIFont fontWithName:@"HelveticaNeue-Bold" size:23.0f],
                                                                        NSShadowAttributeName: shadow
                                                                        }];
 }
@@ -72,17 +75,29 @@
 -(void) setupNavBarStyle {
     [self.navigationController.navigationBar setBackgroundImage:[UIImage new]
                                                   forBarMetrics:UIBarMetricsDefault];
-    self.navigationController.navigationBar.shadowImage = [UIImage imageNamed:@""];
+//    self.navigationController.navigationBar.shadowImage = [UIImage imageNamed:@"lightGray"];
     self.navigationController.navigationBar.translucent = NO;
     [self.navigationController.navigationBar setBackgroundImage:[UIImage imageNamed: @"white"] forBarMetrics:UIBarMetricsDefault];
 }
 
 -(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-//    [self.appDelegate loadFriends];
+    NSLog(@"View Will Appear");
+    
     [[PFUser currentUser] refreshInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+        NSLog(@"Refreshing user");
         [self.tableView reloadData];
     }];
+}
+
+-(void)alertIfNoFriends {
+    NSInteger totalFriends = [self.appDelegate.friendsPhoneNumbersArray count];
+    
+    if (totalFriends == 0) {
+        NSLog(@"No one in group");
+        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"You Have No Friends" message:@"Start by adding or inviting some cool people" delegate:nil cancelButtonTitle:nil otherButtonTitles:@"FUCK YEAH!", nil];
+        [alert show];
+    }
 
 }
 
@@ -98,13 +113,13 @@
 {
 
     // Return the number of sections.
-    if ([[[PFUser currentUser] objectForKey:@"friendRequestsArray"] count] > 0) {
-        pendingFriendReqs = YES;
-        return 3;
-    } else {
-        pendingFriendReqs = NO;
-    }
-    
+//    if (pendingFriendReqs) {
+//        return 3;
+//    } else {
+//
+//    }
+//    
+//    return 3;
     return 3;
 }
 
@@ -112,7 +127,7 @@
     if ([tableView.dataSource tableView:tableView numberOfRowsInSection:section] == 0) {
         return 0;
     } else {
-        return 25.0f;
+        return 30.0f;
     }
 }
 
@@ -122,7 +137,7 @@
 //    NSInteger totalFriends = [[[PFUser currentUser] objectForKey:@"friendsArray"] count];
     NSInteger totalFriends = [self.appDelegate.friendsPhoneNumbersArray count];
     NSInteger inMyGroup = [[[PFUser currentUser] objectForKey:@"myGroupArray"] count];
-    
+
     // Return the number of rows in the section.
     if (section == 0) {
         if (pendingFriendReqs) return 1;
@@ -132,7 +147,7 @@
         
         return inMyGroup;
     } else {
-        NSLog(@"section 2: %ld", totalFriends - inMyGroup );
+        NSLog(@"section 2: %d", totalFriends - inMyGroup );
         return totalFriends - inMyGroup;
     }
 
@@ -147,9 +162,7 @@
     
     if (indexPath.section == 0) {
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"friendRequests" forIndexPath:indexPath];
-        cell.textLabel.text = [NSString stringWithFormat:@"Friends Requests (%ld)", [[[PFUser currentUser] objectForKey:@"friendRequestsArray"] count]];
-        
-        
+        cell.textLabel.text = [NSString stringWithFormat:@"Friends Requests (%d)", [self.appDelegate.pendingFriendRequests intValue]];
         
         return cell;
         
@@ -282,6 +295,30 @@
         [self.tableView reloadData];
         
     }];
+}
+
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    if (indexPath.section == 0) {
+        NSLog(@"Going to friend requests");
+        [self goToFriendRequests];
+    }
+}
+
+
+-(void)goToFriendRequests {
+
+    [[PFUser currentUser] fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+        [self performSegueWithIdentifier:@"showFriendRequests" sender:object];
+    }];
+
+}
+
+-(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    if ([segue.identifier isEqualToString:@"showFriendRequests"]) {
+        TPFriendRequestsViewController *vc = (TPFriendRequestsViewController *)segue.destinationViewController;
+        vc.user = sender;
+        NSLog(@"this is sender %@", sender);
+    }
 }
 
 //- (PFQuery *)queryForTable {

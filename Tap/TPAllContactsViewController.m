@@ -82,7 +82,7 @@
     shadow.shadowColor = [UIColor whiteColor];
     [self.navigationController.navigationBar setTitleTextAttributes: @{
                                                                        NSForegroundColorAttributeName: [UIColor colorWithPatternImage:[UIImage imageNamed:@"blue"]],
-                                                                       NSFontAttributeName: [UIFont fontWithName:@"HelveticaNeue" size:23.0f],
+                                                                       NSFontAttributeName: [UIFont fontWithName:@"HelveticaNeue-Bold" size:23.0f],
                                                                        NSShadowAttributeName: shadow
                                                                        }];
 }
@@ -90,7 +90,7 @@
 -(void) setupNavBarStyle {
     [self.navigationController.navigationBar setBackgroundImage:[UIImage new]
                                                   forBarMetrics:UIBarMetricsDefault];
-    self.navigationController.navigationBar.shadowImage = [UIImage new];
+//    self.navigationController.navigationBar.shadowImage = [UIImage imageNamed:@"lightGray"];
     self.navigationController.navigationBar.translucent = NO;
     [self.navigationController.navigationBar setBackgroundImage:[UIImage imageNamed: @"white"] forBarMetrics:UIBarMetricsDefault];
 }
@@ -155,16 +155,24 @@
     }
     
     PFQuery *query = [PFUser query];
+//    PFQuery *requestsQuery = [PFQuery queryWithClassName:@"FriendRequest"];
+    
 //    [query includeKey:@"phoneNumber"];
     
 //    [query setLimit:0];
-    
+//    requestsQuery whereKey:@"targetUser" notEqualTo:<#(id)#>
     [query whereKey:@"phoneNumber" containedIn:self.appDelegate.contactsPhoneNumbersArray];
+
     [query whereKey:@"phoneNumber" notContainedIn:self.appDelegate.friendsPhoneNumbersArray];
+    [query whereKey:@"phoneNumber" notContainedIn:self.appDelegate.friendRequestsSent];
     
+//    [query whereKey:@"" notContainedIn:[]];
+
+//    PFQuery *all = [PFQuery orQueryWithSubqueries:@[query,requestsQuery]];
+    return query;
 //    [query orderByDescending:@"createdAt"];
 
-    return query;
+//    return all;
     
 }
 
@@ -266,21 +274,45 @@
     
     PFUser *user = [self.objects objectAtIndex:indexPath.row];
     
-    if (![[[PFUser currentUser] objectForKey:@"friendsArray"] containsObject:user]) {
-        [PFCloud callFunctionInBackground:@"sendFriendRequest" withParameters:@{@"targetUserId":[user objectId]} block:^(id object, NSError *error) {
-            if (error) {
-                NSLog(@"Error: %@", error);
+    
+    if (![[[PFUser currentUser] objectForKey:@"friendsArray"] containsObject:user] || [[[PFUser currentUser] objectForKey:@"friendRequestsSent"] containsObject:[user objectId]]) {
+        PFObject *friendRequest = [[PFObject alloc] initWithClassName:@"FriendRequest"];
+        friendRequest[@"requestingUser"] = [PFUser currentUser];
+        friendRequest[@"targetUser"] = user;
+        friendRequest[@"requestingUserPhoneNumber"] = [[PFUser currentUser] objectForKey:@"phoneNumber"];
+        friendRequest[@"requestingUserUsername"] = [[PFUser currentUser] objectForKey:@"username"];        
+        friendRequest[@"status"] = @"pending";
+        [friendRequest saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+            if (succeeded) {
+                NSLog(@"Saved friend request in background");
+//                [PFCloud callFunctionInBackground:@"sendFriendRequest" withParameters:@{@"targetUserId":[user objectId]} block:^(id object, NSError *error) {
+
+                        [ind stopAnimating];
+                        [ind setHidden:YES];
+                        [self.appDelegate.friendRequestsSent addObject:[user objectForKey:@"phoneNumber"]];
+                        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Friend Request Sent" message:@"Succesfuly sent friend request to this dude" delegate:nil cancelButtonTitle:nil otherButtonTitles:@"FUCK YEAH!", nil];
+                        [alert show];
+
+                        // adding friend to friend requests sent
+                        [[[PFUser currentUser] objectForKey:@"friendRequestsSent"] addObject:[user objectId]];
+
+                        [[PFUser currentUser] saveEventually:^(BOOL succeeded, NSError *error) {
+                            NSLog(@"Added %@ to friend requests sent ", [user objectId]);
+                        }];
+
+//                }];
+                
             } else {
-                [ind stopAnimating];
-                [ind setHidden:YES];
-                UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Friend Request Sent" message:@"Succesfuly sent friend request to this dude" delegate:nil cancelButtonTitle:nil otherButtonTitles:@"FUCK YEAH!", nil];
-                [alert show];
+                NSLog(@"Error: %@", error);
             }
-            //
+            
         }];
         
-
+    } else {
+        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Already Sent Friend Request" message:@"You had already sent a friend request to this user" delegate:nil cancelButtonTitle:nil otherButtonTitles:@"Ok", nil];
+        [alert show];
     }
+    
 }
 
 @end

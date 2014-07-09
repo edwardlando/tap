@@ -71,11 +71,13 @@
     
     self.contactsDict = [[NSMutableDictionary alloc] init];
     self.allReadTaps = [[NSMutableArray alloc] init];
+    self.friendRequestsSent = [[NSMutableArray alloc] init];
+    
     self.numbersToUsernamesDict = [[NSMutableDictionary alloc] init];
     
     if ([PFUser currentUser]) {
         [[PFUser currentUser] refreshInBackgroundWithBlock:^(PFObject *object, NSError *error) {
-            //
+            NSLog(@"Refreshed user");
         }];
     }
     

@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import <Parse/Parse.h>
 
-@interface TPFriendRequestsViewController : UITableViewController
+@interface TPFriendRequestsViewController : PFQueryTableViewController
 
-
+@property (strong, nonatomic) PFUser *user;
 @end

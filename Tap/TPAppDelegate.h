@@ -14,6 +14,9 @@
 @property (strong, nonatomic) NSMutableArray *myGroup;
 @property (strong, nonatomic) NSMutableArray *contactsPhoneNumbersArray;
 @property (strong, nonatomic) NSMutableArray *friendsPhoneNumbersArray;
+@property (strong, nonatomic) NSMutableArray *friendRequestsSent;
+@property (strong, nonatomic) NSNumber *pendingFriendRequests;
+
 @property (strong, nonatomic) NSMutableDictionary *contactsDict;
 @property (strong, nonatomic) NSMutableDictionary *numbersToUsernamesDict;
 @property (strong, nonatomic) NSMutableDictionary *friendsObjectsDict;

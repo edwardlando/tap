@@ -93,13 +93,13 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Username" minimumFontSize="17" id="neE-EV-lYu">
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Username" minimumFontSize="17" clearButtonMode="whileEditing" id="neE-EV-lYu">
                                 <rect key="frame" x="20" y="84" width="280" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Password" minimumFontSize="17" id="lzC-6l-2Vw">
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Password" minimumFontSize="17" clearButtonMode="whileEditing" id="lzC-6l-2Vw">
                                 <rect key="frame" x="20" y="126" width="280" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
@@ -137,7 +137,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Phone Number" minimumFontSize="17" id="GOI-9d-KAT">
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Phone Number" minimumFontSize="17" clearButtonMode="whileEditing" id="GOI-9d-KAT">
                                 <rect key="frame" x="23" y="91" width="275" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
@@ -174,11 +174,11 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Verification Code" minimumFontSize="17" id="TbJ-gB-T1i">
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Verification Code" minimumFontSize="17" clearButtonMode="whileEditing" id="TbJ-gB-T1i">
                                 <rect key="frame" x="20" y="90" width="280" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
+                                <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
                             </textField>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="GdD-Wt-W6h">
                                 <rect key="frame" x="103" y="211" width="115" height="30"/>
@@ -531,7 +531,7 @@
             </objects>
             <point key="canvasLocation" x="1996" y="-618"/>
         </scene>
-        <!--My Group View Controller - MY GRP-->
+        <!--My Group View Controller - group-->
         <scene sceneID="l63-zZ-ji8">
             <objects>
                 <tableViewController id="gsb-gx-nt3" customClass="TPMyGroupViewController" sceneMemberID="viewController">
@@ -557,9 +557,6 @@
                                     </subviews>
                                 </tableViewCellContentView>
                                 <inset key="separatorInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
-                                <connections>
-                                    <segue destination="RSO-S3-LAp" kind="push" id="jio-1k-R0R"/>
-                                </connections>
                             </tableViewCell>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="friendInGroupCell" textLabel="6wb-vh-cB5" detailTextLabel="3uf-DJ-v37" rowHeight="67" style="IBUITableViewCellStyleSubtitle" id="eS9-nW-Tog">
                                 <rect key="frame" x="0.0" y="138" width="320" height="67"/>
@@ -644,9 +641,9 @@
                         </connections>
                     </tableView>
                     <toolbarItems/>
-                    <navigationItem key="navigationItem" title="MY GRP" id="aws-sb-gjj">
+                    <navigationItem key="navigationItem" title="group" id="aws-sb-gjj">
                         <barButtonItem key="leftBarButtonItem" image="backArrow2" id="swD-fo-qSE">
-                            <color key="tintColor" red="0.56078431370000004" green="0.32549019610000002" blue="0.77647058820000003" alpha="1" colorSpace="calibratedRGB"/>
+                            <color key="tintColor" red="0.12941176469999999" green="0.75686274509999996" blue="0.97647058819999999" alpha="1" colorSpace="calibratedRGB"/>
                             <connections>
                                 <action selector="backToCamera:" destination="gsb-gx-nt3" id="yPN-eA-Yv8"/>
                             </connections>
@@ -659,12 +656,15 @@
                         </barButtonItem>
                     </navigationItem>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
+                    <connections>
+                        <segue destination="RSO-S3-LAp" kind="push" identifier="showFriendRequests" id="7q3-ly-gwc"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="7h3-wr-Y9c" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="3795" y="-164"/>
         </scene>
-        <!--All Contacts View Controller - FND FRNDS-->
+        <!--All Contacts View Controller - find friends-->
         <scene sceneID="Ybt-9o-LBm">
             <objects>
                 <tableViewController storyboardIdentifier="contactsView" useStoryboardIdentifierAsRestorationIdentifier="YES" id="uHL-VO-cEb" customClass="TPAllContactsViewController" sceneMemberID="viewController">
@@ -750,9 +750,9 @@
                         </connections>
                     </tableView>
                     <toolbarItems/>
-                    <navigationItem key="navigationItem" title="FND FRNDS" id="c3n-Go-nnK">
+                    <navigationItem key="navigationItem" title="find friends" id="c3n-Go-nnK">
                         <barButtonItem key="leftBarButtonItem" image="backArrow2" id="NWT-9A-8CK">
-                            <color key="tintColor" red="0.56078431370000004" green="0.32549019610000002" blue="0.77647058820000003" alpha="1" colorSpace="calibratedRGB"/>
+                            <color key="tintColor" red="0.12941176469999999" green="0.75686274509999996" blue="0.97647058819999999" alpha="1" colorSpace="calibratedRGB"/>
                             <connections>
                                 <action selector="backButton:" destination="uHL-VO-cEb" id="wlZ-kA-N6X"/>
                             </connections>
@@ -769,7 +769,7 @@
             </objects>
             <point key="canvasLocation" x="4325" y="-164"/>
         </scene>
-        <!--Friend Requests View Controller - FRND RQSTS-->
+        <!--Friend Requests View Controller - friend requests-->
         <scene sceneID="eui-2D-7pC">
             <objects>
                 <tableViewController id="RSO-S3-LAp" customClass="TPFriendRequestsViewController" sceneMemberID="viewController">
@@ -786,30 +786,32 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Creep Creepington" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="X7t-9z-oFb">
-                                            <rect key="frame" x="15" y="16" width="158" height="22"/>
+                                            <rect key="frame" x="15" y="15" width="175" height="24"/>
                                             <autoresizingMask key="autoresizingMask"/>
-                                            <fontDescription key="fontDescription" name="HelveticaNeue-Medium" family="Helvetica Neue" pointSize="18"/>
+                                            <fontDescription key="fontDescription" name="HelveticaNeue-Medium" family="Helvetica Neue" pointSize="20"/>
                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="+1 (917) 292 3939" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Dtd-xU-pME">
-                                            <rect key="frame" x="15" y="38" width="101" height="15"/>
+                                            <rect key="frame" x="15" y="39" width="101" height="15"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                             <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <button opaque="NO" tag="55" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="l93-sW-ZTy">
+                                        <button opaque="NO" tag="55" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="l93-sW-ZTy">
                                             <rect key="frame" x="240" y="20" width="30" height="30"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                            <state key="normal" title="V">
+                                            <color key="backgroundColor" red="0.10931797445255474" green="0.70329607664233573" blue="0.31951414233576642" alpha="0.80000000000000004" colorSpace="calibratedRGB"/>
+                                            <state key="normal" image="tick">
                                                 <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                             </state>
                                         </button>
-                                        <button opaque="NO" tag="2" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="HK7-g1-0pG">
+                                        <button opaque="NO" tag="2" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="HK7-g1-0pG">
                                             <rect key="frame" x="280" y="20" width="30" height="30"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                            <state key="normal" title="X">
+                                            <color key="backgroundColor" red="0.96900908799999996" green="0.33194506930000001" blue="0.27993116200000001" alpha="1" colorSpace="calibratedRGB"/>
+                                            <state key="normal" image="cancel">
                                                 <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                             </state>
                                         </button>
@@ -823,7 +825,7 @@
                             <outlet property="delegate" destination="RSO-S3-LAp" id="sjd-9Q-pTR"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="FRND RQSTS" id="djx-1J-m5Q">
+                    <navigationItem key="navigationItem" title="friend requests" id="djx-1J-m5Q">
                         <barButtonItem key="leftBarButtonItem" image="backArrow2" id="MAp-ta-0TZ">
                             <color key="tintColor" red="0.12941176469999999" green="0.75686274509999996" blue="0.97647058819999999" alpha="1" colorSpace="calibratedRGB"/>
                             <connections>
@@ -915,11 +917,13 @@
     <resources>
         <image name="backArrow2" width="27" height="24"/>
         <image name="cameraIcon3" width="37" height="28"/>
+        <image name="cancel" width="20" height="20"/>
         <image name="findFriends4" width="37" height="28"/>
         <image name="friendsScreen3" width="37" height="28"/>
         <image name="minues" width="20" height="20"/>
         <image name="plus" width="20" height="20"/>
         <image name="refresh2" width="25" height="22"/>
+        <image name="tick" width="20" height="20"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>

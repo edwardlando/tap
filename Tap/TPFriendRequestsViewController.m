@@ -29,6 +29,35 @@
     return _appDelegate;
 }
 
+
+- (id)initWithCoder:(NSCoder *)aCoder {
+    self = [super initWithCoder:aCoder];
+    if (self) {
+        // Customize the table
+        
+        // The className to query on
+        self.parseClassName = @"FriendRequest";
+        
+        // The key of the PFObject to display in the label of the default cell style
+        // self.textKey = @"text";
+        
+        // Uncomment the following line to specify the key of a PFFile on the PFObject to display in the imageView of the default cell style
+        // self.imageKey = @"image";
+        
+        // Whether the built-in pull-to-refresh is enabled
+        self.pullToRefreshEnabled = YES;
+        
+        // Whether the built-in pagination is enabled
+        self.paginationEnabled = NO;
+        
+        // The number of objects to show per page
+//        self.objectsPerPage = 10;
+        
+        
+    }
+    return self;
+}
+
 - (IBAction)goBack:(id)sender {
     [self.navigationController popViewControllerAnimated:YES];
 }
@@ -36,21 +65,11 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-
-    self.friendRequests = [[PFUser currentUser] objectForKey:@"friendRequestsArray"];
-//    NSLog(@"self.frie %@", self.friendRequests);
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
     
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+//    self.friendRequests = [self.user objectForKey:@"friendRequestsArray"];
+
 }
 
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
 
 #pragma mark - Table view data source
 
@@ -66,32 +85,38 @@
 #warning Incomplete method implementation.
     // Return the number of rows in the section.
     
-    return [[[PFUser currentUser] objectForKey:@"friendRequestsArray"] count];
+    return [self.objects count];
 }
 
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath object:(PFObject *)object
 {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"friendRequest" forIndexPath:indexPath];
     
-    PFUser *friendsRequester = [self.friendRequests objectAtIndex:indexPath.row];
-    [friendsRequester fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
-        NSString *friendRequesterPhoneNumber = [object objectForKey:@"phoneNumber"];
-        NSString *friendRequesterNameInMyContacts = [self.appDelegate.contactsDict objectForKey:friendRequesterPhoneNumber];
+//    PFUser *friendsRequester = [self.friendRequests objectAtIndex:indexPath.row];
+//    [friendsRequester fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
 
+        NSString *friendRequesterPhoneNumber = [object objectForKey:@"requestingUserPhoneNumber"];
+        NSString *friendRequesterNameInMyContacts = [self.appDelegate.contactsDict objectForKey:friendRequesterPhoneNumber];
+        NSString *friendRequesterUsername = [object objectForKey:@"requestingUserUsername"];
+    
         if ([friendRequesterNameInMyContacts isEqual:@""]) {
-            cell.textLabel.text = [object objectForKey:@"username"];
+            cell.textLabel.text = friendRequesterUsername;
             cell.detailTextLabel.text = friendRequesterPhoneNumber;
         } else {
             cell.textLabel.text = friendRequesterNameInMyContacts;
-            cell.detailTextLabel.text = [object objectForKey:@"username"];
+            cell.detailTextLabel.text = friendRequesterUsername;
         }
 
         UIButton *addButton = (UIButton *)[cell viewWithTag:55];
-    [addButton addTarget:self action:@selector(confirmFriendRequest:) forControlEvents:UIControlEventTouchUpInside];
-    
-//        NSLog(@"ob %@", object);
-    }];
+        
+        addButton.layer.cornerRadius = 5;
+        [addButton addTarget:self action:@selector(confirmFriendRequest:) forControlEvents:UIControlEventTouchUpInside];
+        
+        UIButton *rejectButton = (UIButton *)[cell viewWithTag:2];
+        rejectButton.layer.cornerRadius = 5;
+        [rejectButton addTarget:self action:@selector(rejectFriendRequest:) forControlEvents:UIControlEventTouchUpInside];
+//    }];
 
     // Configure the cell...
     
@@ -99,16 +124,32 @@
 }
 
 
-
--(void)confirmFriendRequest:(id)sender {
+-(void)rejectFriendRequest:(id) sender {
+    NSLog(@"Reject friend request");
     UIView *senderButton = (UIView*) sender;
     NSIndexPath *indexPath = [self.tableView indexPathForCell: (UITableViewCell *)[[[senderButton superview]superview] superview]];
     
-    PFUser *user = [self.friendRequests objectAtIndex:indexPath.row];
-    NSString *friendRequesterNameInMyContacts = [self.appDelegate.contactsDict objectForKey:[user objectForKey:@"phoneNumber"]];
+    PFObject *friendRequest = [self.objects objectAtIndex:indexPath.row];
     
+    friendRequest[@"status"] = @"rejected";
+    [friendRequest saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+        [self.tableView reloadData];
+    }];
+}
+
+-(void)confirmFriendRequest:(id)sender {
+    UIView *senderButton = (UIView*) sender;
+    
+    NSIndexPath *indexPath = [self.tableView indexPathForCell: (UITableViewCell *)[[[senderButton superview]superview] superview]];
+    
+    PFObject *friendRequest = [self.objects objectAtIndex:indexPath.row];
+    
+    PFUser *user = [friendRequest objectForKey:@"requestingUser"];
+    NSString *friendRequesterPhoneNumber = [friendRequest objectForKey:@"requestingUserPhoneNumber"];
+    NSString *friendRequesterNameInMyContacts = [self.appDelegate.contactsDict objectForKey:friendRequesterPhoneNumber];
+    NSString *friendRequesterUsername = [friendRequest objectForKey:@"requestingUserUsername"];
     NSLog(@"Adding this guy as a friend %@", [user objectForKey:@"username"]);
-    if (![[[PFUser currentUser] objectForKey:@"friendsArray"] containsObject:user]) {
+    if (![[self.user objectForKey:@"friendsArray"] containsObject:user]) {
         
         PFUser *currentUser = [PFUser currentUser];
         
@@ -117,33 +158,60 @@
         [[currentUser objectForKey:@"friendsPhonesDict"] setObject:friendRequesterNameInMyContacts forKey:[user objectForKey:@"phoneNumber"]];
         
 //        [[user objectForKey:@"friendsArray"] addObject:currentUser];
-        [[currentUser objectForKey:@"friendRequestsArray"] removeObject:user];
+//        [[currentUser objectForKey:@"friendRequestsArray"] removeObject:user];
         
         [self.appDelegate.friendsPhoneNumbersArray addObject:[user objectForKey:@"phoneNumber"]];
         
-        [currentUser saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+        friendRequest[@"status"] = @"approved";
+        [friendRequest saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
             if (succeeded) {
-                NSLog(@"Approved Friend Request");
-                [PFCloud callFunctionInBackground:@"confirmFriendRequest"
-                    withParameters:@{@"reqUserId":[user objectId]}
-                    block:^(id object, NSError *error) {
-                        if (error) {
-                            NSLog(@"Error: %@", error);
-                        } else {
-                            UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Accepted Friend Request" message:@"You're now friends with this dude" delegate:nil cancelButtonTitle:nil otherButtonTitles:@"FUCK YEAH!", nil];
-                            [alert show];
-                            [self.tableView reloadData];
-                            [self.appDelegate loadFriends];
-                        }
-                        //
+                NSLog(@"Friend request saved in background");
+                
+                [currentUser saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+                    if (succeeded) {
+                        NSLog(@"Approved Friend Request");
+                        [PFCloud callFunctionInBackground:@"confirmFriendRequest"
+                                           withParameters:@{@"reqUserId":[user objectId]}
+                                                    block:^(id object, NSError *error) {
+                                                        if (error) {
+                                                            NSLog(@"Error: %@", error);
+                                                        } else {
+                                                            UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Accepted Friend Request" message:@"You're now friends with this dude" delegate:nil cancelButtonTitle:nil otherButtonTitles:@"FUCK YEAH!", nil];
+                                                            [alert show];
+                                                            
+                                                            [self.tableView reloadData];
+                                                            [self.appDelegate loadFriends];
+                                                        }
+                                                        //
+                                                    }];
+                    } else {
+                        NSLog(@"Error: %@", error);
+                    }
+                    
                 }];
+
+
             } else {
                 NSLog(@"Error: %@", error);
             }
-            
         }];
     }
 }
+
+- (PFQuery *)queryForTable {
+    
+    if (![PFUser currentUser]) {
+        return nil;
+    }
+    
+    PFQuery *query = [PFQuery queryWithClassName:self.parseClassName];
+    [query whereKey:@"targetUser" equalTo:[PFUser currentUser]];
+    [query whereKey:@"status" equalTo:@"pending"];
+    
+    [query orderByDescending:@"createdAt"];
+    return query;
+}
+
 /*
 // Override to support conditional editing of the table view.
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath

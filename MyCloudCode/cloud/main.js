@@ -161,22 +161,8 @@ Parse.Cloud.define("sendSprayPushNotifications", function(request, response) {
         var username = request.user.get("username");
         var senderPhoneNumber= request.user.get("phoneNumber");
         // getContactNameFromPhoneNumber(, senderPhoneNumber);        
-            console.log("trying to get name for phonenumber " +senderPhoneNumber + " and this id" + subscribersArray[0]);
-            Parse.Cloud.useMasterKey();
- 
-            // query.get(subscribersArray[0], {
-            //     success: function (object) {
-            //         var contactsDict = object.get("contactsDict");
-            //         var userPhoneNumber = senderPhoneNumber;
-            //         console.log("userPhoneNumber "+ userPhoneNumber);
-            //         var currentUserNameInContacts = contactsDict[userPhoneNumber];
-            //         console.log("current name " + currentUserNameInContacts);
-            //         response.success();
-            //         return currentUserNameInContacts;
-            //     }, error : function ( error) {
-            //          response.error(error);
-            //     }
-            // });
+        console.log("trying to get name for phonenumber " +senderPhoneNumber + " and this id" + subscribersArray[0]);
+        Parse.Cloud.useMasterKey();
 
         for (var i = 0; i < subscribersArray.length; i++) {
             var recipient = subscribersArray[i];
@@ -188,24 +174,9 @@ Parse.Cloud.define("sendSprayPushNotifications", function(request, response) {
            var targetUser = new Parse.User({id:id});
            console.log("target user");
            targetUser.fetch().then( function ( fetched) {
-            console.log("FETCHEEEDDDDD");
+                console.log("FETCHEEEDDDDD");
            });
-            
-            // console.log();
-            // ;
-
-            // getContactNameFromPhoneNumber(id, senderPhoneNumber);
-
-            // getContactNameFromObjectId(request.user.id ,id, function(name) {
-            // getNameByPhoneNumber(request.user, id);
-
-
-            
-
-
-
             sendDefaultPush(channel, "From " + username, "newtap");
-            
         }
         response.success();   
     }
@@ -213,6 +184,7 @@ Parse.Cloud.define("sendSprayPushNotifications", function(request, response) {
 
 
 var sendDefaultPush = function(channel, alert, type) {
+    console.log("sending default push to channel " + channel + " with message: " + alert + " and type: "+ type);
     Parse.Push.send({
         channels: [channel],
         data: {
@@ -251,7 +223,7 @@ Parse.Cloud.define("confirmFriendRequest", function(request, response) {
                             var contactsDict = object.get("contactsDict");
                             var userPhoneNumber = user.get("phoneNumber");
                             var friendRequsterNameInContacts = contactsDict[userPhoneNumber];
-                            sendDefaultPush("tap" + object.id, friendRequsterNameInContacts + " approved your friend request!", "approvedFriendRequest");
+                            sendDefaultPush("tap" + object.id, friendRequsterNameInContacts + " accepted your friend request!", "approvedFriendRequest");
                             response.success();
                             console.log(response);
                         }, function ( error) {
@@ -298,50 +270,133 @@ var getNameByPhoneNumber = function (currentUser, targetUserId) {
 }
 
 
+// Parse.Cloud.define("sendFriendRequest", function(request, response) {
+//     var requestingUserId = request.user;
+//     var  targetUser = request.params.targetUserId;
+    
+//     requestingUserId.fetch({
+//         success: function(user) {
+//             // user is user approving the friends request
+//             Parse.Cloud.useMasterKey();
+//             query = new Parse.Query(Parse.User);
+//             query.get(targetUser, {
+//                 success: function (object) {
+//                     // object is user requesting the friends request
+                    
+//                     var friendRequestsArray = object.get("friendRequestsArray");
 
-Parse.Cloud.define("sendFriendRequest", function(request, response) {
-    var requestingUserId = request.user;
-    var  targetUser = request.params.targetUserId;
-    requestingUserId.fetch({
-        success: function(user) {
-            // user is user approving the friends request
-            Parse.Cloud.useMasterKey();
+//                     if (!friendRequestsArray.arrayContains(user)) {
+//                         friendRequestsArray.push(user);    
+//                     } else {
+//                         return;
+//                     }
+                    
+//                     object.save().then(
+//                         function (res) {
+//                             var contactsDict = object.get("contactsDict");
+//                             var userPhoneNumber = user.get("phoneNumber");
+//                             var friendRequsterNameInContacts = contactsDict[userPhoneNumber];
+//                             sendDefaultPush("tap" + object.id, friendRequsterNameInContacts + " added you as a friend", "sendFriendRequest");
+//                             response.success();
+//                             console.log(response);
+//                         }, function ( error) {
+//                              response.error(error);
+//                         });
+//                 }, error: function (object, error) {
+//                     response.error(error);
+                
+//                 }    
+//             });
+//         }, 
+//         error: function(object, error) {
+//             response.error(error);
+//         }
+//     })
+// });
+
+
+Parse.Cloud.beforeSave("FriendRequest", function(request, response) {
+    console.log("Before save FriendRequest");
+    var requestingUser = request.user;
+    var targetUser = request.object.get("targetUser").id;
+    var requestingUserPhoneNumber = request.object.get("requestingUserPhoneNumber");
+    var requestingUserUsername = request.object.get("requestingUserUsername");
+    
+    console.log("target user");
+    console.log(targetUser);
+    console.log("reqesting phone number " + requestingUserPhoneNumber);
+    console.log("reqesting username " + requestingUserUsername);
+    
+    requestingUser.fetch({
+        success: function ( user) {
+            console.log("Fetched requesting user");
+
             query = new Parse.Query(Parse.User);
             query.get(targetUser, {
                 success: function (object) {
-                    // object is user requesting the friends request
-                    
-                    var friendRequestsArray = object.get("friendRequestsArray");
-
-                    if (!friendRequestsArray.arrayContains(user)) {
-                        friendRequestsArray.push(user);    
-                    } else {
-                        return;
+                    console.log("got target user");
+                    Parse.Cloud.useMasterKey();
+                    var contactsDict = object.get("contactsDict");
+                    var friendRequsterNameInContacts = contactsDict[requestingUserPhoneNumber];
+                    if (!friendRequsterNameInContacts) {
+                        friendRequsterNameInContacts = requestingUserUsername;
                     }
+                    sendDefaultPush("tap" + object.id, friendRequsterNameInContacts + " sent you a friend request", "sendFriendRequest");
+                 response.success();
+                },
+                error: function ( error) {
+                    // console.log();
+                    response.error("couldn't get target user");
                     
-                    object.save().then(
-                        function (res) {
-                            var contactsDict = object.get("contactsDict");
-                            var userPhoneNumber = user.get("phoneNumber");
-                            var friendRequsterNameInContacts = contactsDict[userPhoneNumber];
-                            sendDefaultPush("tap" + object.id, friendRequsterNameInContacts + " added you as a friend", "sendFriendRequest");
-                            response.success();
-                            console.log(response);
-                        }, function ( error) {
-                             response.error(error);
-                        });
-                }, error: function (object, error) {
-                    response.error(error);
-                
-                }    
+                }
             });
-        }, 
-        error: function(object, error) {
-            response.error(error);
+               
+        }, error : function (error ) {
+            console.log(error);
+            response.error();
         }
     })
-});
 
+
+    // requestingUser.fetch({
+    //     success: function(user) {
+    //         Parse.Cloud.useMasterKey();
+    //         query = new Parse.Query(Parse.User);
+    //         query.get(targetUser, {
+    //             success: function (object) {
+    //                 // object is user requesting the friends request
+    //                 var friendRequestsArray = object.get("friendRequestsArray");
+
+    //                 if (!friendRequestsArray.arrayContains(user)) {
+    //                     friendRequestsArray.push(user);    
+    //                 } else {
+    //                     return;
+    //                 }
+    //                 object.save().then(
+    //                     function (res) {
+    //                         var contactsDict = object.get("contactsDict");
+    //                         var userPhoneNumber = requestingUserUsername
+    //                         var friendRequsterNameInContacts = contactsDict[userPhoneNumber];
+    //                         if (!friendRequsterNameInContacts) friendRequsterNameInContacts = requestingUserUsername;
+
+    //                         sendDefaultPush("tap" + object.id, friendRequsterNameInContacts + " added you as a friend", "sendFriendRequest");
+                            
+    //                         response.success();
+    //                         console.log(response);
+    //                     }, function ( error) {
+    //                          response.error(error);
+    //                     });
+    //             }, error: function (object, error) {
+    //                 response.error(error);
+                
+    //             }    
+    //         });
+    //     }, 
+    //     error: function(object, error) {
+    //         response.error(error);
+    //     }
+    // })
+});
 
 //Verify Text Code
 Parse.Cloud.define("verifyCode",function(request,response){
