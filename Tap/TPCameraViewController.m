@@ -28,7 +28,7 @@
 @property (strong, nonatomic) IBOutlet UILabel *tapsCounter;
 @property (strong, nonatomic) TPAppDelegate *appDelegate;
 @property (strong, nonatomic) IBOutlet UIActivityIndicatorView *sendingIndicator;
-
+@property (strong, nonatomic) NSMutableArray *recipients;
 @end
 
 @implementation TPCameraViewController
@@ -47,6 +47,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
     [self registerForNotifications];
     messagesSaved = 0;
     NSLog(@"Camera did load");
@@ -91,7 +92,7 @@
     [super viewWillAppear:animated];
     taps = 0;
     messagesSaved = 0;
-
+    self.recipients = [[NSMutableArray alloc] init];
     NSLog(@"View Will Appear");
     [self setupCameraScreen];
 
@@ -260,6 +261,14 @@
     if (messagesSaved == taps) {
         NSLog(@"That was the last one");
         NSLog(@"Object %@", /*[sender objectForKey:@"object"]*/ notification.object);
+        if (!interactionCreated) {
+            interactionCreated = YES;
+            NSLog(@"Creating / updating the Interaction object");
+            NSString *batchIdString = [NSString stringWithFormat:@"%ld", batchId];
+            [TPProcessImage updateInteractions:self.recipients withBatchId:batchIdString];
+            
+        }
+        
         [self.sendingIndicator stopAnimating];
         [self.sendingIndicator setHidden:YES];
     }
@@ -298,23 +307,17 @@
     
 //    UIImage *optimizedImage = [UIImage imageWithData:dataForJPEGFile];
     NSString *batchIdString = [NSString stringWithFormat:@"%ld", batchId];
-    NSMutableArray *recipients = [[NSMutableArray alloc] init];
+
     if (self.isReply) {
-        [recipients addObject:self.directRecipient];
+        [self.recipients addObject:self.directRecipient];
     } else {
-        recipients = self.appDelegate.myGroup;
+        self.recipients = self.appDelegate.myGroup;
     }
 
-    if (!interactionCreated) {
-        interactionCreated = YES;
-        NSLog(@"Creating / updating the Interaction object");
-        [TPProcessImage updateInteractions:recipients withBatchId:batchIdString];
-
-    }
 //    NSLog(@"sending to %@", recipients);
 //    [self.sendingIndicator startAnimating];
 //    [self.sendingIndicator setHidden:NO];
-    [TPProcessImage sendTapTo:recipients andImage:dataForJPEGFile inBatch:batchIdString withImageId: taps completed:^(BOOL success) {
+    [TPProcessImage sendTapTo:self.recipients andImage:dataForJPEGFile inBatch:batchIdString withImageId: taps completed:^(BOOL success) {
         //        NSLog(@"HOly shit it saved?");
     }];
         
