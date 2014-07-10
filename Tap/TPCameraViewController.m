@@ -47,6 +47,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    [self registerForNotifications];
     messagesSaved = 0;
     NSLog(@"Camera did load");
     [self setupCamera];
@@ -54,7 +55,7 @@
     taps = 0;
     self.tapsCounter.text = [NSString stringWithFormat:@"%d", taps];
     
-    [self registerForNotifications];
+
     
     UIButton *inboxButton = (UIButton *)[self.view viewWithTag:10];
     PFInstallation *currentInstallation = [PFInstallation currentInstallation];
@@ -88,6 +89,9 @@
 
 -(void) viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    taps = 0;
+    messagesSaved = 0;
+
     NSLog(@"View Will Appear");
     [self setupCameraScreen];
 
@@ -95,8 +99,13 @@
 
 -(void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-    NSLog(@"View Will Disappear");
     [[NSNotificationCenter defaultCenter] removeObserver:self name:kImageCapturedSuccessfully object:nil];
+    NSLog(@"View Will Disappear");
+    taps = 0;
+//    [self unsubscribeFromNotifications];
+
+
+    
 }
 
 -(void)setupCameraScreen {
@@ -136,9 +145,7 @@
     batchId = [[NSDate date] timeIntervalSince1970];
 }
 
--(void)viewDidDisappear:(BOOL)animated {
-    taps = 0;
-}
+
 
 - (BOOL)prefersStatusBarHidden {
     return YES;
@@ -199,6 +206,7 @@
 
 
 -(void) registerForNotifications {
+    NSLog(@"Registered for notifications");
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(setupCameraScreen)
                                                  name:@"onboardingFinished"
@@ -210,14 +218,14 @@
                                                object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(viewDidDisappear:)
+                                             selector:@selector(viewWillDisappear:)
                                                  name:@"appEnteredBackground"
                                                object:nil];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(viewDidLoad)
-                                                 name:@"appEnteredForeground"
-                                               object:nil];
+//    [[NSNotificationCenter defaultCenter] addObserver:self
+//                                             selector:@selector(viewDidLoad)
+//                                                 name:@"appEnteredForeground"
+//                                               object:nil];
 
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(handleSavedImageNotification:)
@@ -226,8 +234,28 @@
     
 }
 
+-(void) unsubscribeFromNotifications {
+    NSLog(@"Unsubscribed from notifications");
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:@"onboardingFinished"];
+
+
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:@"newTaps"];
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:@"appEnteredBackground"];
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:@"appEnteredForeground"];
+
+    [[NSNotificationCenter defaultCenter] removeObserver:@"savedImageToServer"];
+
+}
+
 -(void)handleSavedImageNotification:(NSNotification *)notification {
     messagesSaved++;
+    NSLog(@"handleSavedImageNotification, incremented messagesSaved %d", messagesSaved);
+    NSLog(@"num of messages saved %d / num if taps %d / object %@", messagesSaved, taps, notification.object);
+
     
     if (messagesSaved == taps) {
         NSLog(@"That was the last one");

@@ -162,23 +162,51 @@ Parse.Cloud.define("sendSprayPushNotifications", function(request, response) {
         var senderPhoneNumber= request.user.get("phoneNumber");
         // getContactNameFromPhoneNumber(, senderPhoneNumber);        
         console.log("trying to get name for phonenumber " +senderPhoneNumber + " and this id" + subscribersArray[0]);
-        Parse.Cloud.useMasterKey();
+        
+        request.user.fetch({
+                success: function ( user) {
+                    console.log("Fetched requesting user");
+                    Parse.Cloud.useMasterKey();
+                    var query = new Parse.Query(Parse.User);
+                    console.log("subscribersArray[0] " + subscribersArray[0]);
+                    query.get(subscribersArray[0], {
+                        success: function (targetUser) {
+                            console.log("got target user");
+                            
+                            Parse.Cloud.useMasterKey();
+                            var contactsDict = targetUser.get("contactsDict");
+                            var friendNameInContacts = contactsDict[senderPhoneNumber];
+                            if (!friendNameInContacts) {
+                                friendNameInContacts = username;
+                            }
+                            console.log(friendNameInContacts);
 
-        for (var i = 0; i < subscribersArray.length; i++) {
-            var recipient = subscribersArray[i];
-            // var recipientUser = recipient.fetch();
-            var id = recipient;
-            if (id === request.user.id) continue;
-            var channel = "tap" + id;
+                            for (var i = 0; i < subscribersArray.length; i++) {
+                                var recipient = subscribersArray[i];
+                                // var recipientUser = recipient.fetch();
+                                var id = recipient;
+                                if (id === request.user.id) continue;
+                                var channel = "tap" + id;           
+                                sendDefaultPush(channel, "From " + friendNameInContacts, "newtap");
+                            }
 
-           var targetUser = new Parse.User({id:id});
-           console.log("target user");
-           targetUser.fetch().then( function ( fetched) {
-                console.log("FETCHEEEDDDDD");
-           });
-            sendDefaultPush(channel, "From " + username, "newtap");
-        }
-        response.success();   
+                            response.success();
+                            // sendDefaultPush("tap" + object.id, friendRequsterNameInContacts + " sent you a friend request", "sendFriendRequest");
+                         // response.success();
+                        },
+                        error: function ( error) {
+                            // console.log();
+                            response.error("couldn't get target user");
+                            
+                        }
+                    });
+                }, error: function (error ) {
+                    response.error("error fetching user");
+                }
+            });
+            
+   
+   
     }
 });
 
