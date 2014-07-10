@@ -9,18 +9,58 @@
 #import "TPPhoneNumberViewController.h"
 #import "TPVerifyViewController.h"
 #import <Parse/Parse.h>
+#import <AVFoundation/AVFoundation.h>
+#import "CaptureSessionManager.h"
+#import <MobileCoreServices/MobileCoreServices.h>
+#import <Parse/Parse.h>
+#import <ImageIO/ImageIO.h>
 
 @interface TPPhoneNumberViewController ()
+@property (strong, nonatomic) IBOutlet UIView *cameraView;
+@property (nonatomic,retain) CaptureSessionManager *captureManager;
 
 @end
 
 @implementation TPPhoneNumberViewController
 
+-(void)setupCamera{
+    if(TARGET_IPHONE_SIMULATOR){
+        return;
+    }
+    
+    [self setCaptureManager:[[CaptureSessionManager alloc] init]];
+	[[self captureManager] addVideoInputFrontCamera:NO]; // set to YES for Front Camera, No for Back camer
+    [[self captureManager] addStillImageOutput];
+	[[self captureManager] addVideoPreviewLayer];
+	CGRect layerRect = [[[self cameraView] layer] bounds];
+    [[[self captureManager] previewLayer] setBounds:layerRect];
+    [[[self captureManager] previewLayer] setPosition:CGPointMake(CGRectGetMidX(layerRect),CGRectGetMidY(layerRect))];
+	[[[self cameraView] layer] addSublayer:[[self captureManager] previewLayer]];
+    
+    [[[self captureManager]captureSession]startRunning];
+    
+    //    UIButton *mainMenu = (UIButton *)[self.view viewWithTag:10];
+    //    mainMenu.layer.cornerRadius = 5;
+}
+
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    NSLog(@"Phone Number View Did Load");
+    UIView *paddingView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 5, 30)];
+    self.phoneField.leftView = paddingView;
+
+    self.phoneField.leftViewMode = UITextFieldViewModeAlways;
+
+    [self.phoneField becomeFirstResponder];
+    [self setupCamera];
+    
     // Do any additional setup after loading the view.
+}
+
+- (BOOL)prefersStatusBarHidden {
+    return YES;
 }
 
 - (void)savePhone{

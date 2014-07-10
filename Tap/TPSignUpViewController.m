@@ -8,13 +8,38 @@
 
 #import "TPSignUpViewController.h"
 #import "TPPhoneNumberViewController.h"
+#import <AVFoundation/AVFoundation.h>
+#import "CaptureSessionManager.h"
+#import <MobileCoreServices/MobileCoreServices.h>
 #import <Parse/Parse.h>
+#import <ImageIO/ImageIO.h>
 
 @interface TPSignUpViewController ()
+@property (strong, nonatomic) IBOutlet UIView *cameraView;
+@property (nonatomic,retain) CaptureSessionManager *captureManager;
 
 @end
 
 @implementation TPSignUpViewController
+-(void)setupCamera{
+    if(TARGET_IPHONE_SIMULATOR){
+        return;
+    }
+    
+    [self setCaptureManager:[[CaptureSessionManager alloc] init]];
+	[[self captureManager] addVideoInputFrontCamera:NO]; // set to YES for Front Camera, No for Back camer
+    [[self captureManager] addStillImageOutput];
+	[[self captureManager] addVideoPreviewLayer];
+	CGRect layerRect = [[[self cameraView] layer] bounds];
+    [[[self captureManager] previewLayer] setBounds:layerRect];
+    [[[self captureManager] previewLayer] setPosition:CGPointMake(CGRectGetMidX(layerRect),CGRectGetMidY(layerRect))];
+	[[[self cameraView] layer] addSublayer:[[self captureManager] previewLayer]];
+    
+    [[[self captureManager]captureSession]startRunning];
+    
+//    UIButton *mainMenu = (UIButton *)[self.view viewWithTag:10];
+//    mainMenu.layer.cornerRadius = 5;
+}
 
 - (PFUser *)user
 {
@@ -28,14 +53,42 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    NSLog(@"Signup view did load");
+    [self setupCamera];
     self.passwordField.secureTextEntry = YES;
     
+//    [[self navigationController] setNavigationBarHidden:NO animated:NO];
+    [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationNone];
+    
+    
+    UIView *paddingView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 5, 30)];
+    UIView *paddingView2 = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 5, 30)];
+    self.passwordField.leftView = paddingView;
+    self.usernameField.leftView = paddingView2;
+    self.passwordField.leftViewMode = UITextFieldViewModeAlways;
+    self.usernameField.leftViewMode = UITextFieldViewModeAlways;
+    
+    [self.usernameField becomeFirstResponder];
+    
+    
     if ([PFUser currentUser]) {
-        [self.navigationController performSegueWithIdentifier:@"showPhone" sender:self];
+        NSLog(@"User existing %@", [PFUser currentUser]);
+        self.user = [PFUser currentUser];
+        [self performSegueWithIdentifier:@"showPhone" sender:self];
     }
     // self.user = [PFUser user];
     // Do any additional setup after loading the view.
 }
+
+-(void) viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    NSLog(@"Sign Up View will appear");
+}
+
+- (BOOL)prefersStatusBarHidden {
+    return YES;
+}
+
 
 - (void)signup {
     NSString *username = [self.usernameField.text stringByTrimmingCharactersInSet:
@@ -66,6 +119,7 @@
         [self.user signUpInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
             if (error) {
                 UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Sorry!" message:[error.userInfo objectForKey:@"error"] delegate:nil cancelButtonTitle:@"OK!" otherButtonTitles: nil];
+                self.user = nil;
                 [alertView show];
             }
             else {
@@ -85,6 +139,7 @@
     // Make sure your segue name in storyboard is the same as this line
     if ([[segue identifier] isEqualToString:@"showPhone"])
     {
+        NSLog(@"PERFORMED SEGUE SHOW PHONE");
         TPPhoneNumberViewController *vc = (TPPhoneNumberViewController *)[segue destinationViewController];
         NSLog(@"user %@", self.user);
         vc.user = self.user;

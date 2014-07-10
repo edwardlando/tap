@@ -8,25 +8,50 @@
 
 #import "TPLandingViewController.h"
 
+#import <AVFoundation/AVFoundation.h>
+#import "CaptureSessionManager.h"
+#import <MobileCoreServices/MobileCoreServices.h>
+#import <Parse/Parse.h>
+#import <ImageIO/ImageIO.h>
+
 @interface TPLandingViewController ()
+@property (strong, nonatomic) IBOutlet UIView *cameraView;
+@property (nonatomic,retain) CaptureSessionManager *captureManager;
+@property (strong, nonatomic) IBOutlet UIButton *mainMenu;
 
 @end
 
 @implementation TPLandingViewController
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        // Custom initialization
+-(void)setupCamera{
+    if(TARGET_IPHONE_SIMULATOR){
+        return;
     }
-    return self;
+    
+    [self setCaptureManager:[[CaptureSessionManager alloc] init]];
+	[[self captureManager] addVideoInputFrontCamera:NO]; // set to YES for Front Camera, No for Back camer
+    [[self captureManager] addStillImageOutput];
+	[[self captureManager] addVideoPreviewLayer];
+	CGRect layerRect = [[[self cameraView] layer] bounds];
+    [[[self captureManager] previewLayer] setBounds:layerRect];
+    [[[self captureManager] previewLayer] setPosition:CGPointMake(CGRectGetMidX(layerRect),CGRectGetMidY(layerRect))];
+	[[[self cameraView] layer] addSublayer:[[self captureManager] previewLayer]];
+    
+    [[[self captureManager]captureSession]startRunning];
 }
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    [[self navigationController] setNavigationBarHidden:YES animated:NO];
+        [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationNone];
+    self.mainMenu.layer.cornerRadius = 5;
+    [self setupCamera];
     // Do any additional setup after loading the view.
+}
+
+- (BOOL)prefersStatusBarHidden {
+    return YES;
 }
 
 - (void)didReceiveMemoryWarning

@@ -23,6 +23,7 @@
     int messagesSaved;
     long batchId;
     BOOL interactionCreated;
+    BOOL disappearOnSegue;
 }
 
 @property (strong, nonatomic) IBOutlet UILabel *tapsCounter;
@@ -47,7 +48,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
+    [self checkUserSituation];
     [self registerForNotifications];
     messagesSaved = 0;
     NSLog(@"Camera did load");
@@ -103,10 +104,35 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self name:kImageCapturedSuccessfully object:nil];
     NSLog(@"View Will Disappear");
     taps = 0;
+//    if (!disappearOnSegue) {
+        [self createInteraction];
+//    }
+
 //    [self unsubscribeFromNotifications];
 
 
     
+}
+
+-(void)checkUserSituation {
+    PFUser *currentUser = [PFUser currentUser];
+    if (currentUser) {
+        [currentUser refreshInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+            if (![[PFUser currentUser] objectForKey:@"phoneVerified"]) {
+                UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Uh Oh!" message:@"Please verify your phone number!" delegate:nil cancelButtonTitle:@"OK!" otherButtonTitles: nil];
+                [alertView show];
+                [self performSegueWithIdentifier:@"showLanding" sender:self];
+            }
+        }];
+        
+        NSLog(@"Current user: %@", currentUser.username);
+    }
+    else {
+        //        NSLog(@"Segue time!!!!");
+        //        disappearOnSegue = YES;
+        //        [self performSegueWithIdentifier:@"showLanding" sender:self];
+        
+    }
 }
 
 -(void)setupCameraScreen {
@@ -122,23 +148,6 @@
     [self resetBatchId];
     [self setupTap];
     
-    if (currentUser) {
-        [currentUser refreshInBackgroundWithBlock:^(PFObject *object, NSError *error) {
-            if (![[PFUser currentUser] objectForKey:@"phoneVerified"]) {
-                UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Uh Oh!" message:@"Please verify your phone number!" delegate:nil cancelButtonTitle:@"OK!" otherButtonTitles: nil];
-                [alertView show];
-                [self performSegueWithIdentifier:@"showLanding" sender:self];
-            }
-        }];
-        
-        NSLog(@"Current user: %@", currentUser.username);
-    }
-    else {
-        NSLog(@"Segue time!!!!");
-        [self performSegueWithIdentifier:@"showLanding" sender:self];
-    }
-
-
     takingPicture = true;
 }
 
@@ -261,20 +270,31 @@
     if (messagesSaved == taps) {
         NSLog(@"That was the last one");
         NSLog(@"Object %@", /*[sender objectForKey:@"object"]*/ notification.object);
-        if (!interactionCreated) {
-            interactionCreated = YES;
-            NSLog(@"Creating / updating the Interaction object");
-            NSString *batchIdString = [NSString stringWithFormat:@"%ld", batchId];
-            [TPProcessImage updateInteractions:self.recipients withBatchId:batchIdString];
-            
-        }
         
+        [self createInteraction];
         [self.sendingIndicator stopAnimating];
         [self.sendingIndicator setHidden:YES];
     }
 
 
     
+}
+
+-(void)createInteraction {
+    if (!interactionCreated) {
+        @try {
+            interactionCreated = YES;
+            NSLog(@"Creating / updating the Interaction object");
+            NSString *batchIdString = [NSString stringWithFormat:@"%ld", batchId];
+            [TPProcessImage updateInteractions:self.recipients withBatchId:batchIdString];
+            [self.sendingIndicator stopAnimating];
+            [self.sendingIndicator setHidden:YES];
+        }
+        @catch (NSException *exception) {
+            NSLog(@"Exception %@", exception);
+        }
+
+    }
 }
 
 -(void)swapCamera {
@@ -359,6 +379,8 @@
     if ([segue.identifier isEqual:@"showAllContacts"]) {
 //        TPAllContactsViewController *allConView = (TPAllContactsViewController*)segue.destinationViewController;
 //        allConView.contactsPhoneNumbersArray
+    } else if ([segue.identifier isEqual:@"showLanding"]) {
+        NSLog(@"PERFORMING SHOW LANDING SEGUE");
     }
 }
 
