@@ -18,6 +18,7 @@
 @property (strong, nonatomic) PFObject *selectedInteraction;
 @property (strong, nonatomic) TPAppDelegate *appDelegate;
 @property (strong, nonatomic) NSMutableDictionary *allTapsImages;
+@property (strong, nonatomic) NSMutableArray *allTapsArray;
 
 @end
 
@@ -30,6 +31,15 @@
     
     return _appDelegate;
 }
+
+
+-(NSMutableArray *)allTapsArray {
+    if (!_allTapsArray) {
+        _allTapsArray = [[NSMutableArray alloc] init];
+    }
+    return _allTapsArray;
+}
+
 
 -(NSMutableDictionary *)allTaps {
     if (!_allTaps) {
@@ -85,7 +95,6 @@
 {
     [super viewDidLoad];
     NSLog(@"Inbox view did load");
-    [self countFriendRequests];
     [self registerForNotifications];
     [self setTapLogo];
     [self setupNavBarStyle];
@@ -113,6 +122,7 @@
 
 -(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    [self countFriendRequests];
 //    countFriendRequests
 //    self.tapsCounterOutlet.frame = CGRectMake(self.tapsCounterOutlet.frame.origin.x, self.tapsCounterOutlet.frame.origin.y, 40, 40);
 //    [self.tapsCounterOutlet setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"pink"]]];
@@ -235,7 +245,7 @@
      NSDate *created = [object updatedAt];
      NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
      [dateFormat setDateFormat:@"EEE, dd MMM yy HH:mm:ss VVVV"];
-     
+    cell.userInteractionEnabled = NO;
      cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:20.0];
      cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ ago - Tap to reply directy",
                                   [self dateDiff:[dateFormat stringFromDate:created]]];/*, (unsigned long)[objects count]*/
@@ -263,37 +273,32 @@
 
      
      PFQuery *tapsQuery = [[PFQuery alloc] initWithClassName:@"Message"];
-//     NSLog(@"batchIds %@", [object objectForKey:@"batchIds"]);
+
+     NSString *interactionId = [object objectId];
+     UILabel *tapsCounter = (UILabel *)[cell viewWithTag:11];
      
     [tapsQuery whereKey:@"batchId" containedIn:[object objectForKey:@"batchIds"]];
-    [tapsQuery orderByDescending:@"imageId"];
+    [tapsQuery orderByAscending:@"batchId"];
     [tapsQuery whereKey:@"recipients" equalTo:[PFUser currentUser]];
     [tapsQuery whereKey:@"readArray" notEqualTo:[[PFUser currentUser] objectId]];
-     [tapsQuery whereKey:@"objectId" notContainedIn:self.appDelegate.allReadTaps];
+    [tapsQuery whereKey:@"objectId" notContainedIn:self.appDelegate.allReadTaps];
      
     [tapsQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         if (!error) {
             if ([objects count] > 0) {
-                 cell.detailTextLabel.text = @"Loading...";
-                NSLog(@"Number of objects %ld", [objects count]);
+                cell.detailTextLabel.text = @"Loading...";
+                NSLog(@"Number of objects %ld", (unsigned long)[objects count]);
+                cell.userInteractionEnabled = NO;
+                [tapsCounter setHidden: YES];
                 [ind setHidden:NO];
             }
-            NSString *interactionId = [object objectId];
+
 //            NSLog(@"Found %ld objects", [objects count]);
             [self.allTaps setObject:objects forKey:interactionId];
-
-
             
-//            if ([objects count] > 0) {
-//
-//                
-////                cell.detailTextLabel.text = [NSString stringWithFormat:@"2m ago - tap to open"/*, (unsigned long)[objects count]*/];
-//
-//            }
-            UILabel *tapsCounter = (UILabel *)[cell viewWithTag:11];
-
             NSMutableArray *allPhotosInBatch = [[NSMutableArray alloc] init];
-
+            NSMutableDictionary *allPhotosInBatchDict = [[NSMutableDictionary alloc] init];
+            
             __block int iterations = 0;
             
             for (PFObject *tap in objects) {
@@ -318,17 +323,23 @@
                                                
                                                [ind hidesWhenStopped];
                                                UIImage *image = [[UIImage alloc] initWithData:data];
-                                               [allPhotosInBatch addObject:@{@"image": image, @"imageId": [tap objectForKey:@"imageId"]}];
-//                                               NSLog(@"allPhotosInBatch %@", allPhotosInBatch);
+                                               [allPhotosInBatch addObject:@{@"image": image, @"imageId": [tap objectForKey:@"imageId"], @"batchId": [tap objectForKey:@"batchId"], @"interactionId":interactionId}];
+                                               
+                                               [self.allTapsArray addObject:@{@"image": image, @"imageId": [tap objectForKey:@"imageId"], @"batchId": [tap objectForKey:@"batchId"], @"interactionId":interactionId}];
+
                                                    NSLog(@"%d iterations out of %ld objects", iterations, (unsigned long)[objects count]);
                                                
                                              
                                               iterations++;
                                                if (iterations == [objects count]) {
                                                    
-                                                   [self.allTapsImages setObject:allPhotosInBatch forKey:interactionId];
-                                                   //                [self.allTapsImages setValue:allPhotosInBatch forKey:batchId];
-                                                   //                                                   NSLog(@"All taps images %@", self.allTapsImages);
+                                                   
+                                                   
+                                                   [self.allTapsImages setObject:allPhotosInBatchDict forKey:interactionId];
+                                                  [allPhotosInBatchDict setObject: allPhotosInBatch forKey:[tap objectForKey:@"batchId"]];
+                                                   NSLog(@"all photos in batch %@", allPhotosInBatch);
+                                                   //  [self.allTapsImages setValue:allPhotosInBatch forKey:batchId];
+                                                   //   NSLog(@"All taps images %@", self.allTapsImages);
                                                    [ind stopAnimating];
                                                    [ind setHidden:YES];
                                                    cell.userInteractionEnabled = YES;
@@ -407,8 +418,6 @@
     PFQuery *query = [PFQuery queryWithClassName:@"FriendRequest"];
     [query whereKey:@"targetUser" equalTo:[PFUser currentUser] ];
     [query whereKey:@"status" equalTo:@"pending"];
-    
-
     [query countObjectsInBackgroundWithBlock:^(int number, NSError *error) {
         NSLog(@"counted friend requests %d", number);
         self.appDelegate.pendingFriendRequests = @(number);
@@ -419,8 +428,12 @@
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
 
     self.selectedInteraction =[self.objects objectAtIndex:indexPath.row];
+    
     NSMutableArray *batchTaps = [self.allTaps objectForKey:[self.selectedInteraction objectId]];
-    NSMutableArray *batchTapsImages = [self.allTapsImages objectForKey:[self.selectedInteraction objectId]];
+//    NSMutableArray *batchTapsImages = [self.allTapsImages objectForKey:[self.selectedInteraction objectId]];
+    
+    NSMutableDictionary *allInteractionTaps =[self.allTapsImages objectForKey:[self.selectedInteraction objectId]];
+    
     
 //    NSLog(@"batch taps %@", batchTaps);
     
@@ -429,16 +442,17 @@
     [tapsCounter setHidden:YES];
     
 
-    if ([batchTaps count] == 0 || [batchTapsImages count] == 0) {
+    if ([batchTaps count] == 0 || !allInteractionTaps) {
         PFUser *userToReply = cell.sendingUser;
         [self performSegueWithIdentifier:@"showCamera" sender:userToReply];
 //        [self goToCamera:self];
         
     } else {
-        
-        NSSortDescriptor *imageIdDescriptor = [[NSSortDescriptor alloc] initWithKey:@"imageId" ascending:NO];
+        NSSortDescriptor *imageIdDescriptor = [[NSSortDescriptor alloc] initWithKey:@"imageId" ascending:YES];
         NSArray *sortDescriptors = @[imageIdDescriptor];
-        NSArray *sortedImagesArray = [batchTapsImages sortedArrayUsingDescriptors:sortDescriptors];
+        
+//        NSArray *sortedImagesArray = [batchTapsImages sortedArrayUsingDescriptors:sortDescriptors];
+        NSArray *sortedTapsArray = [batchTaps sortedArrayUsingDescriptors:sortDescriptors];
         
 //        NSLog(@"batch images array %@", batchTapsImages);
 //        NSLog(@"sorted batch images array %@", sortedImagesArray);
@@ -448,9 +462,28 @@
 //            NSLog(@"tapped on the one visited");
 //            batchTaps = [[NSMutableArray alloc] init];
 //            sortedImagesArray = [[NSMutableArray alloc] init];
+            
 //        }
+    
         
-        NSDictionary *senderObject = @{@"batchImages" :sortedImagesArray, @"allTapObjects": batchTaps};
+        NSMutableDictionary *allTapsDict = [[NSMutableDictionary alloc] init];
+        
+        for (id tap in self.allTapsArray) {
+            NSLog(@"tap in all taps array %@", tap);
+            NSString *tapInteractionId = [tap objectForKey:@"interactionId"];
+            NSString *tapBatchId = [tap objectForKey:@"batchId"];
+            if ([tapInteractionId isEqualToString: [self.selectedInteraction objectId]]) {
+                if (![allTapsDict objectForKey:tapBatchId]) {
+                    [allTapsDict setObject:[[NSMutableArray alloc] initWithObjects:tap, nil] forKey:tapBatchId];
+                } else {
+                    [[allTapsDict objectForKey:tapBatchId] addObject:tap];
+                }
+            }
+        }
+
+        
+        
+        NSDictionary *senderObject = @{@"allInteractionTaps" :allTapsDict, @"allTapObjects": sortedTapsArray};
         
         [self performSegueWithIdentifier:@"showTap" sender:senderObject];
         
@@ -468,6 +501,13 @@
         vc.spray = self.selectedInteraction;
         vc.objects = [sender objectForKey:@"allTapObjects"];
         vc.allBatchImages = [sender objectForKey:@"batchImages"];
+        
+        
+        
+        
+//        vc.allInteractionTaps = allTapsDict;
+        vc.allInteractionTaps = [sender objectForKey:@"allInteractionTaps"];
+        
         
     } else if ([segue.identifier isEqual:@"showCamera"]) {
         TPCameraViewController *vc = (TPCameraViewController *)segue.destinationViewController;

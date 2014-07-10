@@ -41,6 +41,7 @@
         }
         
         [self.user setObject:phone forKey:@"phone"];
+        [self.user setObject:phone forKey:@"phoneNumber"];
         NSLog(@"%@", self.user);
         
         

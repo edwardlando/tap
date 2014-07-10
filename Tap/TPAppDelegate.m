@@ -19,10 +19,12 @@
         NSArray *friendsArray = [[PFUser currentUser] objectForKey:@"friendsArray"];
         
         self.friendsPhoneNumbersArray = [[NSMutableArray alloc] init];
+        self.friendsArray = [[NSMutableArray alloc] init];
         
         self.numbersToUsernamesDict = [[NSMutableDictionary alloc] init];
 
         self.friendsObjectsDict = [[NSMutableDictionary alloc] init];
+        
 //        if ([[PFUser currentUser] objectForKey:@"myGroupArray"])  {
 //            [[[PFUser currentUser] objectForKey:@"myGroupArray"] fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
                 self.myGroup = [[PFUser currentUser] objectForKey:@"myGroupArray"] ;
@@ -36,7 +38,11 @@
                 [friend fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
                     
                     [self.friendsObjectsDict setObject:object forKey:[object objectForKey:@"phoneNumber"]];
-                    
+
+                    if (![self.friendsArray containsObject:friend]) {
+                        [self.friendsArray addObject:friend];
+                        NSLog(@"Adding friend to friendsArray appDelegate %ld", [self.friendsArray count]);                        
+                    }
                     if (![self.friendsPhoneNumbersArray containsObject:[object objectForKey:@"phoneNumber"]]) {
                         [self.friendsPhoneNumbersArray addObject:[object objectForKey:@"phoneNumber"]];
                         NSLog(@"added this friend's phone nubmer %@", [object objectForKey:@"phoneNumber"]);

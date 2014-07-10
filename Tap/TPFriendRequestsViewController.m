@@ -148,19 +148,20 @@
     NSString *friendRequesterPhoneNumber = [friendRequest objectForKey:@"requestingUserPhoneNumber"];
     NSString *friendRequesterNameInMyContacts = [self.appDelegate.contactsDict objectForKey:friendRequesterPhoneNumber];
     NSString *friendRequesterUsername = [friendRequest objectForKey:@"requestingUserUsername"];
-    NSLog(@"Adding this guy as a friend %@", [user objectForKey:@"username"]);
+    
+    NSLog(@"Adding this guy as a friend %@", friendRequesterUsername);
     if (![[self.user objectForKey:@"friendsArray"] containsObject:user]) {
         
         PFUser *currentUser = [PFUser currentUser];
         
         [[currentUser objectForKey:@"friendsArray"] addObject:user];
-        [[currentUser objectForKey:@"friendsPhones"] addObject:[user objectForKey:@"phoneNumber"] ];
-        [[currentUser objectForKey:@"friendsPhonesDict"] setObject:friendRequesterNameInMyContacts forKey:[user objectForKey:@"phoneNumber"]];
-        
+        [[currentUser objectForKey:@"friendsPhones"] addObject:friendRequesterPhoneNumber];
+        [[currentUser objectForKey:@"friendsPhonesDict"] setObject:friendRequesterNameInMyContacts forKey:friendRequesterPhoneNumber];
+            
 //        [[user objectForKey:@"friendsArray"] addObject:currentUser];
 //        [[currentUser objectForKey:@"friendRequestsArray"] removeObject:user];
         
-        [self.appDelegate.friendsPhoneNumbersArray addObject:[user objectForKey:@"phoneNumber"]];
+        [self.appDelegate.friendsPhoneNumbersArray addObject:friendRequesterPhoneNumber];
         
         friendRequest[@"status"] = @"approved";
         [friendRequest saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
@@ -178,9 +179,7 @@
                                                         } else {
                                                             UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Accepted Friend Request" message:@"You're now friends with this dude" delegate:nil cancelButtonTitle:nil otherButtonTitles:@"FUCK YEAH!", nil];
                                                             [alert show];
-                                                            
-                                                            [self.tableView reloadData];
-                                                            [self.appDelegate loadFriends];
+                                                            [self viewDidLoad];
                                                         }
                                                         //
                                                     }];

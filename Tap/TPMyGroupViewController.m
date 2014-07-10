@@ -45,16 +45,25 @@
 {
     [super viewDidLoad];
 
+    if ([self.appDelegate.friendsArray count] == 0) {
+        NSLog(@"No friends in app delegate");
+    }
     [self.appDelegate loadFriends];
     if ([self.appDelegate.pendingFriendRequests intValue] > 0) {
         pendingFriendReqs = YES;
     } else {
         pendingFriendReqs = NO;
     }
-    [self alertIfNoFriends]; 
+    [self alertIfNoFriends];
+    
+    
 
     for (PFUser *friendInGroup in [[PFUser currentUser] objectForKey:@"myGroupArray"]) {
         [friendInGroup fetchIfNeeded];
+    }
+
+    for (PFUser *friend in [[PFUser currentUser] objectForKey:@"friendsArray"]) {
+        [friend fetchIfNeeded];
     }
     
     [self setupNavBarStyle];
@@ -95,8 +104,8 @@
     
     if (totalFriends == 0) {
         NSLog(@"No one in group");
-        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"You Have No Friends" message:@"Start by adding or inviting some cool people" delegate:nil cancelButtonTitle:nil otherButtonTitles:@"FUCK YEAH!", nil];
-        [alert show];
+//        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"You Have No Friends" message:@"Start by adding or inviting some cool people" delegate:nil cancelButtonTitle:nil otherButtonTitles:@"FUCK YEAH!", nil];
+//        [alert show];
     }
 
 }
@@ -131,6 +140,19 @@
     }
 }
 
+- (void)tableView:(UITableView *)tableView willDisplayHeaderView:(UIView *)view forSection:(NSInteger)section
+{
+    // Background color
+    //    if (section == 0) {
+    view.tintColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"blue"]];
+    
+    // Text Color
+    UITableViewHeaderFooterView *header = (UITableViewHeaderFooterView *)view;
+    [header.textLabel setTextColor:[UIColor whiteColor]];
+    //    }
+}
+
+
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
 
@@ -147,8 +169,8 @@
         
         return inMyGroup;
     } else {
-        NSLog(@"section 2: %d", totalFriends - inMyGroup );
-        return totalFriends - inMyGroup;
+//        NSLog(@"section 2: %d", totalFriends - inMyGroup );
+        return [self.appDelegate.friendsArray count];
     }
 
 }
@@ -169,7 +191,9 @@
     } else if (indexPath.section == 1) {
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"friendInGroupCell" forIndexPath:indexPath];
         PFUser *friendInGroup = [self.appDelegate.myGroup objectAtIndex:indexPath.row];
+      
         NSLog(@"friend in group %@", [friendInGroup objectForKey:@"username"]);
+        
         NSString *friendPhoneNumber = [friendInGroup objectForKey:@"phoneNumber"];
         NSString *friendUsername = [friendInGroup objectForKey:@"username"];
         NSString *friendName = [self.appDelegate.contactsDict objectForKey:friendPhoneNumber];
@@ -190,8 +214,16 @@
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"friendCell" forIndexPath:indexPath];
 //        PFUser *friend = self.appDelegate.
         
-        NSString *friendPhoneNumber = [self.appDelegate.friendsPhoneNumbersArray objectAtIndex:indexPath.row];
+        PFUser *friend = [self.appDelegate.friendsArray objectAtIndex:indexPath.row];
+        if ([self.appDelegate.myGroup containsObject:friend]) {
+//            return nil;
+            NSLog(@"This guy is in group %@", friend);
+        }
+        NSString *friendPhoneNumber = [friend objectForKey:@"phoneNumber"];
+        NSLog(@"Friend %@", friend);
+        NSLog(@"Phone Number %@", friendPhoneNumber);
         NSString *friendName = [self.appDelegate.contactsDict objectForKey:friendPhoneNumber];
+        NSLog(@"Friend name %@", friendName);
 //        NSString *friendName =
 //        PFUser *friend = [[[PFUser currentUser] objectForKey:@"friendArray"] objectAtIndex:indexPath.row];
 //        [friend fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
@@ -219,7 +251,7 @@
                 cell.detailTextLabel.text = [self.appDelegate.numbersToUsernamesDict objectForKey:friendPhoneNumber];
             }
 //            else {
-//                cell.textLabel.text = friendNameInMyContacts;
+//                cell.textLabel.text = [object objectForKey:@"username"];
 //                cell.detailTextLabel.text = [object objectForKey:@"username"];
 //            }
 //        }];
@@ -234,10 +266,10 @@
         return @"Friend Requests";
     }
     else if (section == 1){
-        return @"My Group";
+        return @"MY GROUP";
     }
     else{
-        return @"All Friends";
+        return @"ALL FRIENDS";
     }
 }
 

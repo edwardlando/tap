@@ -13,8 +13,11 @@
 @property (strong, nonatomic) UIWindow *window;
 @property (strong, nonatomic) NSMutableArray *myGroup;
 @property (strong, nonatomic) NSMutableArray *contactsPhoneNumbersArray;
+
 @property (strong, nonatomic) NSMutableArray *friendsPhoneNumbersArray;
 @property (strong, nonatomic) NSMutableArray *friendRequestsSent;
+@property (strong, nonatomic) NSMutableArray *friendsArray;
+
 @property (strong, nonatomic) NSNumber *pendingFriendRequests;
 
 @property (strong, nonatomic) NSMutableDictionary *contactsDict;

@@ -71,7 +71,7 @@
     self.tableView.sectionIndexTrackingBackgroundColor = [UIColor lightGrayColor];
     self.tableView.sectionIndexColor = [UIColor darkGrayColor];
     self.sections = @[@"My Friends on Tap", @"Invite Friends"];
-    NSLog(@"self.friends numbers %@", self.appDelegate.friendsPhoneNumbersArray );
+
     [self setNavbarIcon];
     [self setupNavBarStyle];
 }
@@ -138,7 +138,7 @@
     
     if (![friendNameInMyContacts isEqual:@""]) {
         cell.textLabel.text = friendNameInMyContacts;
-        cell.detailTextLabel.text = username;
+//        cell.detailTextLabel.text = username;
     }
     
 
@@ -155,24 +155,16 @@
     }
     
     PFQuery *query = [PFUser query];
-//    PFQuery *requestsQuery = [PFQuery queryWithClassName:@"FriendRequest"];
+    NSLog(@"self.friends numbers %@", self.appDelegate.friendsPhoneNumbersArray);
+    NSArray *friendsPhoneNumbers = self.appDelegate.friendsPhoneNumbersArray;
     
-//    [query includeKey:@"phoneNumber"];
-    
-//    [query setLimit:0];
-//    requestsQuery whereKey:@"targetUser" notEqualTo:<#(id)#>
     [query whereKey:@"phoneNumber" containedIn:self.appDelegate.contactsPhoneNumbersArray];
-
-    [query whereKey:@"phoneNumber" notContainedIn:self.appDelegate.friendsPhoneNumbersArray];
-    [query whereKey:@"phoneNumber" notContainedIn:self.appDelegate.friendRequestsSent];
     
-//    [query whereKey:@"" notContainedIn:[]];
-
-//    PFQuery *all = [PFQuery orQueryWithSubqueries:@[query,requestsQuery]];
+    [query whereKey:@"phone" notContainedIn:[friendsPhoneNumbers arrayByAddingObjectsFromArray: self.appDelegate.friendRequestsSent ]];
+    
+//    [query whereKey:@"phoneNumber" notContainedIn:self.appDelegate.friendRequestsSent];
+    
     return query;
-//    [query orderByDescending:@"createdAt"];
-
-//    return all;
     
 }
 

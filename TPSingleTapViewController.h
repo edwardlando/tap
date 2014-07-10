@@ -15,5 +15,6 @@
 @property (strong, nonatomic) NSMutableArray *allBatchImages;
 @property (strong, nonatomic) PFObject *spray;
 @property (strong, nonatomic) IBOutlet PFImageView *imageView;
+@property (strong, nonatomic) NSMutableDictionary *allInteractionTaps;
 
 @end
