@@ -123,7 +123,7 @@
     NSString *currentBatchId = [self.sortedKeysArray objectAtIndex:currentBatch];
     NSArray *batchImages = [self.allInteractionTaps objectForKey:currentBatchId];
     
-    NSSortDescriptor *imageIdDescriptor = [[NSSortDescriptor alloc] initWithKey:@"imageId" ascending:NO];
+    NSSortDescriptor *imageIdDescriptor = [[NSSortDescriptor alloc] initWithKey:@"imageId" ascending:YES];
     NSArray *sortDescriptors = @[imageIdDescriptor];
     NSArray *sortedBatchPhotos = [batchImages sortedArrayUsingDescriptors:sortDescriptors];
 

@@ -20,12 +20,14 @@
     BOOL takingPicture;
     int taps;
     BOOL frontCam;
+    int messagesSaved;
     long batchId;
     BOOL interactionCreated;
 }
 
 @property (strong, nonatomic) IBOutlet UILabel *tapsCounter;
 @property (strong, nonatomic) TPAppDelegate *appDelegate;
+@property (strong, nonatomic) IBOutlet UIActivityIndicatorView *sendingIndicator;
 
 @end
 
@@ -45,6 +47,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    messagesSaved = 0;
     NSLog(@"Camera did load");
     [self setupCamera];
 //    [self setupCameraScreen];
@@ -189,8 +192,11 @@
 
 -(void)takePicture{
     NSLog(@"Take Picture");
+    [self.sendingIndicator startAnimating];
+    [self.sendingIndicator setHidden:NO];
     [[self captureManager]captureStillImage];
 }
+
 
 -(void) registerForNotifications {
     [[NSNotificationCenter defaultCenter] addObserver:self
@@ -212,7 +218,25 @@
                                              selector:@selector(viewDidLoad)
                                                  name:@"appEnteredForeground"
                                                object:nil];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(handleSavedImageNotification:)
+                                                 name:@"savedImageToServer"
+                                               object:nil];
     
+}
+
+-(void)handleSavedImageNotification:(NSNotification *)notification {
+    messagesSaved++;
+    
+    if (messagesSaved == taps) {
+        NSLog(@"That was the last one");
+        NSLog(@"Object %@", /*[sender objectForKey:@"object"]*/ notification.object);
+        [self.sendingIndicator stopAnimating];
+        [self.sendingIndicator setHidden:YES];
+    }
+
+
     
 }
 
@@ -260,7 +284,8 @@
 
     }
 //    NSLog(@"sending to %@", recipients);
-    
+//    [self.sendingIndicator startAnimating];
+//    [self.sendingIndicator setHidden:NO];
     [TPProcessImage sendTapTo:recipients andImage:dataForJPEGFile inBatch:batchIdString withImageId: taps completed:^(BOOL success) {
         //        NSLog(@"HOly shit it saved?");
     }];

@@ -73,6 +73,8 @@
             [msg saveEventually:^(BOOL succeeded, NSError *error) {
                 if(succeeded){
                     NSLog(@"Succeded");
+                    [[NSNotificationCenter defaultCenter] postNotificationName:@"savedImageToServer" object:@(taps)];
+
                 } else {
                     NSLog(@"Error: %@", error);
                 }

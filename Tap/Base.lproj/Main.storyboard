@@ -287,6 +287,10 @@
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <activityIndicatorView hidden="YES" opaque="NO" tag="99" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="white" id="FoL-T8-MgE">
+                                <rect key="frame" x="258" y="12" width="20" height="20"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </activityIndicatorView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
@@ -295,6 +299,7 @@
                     <connections>
                         <outlet property="cameraView" destination="QUu-xs-5q7" id="C1Q-Wm-2ar"/>
                         <outlet property="imageView" destination="fcU-79-8tM" id="ULg-60-MwU"/>
+                        <outlet property="sendingIndicator" destination="FoL-T8-MgE" id="5g2-Sw-jxP"/>
                         <outlet property="tapsCounter" destination="Lja-cq-arR" id="09W-eF-Yvl"/>
                         <segue destination="kV9-w9-b9A" kind="modal" identifier="showLanding" animates="NO" id="pSg-CV-kRm"/>
                         <segue destination="sRn-tg-WCP" kind="modal" identifier="showAllContacts" id="v7N-Hp-VWO"/>
@@ -932,7 +937,7 @@
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
         <segue reference="1J9-RQ-ymp"/>
+        <segue reference="v7N-Hp-VWO"/>
         <segue reference="8Fy-Ee-6NR"/>
-        <segue reference="fq7-Jp-RlX"/>
     </inferredMetricsTieBreakers>
 </document>

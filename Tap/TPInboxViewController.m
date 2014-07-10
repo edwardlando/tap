@@ -159,7 +159,7 @@
 //    [self queryForTable];
 //    self.view ref
 //    [self.tableView reloadData];
-    [self viewDidLoad];
+//    [self viewDidLoad];
 }
 
 -(void)didDismissSingleTapView {
@@ -276,7 +276,7 @@
 
      NSString *interactionId = [object objectId];
      UILabel *tapsCounter = (UILabel *)[cell viewWithTag:11];
-     
+     self.allTapsArray = [[NSMutableArray alloc] init];
     [tapsQuery whereKey:@"batchId" containedIn:[object objectForKey:@"batchIds"]];
     [tapsQuery orderByAscending:@"batchId"];
     [tapsQuery whereKey:@"recipients" equalTo:[PFUser currentUser]];
@@ -469,14 +469,20 @@
         NSMutableDictionary *allTapsDict = [[NSMutableDictionary alloc] init];
         
         for (id tap in self.allTapsArray) {
-            NSLog(@"tap in all taps array %@", tap);
             NSString *tapInteractionId = [tap objectForKey:@"interactionId"];
             NSString *tapBatchId = [tap objectForKey:@"batchId"];
             if ([tapInteractionId isEqualToString: [self.selectedInteraction objectId]]) {
                 if (![allTapsDict objectForKey:tapBatchId]) {
+                    NSLog(@"First tap %@", tap);
                     [allTapsDict setObject:[[NSMutableArray alloc] initWithObjects:tap, nil] forKey:tapBatchId];
                 } else {
-                    [[allTapsDict objectForKey:tapBatchId] addObject:tap];
+                    if (![[allTapsDict objectForKey:tapBatchId] containsObject:tap]) {
+                        NSLog(@"adding this %@", tap);
+                        [[allTapsDict objectForKey:tapBatchId] addObject:tap];
+                    } else {
+                        NSLog(@"aleady contains this tap %@", tap);
+                    }
+
                 }
             }
         }
