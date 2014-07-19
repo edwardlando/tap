@@ -100,6 +100,8 @@
         NSString *friendRequesterNameInMyContacts = [self.appDelegate.contactsDict objectForKey:friendRequesterPhoneNumber];
         NSString *friendRequesterUsername = [object objectForKey:@"requestingUserUsername"];
     
+    NSLog(@"Friend reqester name %@", friendRequesterNameInMyContacts);
+    
         if ([friendRequesterNameInMyContacts isEqual:@""]) {
             cell.textLabel.text = friendRequesterUsername;
             cell.detailTextLabel.text = friendRequesterPhoneNumber;
@@ -160,7 +162,7 @@
             
 //        [[user objectForKey:@"friendsArray"] addObject:currentUser];
 //        [[currentUser objectForKey:@"friendRequestsArray"] removeObject:user];
-        
+        [self.appDelegate.friendsArray addObject:user];
         [self.appDelegate.friendsPhoneNumbersArray addObject:friendRequesterPhoneNumber];
         
         friendRequest[@"status"] = @"approved";

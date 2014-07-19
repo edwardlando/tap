@@ -18,6 +18,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    [self createUserBroadcast];
     // Do any additional setup after loading the view.
     
 }
@@ -35,8 +36,6 @@
             
             [self performSegueWithIdentifier:@"showAsk" sender:self];
             
-
-            
 //            [self.navigationController popToRootViewControllerAnimated:YES];
                         //[PFCloud callFunctionInBackground:@"setupInstallation" withParameters:@{@"instId":Instid} target:nil selector:nil];
         }
@@ -46,6 +45,14 @@
             [alert show];
         }
     }];
+}
+
+-(void)createUserBroadcast {
+    PFObject *cast = [PFObject objectWithClassName:@"Broadcast"];
+    cast[@"owner"] = [PFUser currentUser];
+    cast[@"updated"] = [NSNumber numberWithBool:NO];
+    cast[@"batchIds"] = [[NSMutableArray alloc] init];
+    [cast saveInBackground];
 }
 
 

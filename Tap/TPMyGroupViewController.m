@@ -129,7 +129,7 @@
 //    }
 //    
 //    return 3;
-    return 3;
+    return 2;
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
@@ -263,13 +263,13 @@
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section{
     if (section == 0) {
-        return @"Friend Requests";
+        return @"FRIEND REQUESTS";
     }
-    else if (section == 1){
-        return @"MY GROUP";
-    }
+//    else if (section == 1){
+//        return @"MY GROUP";
+//    }
     else{
-        return @"ALL FRIENDS";
+        return @"FRIENDS";
     }
 }
 

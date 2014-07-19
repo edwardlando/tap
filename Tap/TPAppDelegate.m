@@ -34,6 +34,7 @@
 
         
         if ([friendsArray count] > 0) {
+            NSLog(@"Friends array count > 0");
             for (PFUser *friend in friendsArray) {
                 [friend fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
                     
@@ -67,11 +68,15 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     // Override point for customization after application launch.
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
     
     [Parse setApplicationId:@"oa9f1pYhUoLldBojIPFVwPDpcsaMjuhfkSi1bb8a"
                   clientKey:@"HojAK6PbBNgnHwF4Se5RV2X9fFVnqAhb2yLSo7ad"];
     
     [PFAnalytics trackAppOpenedWithLaunchOptions:launchOptions];
+    
+    NSSetUncaughtExceptionHandler(&uncaughtExceptionHandler);
+    
     
     NSDictionary *notificationPayload = launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey];
     
@@ -87,15 +92,16 @@
         }];
     }
     
-    [self loadFriends];
+    @try {
+        [self loadFriends];
+    }
+    @catch (NSException *exception) {
+        NSLog(@"load friends exception %@", exception);
+    }
+
     
     NSLog(@"friends array %@", self.friendsPhoneNumbersArray);
-//    [self tempLoadFriends];
-    //Temp
-    
-//    if ([PFUser currentUser]) {
-//        self.myGroup = [@[[PFUser currentUser]] mutableCopy];        
-//    }
+
 
     // Register for push notifications
     [application registerForRemoteNotificationTypes:
@@ -105,6 +111,12 @@
     
     
     return YES;
+}
+
+void uncaughtExceptionHandler(NSException *exception) {
+    NSLog(@"CRASH: %@", exception);
+    NSLog(@"Stack Trace: %@", [exception callStackSymbols]);
+    // Internal error reporting
 }
 
 - (void)application:(UIApplication *)application

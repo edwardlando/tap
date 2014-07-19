@@ -24,11 +24,12 @@
     long batchId;
     BOOL interactionCreated;
     BOOL disappearOnSegue;
+    BOOL shouldCreateInteraction;
 }
 
 @property (strong, nonatomic) IBOutlet UILabel *tapsCounter;
 @property (strong, nonatomic) TPAppDelegate *appDelegate;
-@property (strong, nonatomic) IBOutlet UIActivityIndicatorView *sendingIndicator;
+@property (strong, nonatomic) IBOutlet UILabel *sendingIndicator;
 @property (strong, nonatomic) NSMutableArray *recipients;
 @end
 
@@ -48,7 +49,8 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-//    [self checkUserSituation];
+    [self checkUserSituation];
+    
     [self registerForNotifications];
     messagesSaved = 0;
     NSLog(@"Camera did load");
@@ -69,7 +71,7 @@
         // turn button to red
         [self makeMainMenuPink];
     } else {
-        [inboxButton setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"blue"]]];
+        [inboxButton setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"black"]]];
     }
     
     [[self navigationController] setNavigationBarHidden:YES animated:NO];
@@ -87,13 +89,16 @@
     
     // Login
 
-    [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationNone];
+
 
     
 }
 
 -(void) viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    
+    [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationFade];
+    
     taps = 0;
     messagesSaved = 0;
     self.recipients = [[NSMutableArray alloc] init];
@@ -104,15 +109,11 @@
 
 -(void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:kImageCapturedSuccessfully object:nil];
     NSLog(@"View Will Disappear");
-    taps = 0;
-//    if (!disappearOnSegue) {
+    if (taps > 0) {
         [self createInteraction];
-//    }
-
-//    [self unsubscribeFromNotifications];
-
+    }
+    taps = 0;
 
     
 }
@@ -131,20 +132,16 @@
         NSLog(@"Current user: %@", currentUser.username);
     }
     else {
-        //        NSLog(@"Segue time!!!!");
-        //        disappearOnSegue = YES;
-        //        [self performSegueWithIdentifier:@"showLanding" sender:self];
+        NSLog(@"No user");
+        disappearOnSegue = YES;
+        [self performSegueWithIdentifier:@"showLanding" sender:self];
         
     }
 }
 
 -(void)setupCameraScreen {
 
-    PFUser *currentUser = [PFUser currentUser];
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(saveImage)
-                                                 name:kImageCapturedSuccessfully
-                                               object:nil];
+
     interactionCreated = NO;
     taps = 0;
     frontCam = NO;
@@ -183,26 +180,30 @@
     
 }
 
--(void) handleNoGroup {
+-(void) handleNoFriends {
     NSLog(@"No Group");
-    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Add Friends" message:@"It seems that your group is empty, start by adding a couple of friends. If no one is using Tap, invite them!" delegate:nil cancelButtonTitle:@"OK!" otherButtonTitles: nil];
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Add Friends" message:@"It seems that you have no friends, start by adding a couple!" delegate:nil cancelButtonTitle:@"OK!" otherButtonTitles: nil];
     [alertView show];
     [self performSegueWithIdentifier:@"showAllContacts" sender:self];
 }
 
 -(void)touch:(UITapGestureRecognizer *)recognizer
 {
-    if ([self.appDelegate.myGroup count] <= 0) {
-        NSLog(@"Handle no group");
-        [self handleNoGroup];
-        return;
-    }
+//    if ([self.appDelegate.friendsArray count] <= 0) {
+//        NSLog(@"Handle no friends");
+////        [self handleNoGroup];
+//        [self handleNoFriends];
+//        return;
+//    }
+
     NSLog(@"Tap");
 
     [self takePicture];
     taps++;
     self.tapsCounter.text = [NSString stringWithFormat:@"%d", taps];
 }
+
+
 
 -(void) makeMainMenuPink {
     NSLog(@"making menu pink");
@@ -212,14 +213,22 @@
 
 -(void)takePicture{
     NSLog(@"Take Picture");
-    [self.sendingIndicator startAnimating];
     [self.sendingIndicator setHidden:NO];
     [[self captureManager]captureStillImage];
 }
 
 
 -(void) registerForNotifications {
+    
+    [self unsubscribeFromNotifications];
+    
     NSLog(@"Registered for notifications");
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(saveImage)
+                                                 name:kImageCapturedSuccessfully
+                                               object:nil];
+    
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(setupCameraScreen)
                                                  name:@"onboardingFinished"
@@ -249,7 +258,8 @@
 
 -(void) unsubscribeFromNotifications {
     NSLog(@"Unsubscribed from notifications");
-    
+
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:kImageCapturedSuccessfully object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:@"onboardingFinished"];
 
 
@@ -266,28 +276,35 @@
 
 -(void)handleSavedImageNotification:(NSNotification *)notification {
     messagesSaved++;
+    
     NSLog(@"handleSavedImageNotification, incremented messagesSaved %d", messagesSaved);
     NSLog(@"num of messages saved %d / num if taps %d / object %@", messagesSaved, taps, notification.object);
-
+    
+//    self.tapsCounter.text = [NSString stringWithFormat:@"%d", [self.tapsCounter.text intValue] - 1];
     
     if (messagesSaved == taps) {
         NSLog(@"That was the last one");
         NSLog(@"Object %@", /*[sender objectForKey:@"object"]*/ notification.object);
         
         [self createInteraction];
-        [self.sendingIndicator stopAnimating];
+        
+
         [self.sendingIndicator setHidden:YES];
     }
 }
 
 -(void)createInteraction {
+    
     if (!interactionCreated) {
         @try {
             interactionCreated = YES;
             NSLog(@"Creating / updating the Interaction object");
             NSString *batchIdString = [NSString stringWithFormat:@"%ld", batchId];
-            [TPProcessImage updateInteractions:self.recipients withBatchId:batchIdString];
-            [self.sendingIndicator stopAnimating];
+//            [TPProcessImage updateInteractions:self.recipients withBatchId:batchIdString];
+
+            [TPProcessImage updateBroadcast:batchIdString];
+            
+
             [self.sendingIndicator setHidden:YES];
         }
         @catch (NSException *exception) {

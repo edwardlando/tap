@@ -13,7 +13,10 @@
 #import <AddressBook/ABAddressBook.h>
 #import "TPAppDelegate.h"
 
-@interface TPAllContactsViewController ()
+@interface TPAllContactsViewController () {
+    BOOL pendingFriendReqs;
+}
+
 - (IBAction)backButton:(id)sender;
 - (IBAction)refreshPage:(id)sender;
 
@@ -66,14 +69,67 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    NSLog(@"This is still being run");
+    
 //    NSLog(@"self.appdel %@", self.appDelegate.contactsPhoneNumbersArray);
     self.tableView.sectionIndexBackgroundColor = [UIColor clearColor];
     self.tableView.sectionIndexTrackingBackgroundColor = [UIColor lightGrayColor];
     self.tableView.sectionIndexColor = [UIColor darkGrayColor];
-    self.sections = @[@"My Friends on Tap", @"Invite Friends"];
+
+    if ([self.appDelegate.friendsArray count] == 0) {
+        NSLog(@"No friends in app delegate");
+    }
+    [self.appDelegate loadFriends];
+    if ([self.appDelegate.pendingFriendRequests intValue] > 0) {
+        pendingFriendReqs = YES;
+    } else {
+        pendingFriendReqs = NO;
+    }
+
+    [self alertIfNoFriends];
+
+    
+    self.sections = @[@"Friend Requests", @"Contacts on Tap", @"Invite Contacts"];
 
     [self setNavbarIcon];
     [self setupNavBarStyle];
+}
+
+-(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
+    if ([tableView.dataSource tableView:tableView numberOfRowsInSection:section] == 0) {
+        return 0;
+    } else {
+        return 30.0f;
+    }
+}
+
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section{
+    return [self.sections objectAtIndex:section];
+}
+
+- (void)tableView:(UITableView *)tableView willDisplayHeaderView:(UIView *)view forSection:(NSInteger)section
+{
+    // Background color
+    //    if (section == 0) {
+    view.tintColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"blue"]];
+    
+    // Text Color
+    UITableViewHeaderFooterView *header = (UITableViewHeaderFooterView *)view;
+    [header.textLabel setTextColor:[UIColor whiteColor]];
+    //    }
+}
+
+
+-(void)alertIfNoFriends {
+    NSInteger totalFriends = [self.appDelegate.friendsArray count];
+    
+    if (totalFriends == 0) {
+        NSLog(@"No one in group");
+        //        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"You Have No Friends" message:@"Start by adding or inviting some cool people" delegate:nil cancelButtonTitle:nil otherButtonTitles:@"FUCK YEAH!", nil];
+        //        [alert show];
+    }
+    
 }
 
 -(void) setNavbarIcon {
@@ -98,16 +154,26 @@
 
 #pragma mark - Table view data source
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-//    NSString *sectionTitle = [self.sections objectAtIndex:section];
-//    NSArray *sectionContacts = [self.alphabeticalPhonebook objectForKey:sectionTitle];
-//    if (section == 0) {
-//    NSLog(@"self.objects %@", self.objects);
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    
+    //    NSInteger totalFriends = [[[PFUser currentUser] objectForKey:@"friendsArray"] count];
+    NSInteger totalFriends = [self.appDelegate.friendsPhoneNumbersArray count];
+    NSInteger inMyGroup = [[[PFUser currentUser] objectForKey:@"myGroupArray"] count];
+    
+    // Return the number of rows in the section.
+    if (section == 0) {
+        if (pendingFriendReqs) return 1;
+        
+        return 0;
+    } else if (section == 1) {
+        
+        return inMyGroup;
+    } else {
+        //        NSLog(@"section 2: %d", totalFriends - inMyGroup );
         return [self.objects count];
-//    } else {
-//        return [self.appDelegate.contactsPhoneNumbersArray count] - self.objects.count ;
-//    }
-
+    }
+    
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath object:(PFObject *)object{
@@ -170,7 +236,8 @@
 
 
 - (IBAction)backButton:(id)sender {
-    [self.navigationController popViewControllerAnimated:YES];
+//    [self.navigationController popViewControllerAnimated:YES];
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (IBAction)refreshPage:(id)sender {

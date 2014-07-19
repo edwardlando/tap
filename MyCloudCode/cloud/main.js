@@ -16,6 +16,25 @@ Array.prototype.arrayContains = function(obj) {
 }
 
 
+// Parse.Cloud.beforeSave(Parse.User, function(request, response) {
+//     console.log("user before save");
+//     createUserBroadcast(request.object);
+//     response.success();
+// });
+
+
+// var createUserBroadcast = function ( user) {
+//     console.log("create user broadcast for user " + user.id);
+//     var userBroadcast =  Parse.Object.extend("UserBroadcast");
+//     var cast = new userBroadcast();
+
+//     cast.set("owner", user);
+//     cast.set("updated", true);
+//     cast.save();
+
+// } 
+
+
 Parse.Cloud.define("sendVerificationCode",function(request,response){
   var code = (Math.floor(Math.random()*9000)+1000).toString();
 
@@ -235,10 +254,10 @@ Parse.Cloud.define("confirmFriendRequest", function(request, response) {
             Parse.Cloud.useMasterKey();
             query = new Parse.Query(Parse.User);
             query.get(requestingUserId, {
-                success: function (object) {
+                success: function (friend) {
                     // object is user requesting the friends request
-                    var friendsArray = object.get("friendsArray");
-                    var friendsPhones = object.get("friendsPhones");
+                    var friendsArray = friend.get("friendsArray");
+                    var friendsPhones = friend.get("friendsPhones");
                     if (!friendsArray.arrayContains(user) && !friendsPhones.arrayContains(user.phoneNumber)) {
                         friendsArray.push(user);
                         friendsPhones.push(user.phoneNumber);
@@ -246,12 +265,16 @@ Parse.Cloud.define("confirmFriendRequest", function(request, response) {
                         return;
                     }
                     
-                    object.save().then(
+                    friend.save().then(
                         function (res) {
-                            var contactsDict = object.get("contactsDict");
+                            var contactsDict = friend.get("contactsDict");
                             var userPhoneNumber = user.get("phoneNumber");
                             var friendRequsterNameInContacts = contactsDict[userPhoneNumber];
-                            sendDefaultPush("tap" + object.id, friendRequsterNameInContacts + " accepted your friend request!", "approvedFriendRequest");
+                            sendDefaultPush("tap" + friend.id, friendRequsterNameInContacts + " accepted your friend request!", "approvedFriendRequest");
+                            // create interactions
+
+                            // createInteractionObjectForNewFriend(user, friend);
+
                             response.success();
                             console.log(response);
                         }, function ( error) {
@@ -268,6 +291,77 @@ Parse.Cloud.define("confirmFriendRequest", function(request, response) {
         }
     })
 });
+
+var createInteractionObjectForNewFriend = function(userPointer, friendPointer) {
+    console.log("createInteractionObjectForNewFriend " + userPointer.id + " " + friendPointer.id);
+    var Interaction =  Parse.Object.extend("Interaction");
+    var interaction1 = new Interaction();
+    var interaction2 = new Interaction();
+    
+    var interactionsArray = new Array();
+
+    interaction1.set("recipient", userPointer);
+    interaction1.set("sender", friendPointer);
+
+    interaction2.set("recipient", friendPointer);
+    interaction2.set("sender", userPointer);
+
+    interaction1.set("batchIds", new Array());
+    interaction2.set("batchIds", new Array());
+
+    interactionsArray.push(interaction1);
+    interactionsArray.push(interaction2);
+
+    Parse.Object.saveAll(interactionsArray);
+}
+
+
+
+Parse.Cloud.beforeSave("Interaction", function(request, response) {
+  console.log("interaction before save");
+  if (!request.object.get("recipient") || !request.object.get("sender")) {
+    response.error('Interaction must have recipient and sender');
+  } else {
+    var query = new Parse.Query("Interaction");
+    query.equalTo("recipient", request.object.get("recipient"));
+    query.equalTo("sender", request.object.get("sender"));
+    query.first({
+      success: function(object) {
+        if (object) {
+          response.error("Interaction already exists with id" + object.id);
+        } else {
+          response.success();
+        }
+      },
+      error: function(error) {
+        response.error("Could not validate uniqueness for this Interaction object.");
+      }
+    });
+  }
+});
+
+// Parse.Cloud.beforeSave("Broadcast", function(request, response) {
+//   console.log("broadcast before save");
+//   if (!request.object.get("owner")) {
+//     response.error('Broadcast must have owner');
+//   } else {
+//     var query = new Parse.Query("Broadcast");
+//     query.equalTo("owner", request.object.get("owner"));
+//     query.first({
+//       success: function(object) {
+//         if (object) {
+//           response.error("Broadcast already exists with id" + object.id);
+//         } else {
+//           response.success();
+//         }
+//       },
+//       error: function(error) {
+//         response.error("Could not validate uniqueness for this Broadcast object.");
+//       }
+//     });
+//   }
+// });
+
 
 
 var getNameByPhoneNumber = function (currentUser, targetUserId) {

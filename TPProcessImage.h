@@ -12,8 +12,9 @@
 
 
 +(void)sendTapTo:(NSMutableArray *)recipients andImage:(NSData *)imageData inBatch:(NSString *)batchId withImageId: (int) taps completed:(void (^)(BOOL success))completed;
-+ (void) createSprayTo:(NSMutableArray *)recipients withBatchId: (NSString *) batchId withNumOfTaps: (NSUInteger) numOfTaps withDirect: (BOOL) isDirect;
+
 
 + (void) updateInteractions:(NSMutableArray *)recipients withBatchId:(NSString *)batchId;
++(void)updateBroadcast:(NSString *)batchId;
 
 @end

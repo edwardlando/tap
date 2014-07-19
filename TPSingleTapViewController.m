@@ -111,7 +111,7 @@
     
     if (taps == 2) {
         UILabel *tapsLabel = (UILabel *)[self.view viewWithTag:10];
-        tapsLabel.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"blue"]];
+        tapsLabel.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"black"]];
     }
     if (taps - 1 < 0) {
         [self noMoreTaps];
@@ -208,16 +208,6 @@
     [self.appDelegate.allReadTaps addObject:[message objectId]];
     NSLog(@"message read %@", [message objectId]);
     [self.tapsToSave addObject:message];
-
-//    [message saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-//        if (succeeded) {
-//            NSLog(@"marked message as read");
-//        } else {
-//            NSLog(@"Error: %@", error);
-//        }
-//
-//    }];
-
 }
 
 /*
