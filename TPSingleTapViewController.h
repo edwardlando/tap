@@ -16,5 +16,5 @@
 @property (strong, nonatomic) PFObject *spray;
 @property (strong, nonatomic) IBOutlet PFImageView *imageView;
 @property (strong, nonatomic) NSMutableDictionary *allInteractionTaps;
-
+@property (strong, nonatomic) NSNumber *isMyFlipcast;
 @end

@@ -12,15 +12,18 @@
 #import "TPViewCell.h"
 #import "TPCameraViewController.h"
 
-@interface TPInboxViewController ()
+@interface TPInboxViewController () <UIAlertViewDelegate>
 - (IBAction)goToCamera:(id)sender;
 @property (strong, nonatomic) NSMutableDictionary *allTaps;
 @property (strong, nonatomic) PFObject *selectedInteraction;
 @property (strong, nonatomic) PFObject *selectedBroadcast;
-
+@property (strong, nonatomic) PFObject *flipcastToEdit;
+@property (strong, nonatomic) NSArray *sections;
+@property (strong, nonatomic) NSMutableArray *myFlipcasts;
 @property (strong, nonatomic) TPAppDelegate *appDelegate;
 @property (strong, nonatomic) NSMutableDictionary *allTapsImages;
 @property (strong, nonatomic) NSMutableArray *allTapsArray;
+@property (strong, nonatomic) UITableViewCell *cellToRemove;
 
 @end
 
@@ -32,6 +35,13 @@
     }
     
     return _appDelegate;
+}
+
+-(NSMutableArray *)myFlipcasts {
+    if (!_myFlipcasts) {
+        _myFlipcasts = [[NSMutableArray alloc] init];
+    }
+    return _myFlipcasts;
 }
 
 
@@ -102,6 +112,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    self.sections = @[@"ME", @"FRIENDS"];
     NSLog(@"Inbox view did load");
     [self registerForNotifications];
 //    [self setTapLogo];
@@ -123,6 +134,18 @@
                                                                        NSFontAttributeName: [UIFont fontWithName:@"Avenir" size:23.0f],
                                                                        NSShadowAttributeName: shadow
                                                                        }];
+}
+
+- (void)tableView:(UITableView *)tableView willDisplayHeaderView:(UIView *)view forSection:(NSInteger)section
+{
+    // Background color
+    //    if (section == 0) {
+    //    view.tintColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"blue"]];
+    view.tintColor = [UIColor blackColor];
+    // Text Color
+    UITableViewHeaderFooterView *header = (UITableViewHeaderFooterView *)view;
+    [header.textLabel setTextColor:[UIColor whiteColor]];
+    //    }
 }
 
 
@@ -166,7 +189,7 @@
 
 -(void) registerForNotifications {
     [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(didDismissSingleTapView)
+                                             selector:@selector(didDismissSingleTapView:)
                                                  name:@"singleTapViewDismissed"
                                                object:nil];
     
@@ -198,8 +221,9 @@
 //    [self viewDidLoad];
 }
 
--(void)didDismissSingleTapView {
-    NSLog(@"Dismissed single tap view");
+-(void)didDismissSingleTapView:(NSNotification *)notification {
+    NSLog(@"Dismissed single tap view %@", notification.object);
+    
     @try {
         [self.allTapsImages removeObjectForKey:[self.selectedBroadcast objectId]];
         [self.tableView reloadData];
@@ -218,15 +242,44 @@
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
     // Return the number of sections.
-    return 1;
+    return [self.sections count];
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
+    if (section == 0) {
+        
+        return [self.myFlipcasts count];
+    } else if (section == 1){
+        return [self.objects count];
+    }
+    
+    return 0;
 
-    return [self.objects count];
 }
 
+-(void)queryMyFlipcasts {
+    NSLog(@"querying my broadcasts");
+    PFQuery *myFlipcasts = [PFQuery queryWithClassName:@"Flipcast"];
+    [myFlipcasts whereKey:@"owner" equalTo:[PFUser currentUser]];
+    myFlipcasts.cachePolicy = kPFCachePolicyNetworkElseCache;
+    [myFlipcasts findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        self.myFlipcasts = objects;
+        [self.tableView reloadData];
+    }];
+}
+
+-(void)objectsWillLoad {
+    [super objectsWillLoad];
+    [self queryMyFlipcasts];
+    
+}
+
+-(void) objectsDidLoad:(NSError *)error {
+    [super objectsDidLoad:error];
+    NSLog(@"self.objects count %ld", (unsigned long)[self.objects count]);
+    NSLog(@"self.mybroadcasts count %ld", (unsigned long)[self.myFlipcasts count]);
+}
 
 - (PFQuery *)queryForTable {
 
@@ -234,14 +287,11 @@
         return nil;
     }
     
-//    PFQuery *query = [PFQuery queryWithClassName:self.parseClassName];
     PFQuery *friendsBroadcasts = [PFQuery queryWithClassName:self.parseClassName];
 
     [friendsBroadcasts whereKey:@"owner" containedIn:self.appDelegate.friendsArray];
     
-//    NSLog(@"This is appdelegate friends array %@", self.appDelegate.friendsArray);
-    
-    PFQuery *all = [PFQuery orQueryWithSubqueries:@[/*query, */friendsBroadcasts]];
+    PFQuery *all = [PFQuery orQueryWithSubqueries:@[friendsBroadcasts]];
     [all orderByDescending:@"updatedAt"];
     [all includeKey:@"owner"];
 
@@ -254,178 +304,402 @@
     
 }
 
- - (TPViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath object:(PFObject *)object {
-     static NSString *CellIdentifier = @"recievedTap";
 
-     TPViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
-    
-    UIActivityIndicatorView *ind = (UIActivityIndicatorView *)[cell viewWithTag:5];
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section{
+    return [self.sections objectAtIndex:section];
+}
+-(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
+    if ([tableView.dataSource tableView:tableView numberOfRowsInSection:section] == 0) {
+        return 0;
+    } else {
+        return 30.0f;
+    }
+}
 
-   [ind setHidden:YES];
-    
-    NSString *friendPhoneNumber = [[object objectForKey:@"owner"] objectForKey:@"phoneNumber"];
-     
-    NSString *friendNameInMyContacts = [self.appDelegate.contactsDict objectForKey:friendPhoneNumber];
-     
-    NSString *username = [[object objectForKey:@"owner"] objectForKey:@"username"];
-     
-     NSLog(@"username %@", username);
-     NSLog(@"name %@", friendNameInMyContacts);
-     
-    cell.sendingUser = [object objectForKey:@"owner"];
-    
-     cell.textLabel.text = (friendNameInMyContacts) ? friendNameInMyContacts : username ;
-    
-     cell.detailTextLabel.textColor = [UIColor grayColor];
 
-     NSDate *created = [object updatedAt];
-     NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
-     [dateFormat setDateFormat:@"EEE, dd MMM yy HH:mm:ss VVVV"];
-    cell.userInteractionEnabled = NO;
-     cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:20.0];
-     cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ ago - Tap to reply directy",
-                                  [self dateDiff:[dateFormat stringFromDate:created]]];/*, (unsigned long)[objects count]*/
-//     cell.userInteractionEnabled = YES;
-     @try {
-         if ([self.selectedBroadcast isKindOfClass:[PFObject class]]) {
-//             NSLog(@"Selected interactions %@", self.selectedInteraction);
+ - (TPViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
 
-             if ([[object updatedAt] isEqual:[self.selectedBroadcast updatedAt]]) {
-                 NSLog(@"not reloading the one just watched");
-//                 cell.justVisited = [NSNumber numberWithBool:YES];
-//                 return cell;
+     if (indexPath.section == 0) {
+         static NSString *CellIdentifier = @"sentTap";
+         
+         TPViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
+         UIActivityIndicatorView *ind = (UIActivityIndicatorView *)[cell viewWithTag:5];
+         [ind setHidden:YES];
+         PFObject *flipcast = [self.myFlipcasts objectAtIndex:indexPath.row];
+         NSDate *created = [flipcast updatedAt];
+         NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
+         [dateFormat setDateFormat:@"EEE, dd MMM yy HH:mm:ss VVVV"];
+         cell.userInteractionEnabled = NO;
+
+         cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:20.0];
+         cell.textLabel.text = [NSString stringWithFormat:@"%@ ago",
+                                      [self dateDiff:[dateFormat stringFromDate:created]]];
+         cell.detailTextLabel.textColor = [UIColor grayColor];
+         
+         
+         cell.sendingUser = [flipcast objectForKey:@"owner"];
+         cell.myFlipcast = [NSNumber numberWithBool:YES];
+         
+         PFQuery *tapsQuery = [[PFQuery alloc] initWithClassName:@"Message"];
+         
+         NSString *broadcastId = [flipcast objectId];
+         
+         UILabel *tapsCounter = (UILabel *)[cell viewWithTag:11];
+         UIImageView *thumb = (UIImageView *)[cell viewWithTag:516];
+         UIButton *editButton = (UIButton *)[cell viewWithTag:476];
+         
+         [editButton addTarget:self action:@selector(editFlipcast:) forControlEvents:UIControlEventTouchUpInside];
+         
+         thumb.layer.cornerRadius = 5;
+         
+         self.allTapsArray = [[NSMutableArray alloc] init];
+         
+         [tapsQuery whereKey:@"batchId" equalTo:[flipcast objectForKey:@"batchId"]];
+         [tapsQuery orderByAscending:@"batchId"];
+         [tapsQuery whereKey:@"sender" equalTo:cell.sendingUser];
+         [tapsQuery whereKey:@"readArray" notEqualTo:[[PFUser currentUser] objectId]];
+         [tapsQuery whereKey:@"objectId" notContainedIn:self.appDelegate.allReadTaps];
+         
+         [tapsQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+             if (!error) {
+                 if ([objects count] > 0) {
+                     cell.detailTextLabel.text = @"Loading...";
+                     NSLog(@"Number of objects %ld", (unsigned long)[objects count]);
+                     cell.userInteractionEnabled = NO;
+                     [tapsCounter setHidden: YES];
+                     [ind setHidden:NO];
+                 }
+                 
+                 //            NSLog(@"Found %ld objects", [objects count]);
+                 [self.allTaps setObject:objects forKey:broadcastId];
+                 
+                 NSMutableArray *allPhotosInBatch = [[NSMutableArray alloc] init];
+                 NSMutableDictionary *allPhotosInBatchDict = [[NSMutableDictionary alloc] init];
+                 
+                 __block int iterations = 0;
+                 
+                 for (PFObject *tap in objects) {
+                     PFFile *image = [tap objectForKey:@"img"];
+                     
+                     NSURL *tapImageUrl = [[NSURL alloc] initWithString:image.url];
+                     
+                     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:tapImageUrl];
+                     [NSURLConnection sendAsynchronousRequest:request
+                                                        queue:[NSOperationQueue mainQueue]
+                                            completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+                                                if ( !error )
+                                                {
+                                                    NSLog(@"Start fetching photos");
+                                                    cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:20.0];
+                                                    
+                                                    cell.detailTextLabel.text = @"Tap to open";//[NSString stringWithFormat:@"%@ ago - Tap to open",
+                                                                                // [self dateDiff:[dateFormat stringFromDate:created]]];
+                                                    
+                                                    [ind setHidden:NO];
+                                                    [ind startAnimating];
+                                                    
+                                                    [ind hidesWhenStopped];
+                                                    UIImage *image = [[UIImage alloc] initWithData:data];
+                                                    if (iterations == 0) {
+                                                        thumb.image = image;
+                                                    }
+                                                    [allPhotosInBatch addObject:@{@"image": image, @"imageId": [tap objectForKey:@"imageId"], @"batchId": [tap objectForKey:@"batchId"], @"broadcastId":broadcastId}];
+                                                    
+                                                    [self.allTapsArray addObject:@{@"image": image, @"imageId": [tap objectForKey:@"imageId"], @"batchId": [tap objectForKey:@"batchId"], @"broadcastId":broadcastId}];
+                                                    
+                                                    NSLog(@"%d iterations out of %ld objects", iterations, (unsigned long)[objects count]);
+                                                    
+                                                    
+                                                    iterations++;
+                                                    if (iterations == [objects count]) {
+                                                        
+                                                        // setting the thumbnail
+                                                        
+                                                        thumb.layer.cornerRadius = 5;
+                                                        [self.allTapsImages setObject:allPhotosInBatchDict forKey:broadcastId];
+                                                        [allPhotosInBatchDict setObject: allPhotosInBatch forKey:[tap objectForKey:@"batchId"]];
+//                                                        NSLog(@"all photos in batch %@", allPhotosInBatch);
+                                                        //  [self.allTapsImages setValue:allPhotosInBatch forKey:batchId];
+                                                        //   NSLog(@"All taps images %@", self.allTapsImages);
+                                                        [ind stopAnimating];
+                                                        [ind setHidden:YES];
+                                                        cell.userInteractionEnabled = YES;
+                                                        tapsCounter.text = [NSString stringWithFormat:@"%ld",(unsigned long)[objects count] ];
+                                                        
+                                                        [thumb setHidden:NO];
+                                                    }
+                                                    //                                              completionBlock(YES,image);
+                                                } else{
+                                                    //                                               completionBlock(NO,nil);
+                                                }
+                                            }];
+                     
+                     
+                 }
+                 
+                 tapsCounter.layer.cornerRadius = 5;
+                 tapsCounter.clipsToBounds = YES;
+                 
+                 if ([objects count] > 0) {
+                     //                cell.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"lightGray"]];
+                 } else {
+                     
+                     cell.userInteractionEnabled = YES;
+                     //                cell.backgroundColor = [UIColor whiteColor];
+                     [ind stopAnimating];
+                     [ind setHidden:YES];
+                     [tapsCounter setHidden:YES];
+                     [thumb setHidden:YES];
+                 }
+                 
+                 
              } else {
-//                 cell.justVisited = [NSNumber numberWithBool:NO];
+                 NSLog(@"Error: %@", error);
              }
-         }
-     }
-     @catch (NSException *exception) {
-         NSLog(@"Exception: %@", exception);
-     }
-     @finally {
+         }];
+         return cell;
          
      }
+     else if (indexPath.section == 1) {
+         
+        static NSString *CellIdentifier = @"recievedTap";
 
+        TPViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
+         
+        UIActivityIndicatorView *ind = (UIActivityIndicatorView *)[cell viewWithTag:5];
+       [ind setHidden:YES];
+        PFObject *object = [self.objects objectAtIndex:indexPath.row];
+        NSString *friendPhoneNumber = [[object objectForKey:@"owner"] objectForKey:@"phoneNumber"];
+        NSString *friendNameInMyContacts = [self.appDelegate.contactsDict objectForKey:friendPhoneNumber];
+         
+        NSString *username = [[object objectForKey:@"owner"] objectForKey:@"username"];
+         
+         NSLog(@"username %@", username);
+         NSLog(@"name %@", friendNameInMyContacts);
+         
+        cell.sendingUser = [object objectForKey:@"owner"];
+        
+         cell.textLabel.text = (friendNameInMyContacts) ? friendNameInMyContacts : username ;
+        
+         cell.detailTextLabel.textColor = [UIColor grayColor];
 
-     
-     PFQuery *tapsQuery = [[PFQuery alloc] initWithClassName:@"Message"];
+         NSDate *created = [object updatedAt];
+         NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
+         [dateFormat setDateFormat:@"EEE, dd MMM yy HH:mm:ss VVVV"];
+        cell.userInteractionEnabled = NO;
+         cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:20.0];
+         cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ ago - Tap to reply directy",
+          [self dateDiff:[dateFormat stringFromDate:created]]];/*, (unsigned long)[objects count]*/
 
-     NSString *broadcastId = [object objectId];
-     
-     UILabel *tapsCounter = (UILabel *)[cell viewWithTag:11];
-     UIImageView *thumb = (UIImageView *)[cell viewWithTag:516];
-     
-     thumb.layer.cornerRadius = 5;
-     
-     self.allTapsArray = [[NSMutableArray alloc] init];
-     
-    [tapsQuery whereKey:@"batchId" containedIn:[object objectForKey:@"batchIds"]];
-    [tapsQuery orderByAscending:@"batchId"];
-    [tapsQuery whereKey:@"sender" equalTo:cell.sendingUser];
-    [tapsQuery whereKey:@"readArray" notEqualTo:[[PFUser currentUser] objectId]];
-    [tapsQuery whereKey:@"objectId" notContainedIn:self.appDelegate.allReadTaps];
-     
-    [tapsQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-        if (!error) {
-            if ([objects count] > 0) {
-                cell.detailTextLabel.text = @"Loading...";
-                NSLog(@"Number of objects %ld", (unsigned long)[objects count]);
-                cell.userInteractionEnabled = NO;
-                [tapsCounter setHidden: YES];
-                [ind setHidden:NO];
-            }
+         @try {
+             if ([self.selectedBroadcast isKindOfClass:[PFObject class]]) {
+                 if ([[object updatedAt] isEqual:[self.selectedBroadcast updatedAt]]) {
+                     NSLog(@"not reloading the one just watched");
+    //                 cell.justVisited = [NSNumber numberWithBool:YES];
+    //                 return cell;
+                 } else {
+    //                 cell.justVisited = [NSNumber numberWithBool:NO];
+                 }
+             }
+         }
+         @catch (NSException *exception) {
+             NSLog(@"Exception: %@", exception);
+         }
+         
+         PFQuery *tapsQuery = [[PFQuery alloc] initWithClassName:@"Message"];
 
-//            NSLog(@"Found %ld objects", [objects count]);
-            [self.allTaps setObject:objects forKey:broadcastId];
-            
-            NSMutableArray *allPhotosInBatch = [[NSMutableArray alloc] init];
-            NSMutableDictionary *allPhotosInBatchDict = [[NSMutableDictionary alloc] init];
-            
-            __block int iterations = 0;
-            
-            for (PFObject *tap in objects) {
-                PFFile *image = [tap objectForKey:@"img"];
+         NSString *broadcastId = [object objectId];
+         
+         UILabel *tapsCounter = (UILabel *)[cell viewWithTag:11];
+         UIImageView *thumb = (UIImageView *)[cell viewWithTag:516];
+         
+         thumb.layer.cornerRadius = 5;
+         
+         self.allTapsArray = [[NSMutableArray alloc] init];
+         
+        [tapsQuery whereKey:@"batchId" containedIn:[object objectForKey:@"batchIds"]];
+        [tapsQuery orderByAscending:@"batchId"];
+        [tapsQuery whereKey:@"sender" equalTo:cell.sendingUser];
+        [tapsQuery whereKey:@"readArray" notEqualTo:[[PFUser currentUser] objectId]];
+        [tapsQuery whereKey:@"objectId" notContainedIn:self.appDelegate.allReadTaps];
+         
+        [tapsQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+            if (!error) {
+                if ([objects count] > 0) {
+                    cell.detailTextLabel.text = @"Loading...";
+                    NSLog(@"Number of objects %ld", (unsigned long)[objects count]);
+                    cell.userInteractionEnabled = NO;
+                    [tapsCounter setHidden: YES];
+                    [ind setHidden:NO];
+                }
+
+    //            NSLog(@"Found %ld objects", [objects count]);
+                [self.allTaps setObject:objects forKey:broadcastId];
                 
-                NSURL *tapImageUrl = [[NSURL alloc] initWithString:image.url];
+                NSMutableArray *allPhotosInBatch = [[NSMutableArray alloc] init];
+                NSMutableDictionary *allPhotosInBatchDict = [[NSMutableDictionary alloc] init];
                 
-                NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:tapImageUrl];
-                [NSURLConnection sendAsynchronousRequest:request
-                                                   queue:[NSOperationQueue mainQueue]
-                                       completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
-                                           if ( !error )
-                                           {
-                                               NSLog(@"Start fetching photos");
-                                               cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:20.0];
-                                               
-                                               cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ ago - Tap to open",
-                                                                            [self dateDiff:[dateFormat stringFromDate:created]]];
-                                               
-                                               [ind setHidden:NO];
-                                               [ind startAnimating];
-                                               
-                                               [ind hidesWhenStopped];
-                                               UIImage *image = [[UIImage alloc] initWithData:data];
-                                               if (iterations == 0) {
-                                                  thumb.image = image;
-                                               }
-                                               [allPhotosInBatch addObject:@{@"image": image, @"imageId": [tap objectForKey:@"imageId"], @"batchId": [tap objectForKey:@"batchId"], @"broadcastId":broadcastId}];
-                                               
-                                               [self.allTapsArray addObject:@{@"image": image, @"imageId": [tap objectForKey:@"imageId"], @"batchId": [tap objectForKey:@"batchId"], @"broadcastId":broadcastId}];
-
-                                                   NSLog(@"%d iterations out of %ld objects", iterations, (unsigned long)[objects count]);
-                                               
-                                             
-                                              iterations++;
-                                               if (iterations == [objects count]) {
+                __block int iterations = 0;
+                
+                for (PFObject *tap in objects) {
+                    PFFile *image = [tap objectForKey:@"img"];
+                    
+                    NSURL *tapImageUrl = [[NSURL alloc] initWithString:image.url];
+                    
+                    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:tapImageUrl];
+                    [NSURLConnection sendAsynchronousRequest:request
+                                                       queue:[NSOperationQueue mainQueue]
+                                           completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+                                               if ( !error )
+                                               {
+                                                   NSLog(@"Start fetching photos");
+                                                   cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:20.0];
                                                    
-                                                   // setting the thumbnail
+                                                   cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ ago - Tap to open",
+                                                                                [self dateDiff:[dateFormat stringFromDate:created]]];
+                                                   
+                                                   [ind setHidden:NO];
+                                                   [ind startAnimating];
+                                                   
+                                                   [ind hidesWhenStopped];
+                                                   UIImage *image = [[UIImage alloc] initWithData:data];
+                                                   if (iterations == 0) {
+                                                      thumb.image = image;
+                                                   }
+                                                   [allPhotosInBatch addObject:@{@"image": image, @"imageId": [tap objectForKey:@"imageId"], @"batchId": [tap objectForKey:@"batchId"], @"broadcastId":broadcastId}];
+                                                   
+                                                   [self.allTapsArray addObject:@{@"image": image, @"imageId": [tap objectForKey:@"imageId"], @"batchId": [tap objectForKey:@"batchId"], @"broadcastId":broadcastId}];
 
-                                                   thumb.layer.cornerRadius = 5;
-                                                   [self.allTapsImages setObject:allPhotosInBatchDict forKey:broadcastId];
-                                                  [allPhotosInBatchDict setObject: allPhotosInBatch forKey:[tap objectForKey:@"batchId"]];
-                                                   NSLog(@"all photos in batch %@", allPhotosInBatch);
-                                                   //  [self.allTapsImages setValue:allPhotosInBatch forKey:batchId];
-                                                   //   NSLog(@"All taps images %@", self.allTapsImages);
-                                                   [ind stopAnimating];
-                                                   [ind setHidden:YES];
-                                                   cell.userInteractionEnabled = YES;
-                                                   tapsCounter.text = [NSString stringWithFormat:@"%ld",(unsigned long)[objects count] ];
+                                                       NSLog(@"%d iterations out of %ld objects", iterations, (unsigned long)[objects count]);
+                                                   
+                                                 
+                                                  iterations++;
+                                                   if (iterations == [objects count]) {
+                                                       
+                                                       // setting the thumbnail
 
-                                                   [thumb setHidden:NO];
+                                                       thumb.layer.cornerRadius = 5;
+                                                       [self.allTapsImages setObject:allPhotosInBatchDict forKey:broadcastId];
+                                                      [allPhotosInBatchDict setObject: allPhotosInBatch forKey:[tap objectForKey:@"batchId"]];
+//                                                       NSLog(@"all photos in batch %@", allPhotosInBatch);
+                                                       //  [self.allTapsImages setValue:allPhotosInBatch forKey:batchId];
+                                                       //   NSLog(@"All taps images %@", self.allTapsImages);
+                                                       [ind stopAnimating];
+                                                       [ind setHidden:YES];
+                                                       cell.userInteractionEnabled = YES;
+                                                       tapsCounter.text = [NSString stringWithFormat:@"%ld",(unsigned long)[objects count] ];
+
+                                                       [thumb setHidden:NO];
+                                                   }
+    //                                              completionBlock(YES,image);
+                                               } else{
+    //                                               completionBlock(NO,nil);
                                                }
-//                                              completionBlock(YES,image);
-                                           } else{
-//                                               completionBlock(NO,nil);
-                                           }
-                                       }];
+                                           }];
+                    
+
+                }
                 
+                tapsCounter.layer.cornerRadius = 5;
+                tapsCounter.clipsToBounds = YES;
+                
+                if ([objects count] > 0) {
+    //                cell.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"lightGray"]];
+                } else {
 
-            }
-            
-            tapsCounter.layer.cornerRadius = 5;
-            tapsCounter.clipsToBounds = YES;
-            
-            if ([objects count] > 0) {
-//                cell.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"lightGray"]];
+                   cell.userInteractionEnabled = YES;
+    //                cell.backgroundColor = [UIColor whiteColor];
+                    [ind stopAnimating];
+                    [ind setHidden:YES];
+                    [tapsCounter setHidden:YES];
+                    [thumb setHidden:YES];
+                }
+
+                
             } else {
-
-               cell.userInteractionEnabled = YES;
-//                cell.backgroundColor = [UIColor whiteColor];
-                [ind stopAnimating];
-                [ind setHidden:YES];
-                [tapsCounter setHidden:YES];
-                [thumb setHidden:YES];
+                NSLog(@"Error: %@", error);
             }
+        }];
+         return cell;
+     }
+    
+    return [[UITableViewCell alloc] init];
+}
 
-            
+
+-(void)editFlipcast:(id)sender {
+    UIView *senderButton = (UIView*) sender;
+    UITableViewCell *cell =(UITableViewCell *)[[[sender superview] superview] superview];
+    self.cellToRemove = cell;
+    NSIndexPath *indexPath = [self.tableView indexPathForCell: cell];
+    
+// remove batch Id from broadcast array
+    
+    PFObject *flipCast = [self.myFlipcasts objectAtIndex:indexPath.row];
+//    UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
+    self.flipcastToEdit = flipCast;
+    
+    UIAlertView *message = [[UIAlertView alloc] initWithTitle:@"Edit Cast"
+                                                      message:@"This is your first UIAlertview message."
+                                                     delegate:self
+                                            cancelButtonTitle:@"Cancel"
+                                            otherButtonTitles:@"Delete", nil];
+    [message setTag:1];
+    [message show];
+    
+}
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if (alertView.tag == 1) {
+        
+        NSString *title = [alertView buttonTitleAtIndex:buttonIndex];
+        
+        if([title isEqualToString:@"Delete"])
+        {
+            NSLog(@"Delete %@", self.flipcastToEdit);
+            [self deleteFlipCast:self.flipcastToEdit];
+        }
+    }
+}
+
+-(void)deleteFlipCast:(PFObject *)flipcast {
+    NSString *batchId = [flipcast objectForKey:@"batchId"];
+    PFQuery *mybroadcast = [PFQuery queryWithClassName:@"Broadcast"];
+    [mybroadcast whereKey:@"owner" equalTo:[PFUser currentUser]];
+    [mybroadcast getFirstObjectInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+        if (!error) {
+            NSMutableArray *batchIds = [object objectForKey:@"batchIds"];
+            if ([batchIds containsObject:batchId]) {
+                NSLog(@"found batchId %@ in batchIds", batchId);
+                [batchIds removeObject:batchId];
+                [object setObject:batchIds forKey:@"batchIds"];
+                [object saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+                    if (succeeded) {
+                        
+//                        [self.cellToRemove removeFromSuperview];
+                        [self.myFlipcasts removeObject:flipcast];
+                        [self.tableView deleteRowsAtIndexPaths:@[[self.tableView indexPathForCell:self.cellToRemove]] withRowAnimation:UITableViewRowAnimationAutomatic];
+                        
+                        [self.tableView reloadData];
+                        
+                        NSLog(@"Successfuly removed batchId");
+                    } else {
+                        NSLog(@"Error removing batchId: %@", error);
+                    }
+                }];
+            }
         } else {
-            NSLog(@"Error: %@", error);
+            NSLog(@"Error getting broadcast: %@", error);
         }
     }];
-
-
-    
-    return cell;
+    [flipcast deleteInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+        if (succeeded) {
+            NSLog(@"Removed this cast");
+        } else {
+            NSLog(@"Error deleting cast: %@", error);
+        }
+    }];
 }
 
 -(NSString *)dateDiff:(NSString *)origDate {
@@ -475,7 +749,16 @@
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
 
-    self.selectedBroadcast =[self.objects objectAtIndex:indexPath.row];
+    BOOL isMyFlipcast;
+    
+    if (indexPath.section == 0) {
+        self.selectedBroadcast =[self.myFlipcasts objectAtIndex:indexPath.row];
+        isMyFlipcast = YES;
+    } else {
+        self.selectedBroadcast =[self.objects objectAtIndex:indexPath.row];
+        isMyFlipcast = NO;
+    }
+
     
     NSMutableArray *batchTaps = [self.allTaps objectForKey:[self.selectedBroadcast objectId]];
 //    NSMutableArray *batchTapsImages = [self.allTapsImages objectForKey:[self.selectedInteraction objectId]];
@@ -491,9 +774,10 @@
     
 
     if ([batchTaps count] == 0 || !allInteractionTaps) {
-        PFUser *userToReply = cell.sendingUser;
-        [self performSegueWithIdentifier:@"showCamera" sender:userToReply];
-//        [self goToCamera:self];
+
+//        PFUser *userToReply = cell.sendingUser;
+//        [self performSegueWithIdentifier:@"showCamera" sender:userToReply];
+////        [self goToCamera:self];
         
     } else {
         NSSortDescriptor *imageIdDescriptor = [[NSSortDescriptor alloc] initWithKey:@"imageId" ascending:YES];
@@ -536,11 +820,12 @@
             }
         }
 
+        if (isMyFlipcast) NSLog(@"It is my flipcast");
         
-        
-        NSDictionary *senderObject = @{@"allInteractionTaps" :allTapsDict, @"allTapObjects": sortedTapsArray};
+        NSDictionary *senderObject = @{@"allInteractionTaps" :allTapsDict, @"allTapObjects": sortedTapsArray, @"isMyFlipcast":@(isMyFlipcast)};
         
         [self performSegueWithIdentifier:@"showTap" sender:senderObject];
+        
         
     }
 
@@ -557,10 +842,11 @@
         vc.objects = [sender objectForKey:@"allTapObjects"];
         vc.allBatchImages = [sender objectForKey:@"batchImages"];
         
-        
 //        vc.allInteractionTaps = allTapsDict;
         vc.allInteractionTaps = [sender objectForKey:@"allInteractionTaps"];
         
+        NSLog(@"sender is my flip %@", [sender objectForKey:@"isMyFlipcast"]);
+        vc.isMyFlipcast = [sender objectForKey:@"isMyFlipcast"];
         
     } else if ([segue.identifier isEqual:@"showCamera"]) {
         TPCameraViewController *vc = (TPCameraViewController *)segue.destinationViewController;

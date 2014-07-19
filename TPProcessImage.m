@@ -56,7 +56,16 @@
 
 
 +(void)updateBroadcast:(NSString *)batchId {
-    NSLog(@"Updating user channel");
+    
+    NSLog(@"updateBroadcast");
+    
+    PFObject *flipcast = [PFObject objectWithClassName:@"Flipcast"];
+    flipcast[@"owner"] = [PFUser currentUser];
+    flipcast[@"batchId"] = batchId;
+    [flipcast saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+        NSLog(@"Created Flipcasts");
+    }];
+    
     PFQuery *channelQuery = [PFQuery queryWithClassName:@"Broadcast"];
     [channelQuery whereKey:@"owner" equalTo:[PFUser currentUser]];
     [channelQuery getFirstObjectInBackgroundWithBlock:^(PFObject *object, NSError *error) {

@@ -13,5 +13,6 @@
 @property (strong, nonatomic) PFUser *sendingUser;
 @property (strong, nonatomic) NSArray *taps;
 @property (strong, nonatomic) NSNumber *justVisited;
+@property (strong, nonatomic) NSNumber *myFlipcast;
 
 @end

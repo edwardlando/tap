@@ -137,7 +137,10 @@
     
 //    UIImage *singleTapImage = [[self.allBatchImages objectAtIndex:taps - 1] objectForKey:@"image"];
     
-    [self markAsRead:singleTap];
+    if (![self.isMyFlipcast boolValue]) {
+        [self markAsRead:singleTap];
+    }
+
     self.imageView.image = singleTapImage;
 }
 
@@ -175,28 +178,33 @@
 //    [self presentViewController:camera animated:NO completion:^{
 //        //
 //    }];
-    [[self.spray objectForKey:@"read"] addObject:[PFUser currentUser]];
-    [self.spray saveEventually];
     
-    if ([self.tapsToSave count] > 0) {
-        [PFObject saveAllInBackground:self.tapsToSave block:^(BOOL succeeded, NSError *error) {
-            if (succeeded) {
-                NSLog(@"just saved taps background like a boss");
-            } else {
-                NSLog(@"Error: %@", error);
-            }
+    if (![self.isMyFlipcast boolValue]) {
+        
 
+        [[self.spray objectForKey:@"read"] addObject:[PFUser currentUser]];
+        [self.spray saveEventually];
+        
+        if ([self.tapsToSave count] > 0) {
+            [PFObject saveAllInBackground:self.tapsToSave block:^(BOOL succeeded, NSError *error) {
+                if (succeeded) {
+                    NSLog(@"just saved taps background like a boss");
+                } else {
+                    NSLog(@"Error: %@", error);
+                }
+
+            }];
+        }
+        
+        PFInstallation *currentInstallation = [PFInstallation currentInstallation];
+        currentInstallation.badge = (currentInstallation.badge - 1 >= 0) ? currentInstallation.badge - 1 : 0;
+        [currentInstallation saveEventually:^(BOOL succeeded, NSError *error) {
+            NSLog(@"decremented installation badge to %ld", (long)currentInstallation.badge);
         }];
     }
     
-    PFInstallation *currentInstallation = [PFInstallation currentInstallation];
-    currentInstallation.badge = (currentInstallation.badge - 1 >= 0) ? currentInstallation.badge - 1 : 0;
-    [currentInstallation saveEventually:^(BOOL succeeded, NSError *error) {
-        NSLog(@"decremented installation badge to %ld", (long)currentInstallation.badge);
-    }];
-    
     [[NSNotificationCenter defaultCenter] postNotificationName:@"singleTapViewDismissed"
-                                                        object:nil
+                                                        object:self.isMyFlipcast
                                                       userInfo:nil];
     
     [self dismissViewControllerAnimated:NO completion:nil];
