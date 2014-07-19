@@ -48,7 +48,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    [self checkUserSituation];
+//    [self checkUserSituation];
     [self registerForNotifications];
     messagesSaved = 0;
     NSLog(@"Camera did load");
@@ -61,7 +61,10 @@
     
     UIButton *inboxButton = (UIButton *)[self.view viewWithTag:10];
     PFInstallation *currentInstallation = [PFInstallation currentInstallation];
+
 //    currentInstallation.badge = 0;
+    
+    
     if (currentInstallation.badge != 0) {
         // turn button to red
         [self makeMainMenuPink];
@@ -275,9 +278,6 @@
         [self.sendingIndicator stopAnimating];
         [self.sendingIndicator setHidden:YES];
     }
-
-
-    
 }
 
 -(void)createInteraction {
@@ -306,7 +306,6 @@
 -(void)saveImage{
     NSLog(@"save image");
 //    _imageView.image = [captureManager stillImage];
-
     _selectedImage = [captureManager stillImage];
 //    NSLog(@"Selected Image %@", [captureManager stillImage]);
 
