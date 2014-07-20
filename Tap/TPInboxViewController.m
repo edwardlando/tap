@@ -11,6 +11,7 @@
 #import "TPAppDelegate.h"
 #import "TPViewCell.h"
 #import "TPCameraViewController.h"
+#import "QuartzCore/QuartzCore.h"
 
 @interface TPInboxViewController () <UIAlertViewDelegate>
 - (IBAction)goToCamera:(id)sender;
@@ -141,11 +142,30 @@
     // Background color
     //    if (section == 0) {
     //    view.tintColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"blue"]];
-    view.tintColor = [UIColor blackColor];
+    view.tintColor = [UIColor whiteColor];
+    view.backgroundColor = [UIColor whiteColor];
     // Text Color
+//    if (section == 0) {
+//        view.layer.borderColor = [[UIColor lightGrayColor] colorWithAlphaComponent:0.3].CGColor;
+//        view.layer.borderWidth = 3.0f;
+//    }
+    
+//    CALayer *TopBorder = [CALayer layer];
+//    TopBorder.frame = CGRectMake(0.0f, 0.0f, view.frame.size.width, 3.0f);
+//    TopBorder.backgroundColor = [[UIColor lightGrayColor] colorWithAlphaComponent:0.3].CGColor;
+//    [view.layer addSublayer:TopBorder];
+
+    CALayer *BottomBorder = [CALayer layer];
+    BottomBorder.frame = CGRectMake(0.0f, view.frame.size.height - 0.7f, view.frame.size.width, 0.7f);
+    BottomBorder.backgroundColor = [[UIColor lightGrayColor] colorWithAlphaComponent:0.5].CGColor;
+    [view.layer addSublayer:BottomBorder];
+    
+    
     UITableViewHeaderFooterView *header = (UITableViewHeaderFooterView *)view;
-    [header.textLabel setTextColor:[UIColor whiteColor]];
-    //    }
+    [header.textLabel setTextColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"blue"]]];
+    [header.textLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Bold" size:15.0f]];
+
+    
 }
 
 
@@ -263,6 +283,7 @@
     PFQuery *myFlipcasts = [PFQuery queryWithClassName:@"Flipcast"];
     [myFlipcasts whereKey:@"owner" equalTo:[PFUser currentUser]];
     myFlipcasts.cachePolicy = kPFCachePolicyNetworkElseCache;
+    [myFlipcasts orderByDescending:@"createdAt"];
     [myFlipcasts findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         self.myFlipcasts = objects;
         [self.tableView reloadData];
@@ -389,7 +410,7 @@
                                             completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
                                                 if ( !error )
                                                 {
-                                                    NSLog(@"Start fetching photos");
+//                                                    NSLog(@"Start fetching photos");
                                                     cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:20.0];
                                                     
                                                     cell.detailTextLabel.text = @"Tap to open";//[NSString stringWithFormat:@"%@ ago - Tap to open",
@@ -407,7 +428,7 @@
                                                     
                                                     [self.allTapsArray addObject:@{@"image": image, @"imageId": [tap objectForKey:@"imageId"], @"batchId": [tap objectForKey:@"batchId"], @"broadcastId":broadcastId}];
                                                     
-                                                    NSLog(@"%d iterations out of %ld objects", iterations, (unsigned long)[objects count]);
+//                                                    NSLog(@"%d iterations out of %ld objects", iterations, (unsigned long)[objects count]);
                                                     
                                                     
                                                     iterations++;
@@ -488,7 +509,7 @@
          [dateFormat setDateFormat:@"EEE, dd MMM yy HH:mm:ss VVVV"];
         cell.userInteractionEnabled = NO;
          cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:20.0];
-         cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ ago - Tap to reply directy",
+         cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ ago",
           [self dateDiff:[dateFormat stringFromDate:created]]];/*, (unsigned long)[objects count]*/
 
          @try {
@@ -552,7 +573,7 @@
                                            completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
                                                if ( !error )
                                                {
-                                                   NSLog(@"Start fetching photos");
+//                                                   NSLog(@"Start fetching photos");
                                                    cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:20.0];
                                                    
                                                    cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ ago - Tap to open",
@@ -570,7 +591,7 @@
                                                    
                                                    [self.allTapsArray addObject:@{@"image": image, @"imageId": [tap objectForKey:@"imageId"], @"batchId": [tap objectForKey:@"batchId"], @"broadcastId":broadcastId}];
 
-                                                       NSLog(@"%d iterations out of %ld objects", iterations, (unsigned long)[objects count]);
+//                                                       NSLog(@"%d iterations out of %ld objects", iterations, (unsigned long)[objects count]);
                                                    
                                                  
                                                   iterations++;
@@ -640,7 +661,7 @@
     self.flipcastToEdit = flipCast;
     
     UIAlertView *message = [[UIAlertView alloc] initWithTitle:@"Edit Cast"
-                                                      message:@"This is your first UIAlertview message."
+                                                      message:@"Confirm Deletion"
                                                      delegate:self
                                             cancelButtonTitle:@"Cancel"
                                             otherButtonTitles:@"Delete", nil];

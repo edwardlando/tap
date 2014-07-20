@@ -95,7 +95,7 @@
 //    [self alertIfNoFriends];
     
     
-    self.sections = @[@"Friend Requests", @"Contacts on Tap", @"Invite Contacts"];
+    self.sections = @[@"REQUESTS", @"CONTACTS ON FLIPCAST", @"INVITE CONTACTS"];
     
     [self setNavbarIcon];
     [self setupNavBarStyle];
@@ -223,7 +223,7 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
 
-    NSLog(@"cell for row");
+//    NSLog(@"cell for row");
     
     if (indexPath.section == 0) {
         NSLog(@"section is 0");
@@ -245,6 +245,7 @@
         
         PFObject *object = [self.objects objectAtIndex:indexPath.row];
         NSString *username = [object objectForKey:@"username"];
+
         cell.textLabel.text = username;
         cell.detailTextLabel.text = [object objectForKey:@"phoneNumber"];
         
@@ -254,6 +255,7 @@
         
         if (![friendNameInMyContacts isEqual:@""]) {
             cell.textLabel.text = friendNameInMyContacts;
+            cell.detailTextLabel.text = username;
             //        cell.detailTextLabel.text = username;
         }
         
@@ -272,12 +274,13 @@
 //            cell.textLabel.text = name;
 //            cell.detailTextLabel.text = number;
         
+        
         NSArray *keys = [self.appDelegate.contactsDict allKeys];
         
         NSString *number = [keys objectAtIndex:indexPath.row];
         
         NSString *name = [self.appDelegate.contactsDict objectForKey:number];
-
+//        NSDictionary *contact = self.appDelegate.
         
         cell.textLabel.text = name;
         cell.detailTextLabel.text = number;
@@ -305,7 +308,7 @@
     
     [query whereKey:@"phone" notContainedIn:[friendsPhoneNumbers arrayByAddingObjectsFromArray: self.appDelegate.friendRequestsSent ]];
     
-    
+    query.cachePolicy =  kPFCachePolicyCacheThenNetwork;
     return query;
     
 }

@@ -62,7 +62,22 @@
 }
 
 
-
+-(void)checkIfActive {
+    PFQuery *query = [PFQuery queryWithClassName:@"Settings"];
+    [query whereKey:@"Number" equalTo:@"1"];
+    [query whereKey:@"Type" equalTo:@"active"];
+    [query getFirstObjectInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+        NSLog(@"object %d", [[object objectForKey:@"boolValue"] boolValue]);
+        if (!error) {
+            if ([[object objectForKey:@"boolValue"]boolValue]) {
+                NSLog(@"App is active");
+            } else {
+                exit(0);
+            }
+            
+        }
+    }];
+}
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
@@ -76,7 +91,8 @@
     [PFAnalytics trackAppOpenedWithLaunchOptions:launchOptions];
     
     NSSetUncaughtExceptionHandler(&uncaughtExceptionHandler);
-    
+
+    [self checkIfActive];
     
     NSDictionary *notificationPayload = launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey];
     
@@ -192,6 +208,12 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
+    
+    [self checkIfActive];
+    
+    if ([PFUser currentUser].isAuthenticated){
+            [self loadFriends];
+    }
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
 }
 

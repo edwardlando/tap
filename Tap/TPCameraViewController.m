@@ -52,13 +52,22 @@
     [self checkUserSituation];
     
     [self registerForNotifications];
-    messagesSaved = 0;
-    NSLog(@"Camera did load");
-    [self setupCamera];
-//    [self setupCameraScreen];
-    taps = 0;
-    self.tapsCounter.text = [NSString stringWithFormat:@"%d", taps];
     
+//    messagesSaved = 0;
+    if (![self.appDelegate.sending boolValue]) {
+        NSLog(@"It's not sending");
+        self.appDelegate.messagesSaved = @(0);
+        self.appDelegate.taps = @(0);
+    }
+    
+    
+    NSLog(@"Camera did load");
+    [self setupCameraScreen];
+//    [self setupCameraScreen];
+//    taps = 0;
+
+//    self.tapsCounter.text = [NSString stringWithFormat:@"%d", taps];
+    self.tapsCounter.text = [NSString stringWithFormat:@"%d", [self.appDelegate.taps intValue]];
 
     
     UIButton *inboxButton = (UIButton *)[self.view viewWithTag:10];
@@ -99,21 +108,28 @@
     
     [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationFade];
     
-    taps = 0;
-    messagesSaved = 0;
+//    taps = 0;
+    if (![self.appDelegate.sending boolValue]) {
+        NSLog(@"It's not sending");
+        self.appDelegate.messagesSaved = @(0);
+        self.appDelegate.taps = @(0);
+        self.tapsCounter.text = [NSString stringWithFormat:@"%d", [self.appDelegate.taps intValue]];
+    }
+
     self.recipients = [[NSMutableArray alloc] init];
     NSLog(@"View Will Appear");
     [self setupCameraScreen];
-
 }
 
 -(void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
     NSLog(@"View Will Disappear");
-    if (taps > 0) {
+    if ([self.appDelegate.taps intValue] > 0) {
         [self createInteraction];
     }
-    taps = 0;
+    if (![self.appDelegate.sending boolValue]) {
+        self.appDelegate.taps = @(0);
+    }
 
     
 }
@@ -140,13 +156,19 @@
 }
 
 -(void)setupCameraScreen {
-
-
+    
+    NSLog(@"Set up camera screen");
+//    [self registerForNotifications];
     interactionCreated = NO;
-    taps = 0;
+//    taps = 0;
+    if (![self.appDelegate.sending boolValue]) {
+        self.appDelegate.taps = @(0);
+        self.appDelegate.messagesSaved = @(0);
+    }
     frontCam = NO;
     [self resetBatchId];
     [self setupTap];
+    [self setupCamera];
     
     takingPicture = true;
 }
@@ -199,8 +221,16 @@
     NSLog(@"Tap");
 
     [self takePicture];
-    taps++;
-    self.tapsCounter.text = [NSString stringWithFormat:@"%d", taps];
+    
+    
+//    taps++;
+
+    NSLog(@"Incremented app del taps %d", [self.appDelegate.taps intValue]);
+    
+    if ([self.appDelegate.taps intValue] == 0) {
+        [self createInteraction];
+    }
+
 }
 
 
@@ -221,7 +251,7 @@
 -(void) registerForNotifications {
     
     [self unsubscribeFromNotifications];
-    
+
     NSLog(@"Registered for notifications");
     
     [[NSNotificationCenter defaultCenter] addObserver:self
@@ -248,7 +278,7 @@
 //                                             selector:@selector(viewDidLoad)
 //                                                 name:@"appEnteredForeground"
 //                                               object:nil];
-
+    
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(handleSavedImageNotification:)
                                                  name:@"savedImageToServer"
@@ -261,34 +291,32 @@
 
     [[NSNotificationCenter defaultCenter] removeObserver:self name:kImageCapturedSuccessfully object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:@"onboardingFinished"];
-
-
-    
     [[NSNotificationCenter defaultCenter] removeObserver:@"newTaps"];
-    
     [[NSNotificationCenter defaultCenter] removeObserver:@"appEnteredBackground"];
-    
     [[NSNotificationCenter defaultCenter] removeObserver:@"appEnteredForeground"];
-
     [[NSNotificationCenter defaultCenter] removeObserver:@"savedImageToServer"];
 
 }
 
 -(void)handleSavedImageNotification:(NSNotification *)notification {
-    messagesSaved++;
+//    messagesSaved++;
     
-    NSLog(@"handleSavedImageNotification, incremented messagesSaved %d", messagesSaved);
-    NSLog(@"num of messages saved %d / num if taps %d / object %@", messagesSaved, taps, notification.object);
+    NSLog(@"handleSavedImageNotification called");
+    
+    self.appDelegate.messagesSaved = @([self.appDelegate.messagesSaved intValue] + 1);
+    
+    NSLog(@"handleSavedImageNotification, incremented messagesSaved %d", [self.appDelegate.messagesSaved intValue]);
+    NSLog(@"num of messages saved %d / num if taps %d / object %@", [self.appDelegate.messagesSaved intValue], [self.appDelegate.taps intValue], notification.object);
     
 //    self.tapsCounter.text = [NSString stringWithFormat:@"%d", [self.tapsCounter.text intValue] - 1];
     
-    if (messagesSaved == taps) {
+    if ([self.appDelegate.messagesSaved intValue] == [self.appDelegate.taps intValue]) {
         NSLog(@"That was the last one");
+        self.appDelegate.sending = @(NO);
+        
+        // Need to reset metrics here?
+        
         NSLog(@"Object %@", /*[sender objectForKey:@"object"]*/ notification.object);
-        
-        [self createInteraction];
-        
-
         [self.sendingIndicator setHidden:YES];
     }
 }
@@ -303,9 +331,6 @@
 //            [TPProcessImage updateInteractions:self.recipients withBatchId:batchIdString];
 
             [TPProcessImage updateBroadcast:batchIdString];
-            
-
-            [self.sendingIndicator setHidden:YES];
         }
         @catch (NSException *exception) {
             NSLog(@"Exception %@", exception);
@@ -353,10 +378,14 @@
 //    NSLog(@"sending to %@", recipients);
 //    [self.sendingIndicator startAnimating];
 //    [self.sendingIndicator setHidden:NO];
-    [TPProcessImage sendTapTo:self.recipients andImage:dataForJPEGFile inBatch:batchIdString withImageId: taps completed:^(BOOL success) {
+    
+    self.appDelegate.taps = @([self.appDelegate.taps intValue] + 1);
+    self.tapsCounter.text = [NSString stringWithFormat:@"%d", [self.appDelegate.taps intValue]];
+    self.appDelegate.sending = @(YES);
+    [TPProcessImage sendTapTo:self.recipients andImage:dataForJPEGFile inBatch:batchIdString withImageId: [self.appDelegate.taps intValue] completed:^(BOOL success) {
         //        NSLog(@"HOly shit it saved?");
     }];
-        
+    
     
     
 
@@ -364,8 +393,12 @@
 }
 
 -(void) resetBatch {
-    taps = 0;
-    self.tapsCounter.text = [NSString stringWithFormat:@"%d", taps];
+//    taps = 0;
+    if (![self.appDelegate.sending boolValue]) {
+        self.appDelegate.taps = @(0);
+    }
+//    self.tapsCounter.text = [NSString stringWithFormat:@"%d", taps];
+    self.tapsCounter.text = [NSString stringWithFormat:@"%d", [self.appDelegate.taps intValue]];
     [self resetBatchId];
 }
 

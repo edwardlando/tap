@@ -24,6 +24,10 @@
 @property (strong, nonatomic) NSMutableDictionary *numbersToUsernamesDict;
 @property (strong, nonatomic) NSMutableDictionary *friendsObjectsDict;
 @property (strong, nonatomic) NSMutableArray *allReadTaps;
+@property (strong, nonatomic) NSNumber *taps;
+@property (strong, nonatomic) NSNumber *messagesSaved;
+@property (strong, nonatomic) NSNumber *sending;
+
 
 -(void)loadFriends;
 @end

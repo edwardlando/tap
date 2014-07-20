@@ -10,7 +10,7 @@
 
 
 #import <Parse/Parse.h>
-
+#import "TPAppDelegate.h"
 
 @implementation TPProcessImage
 

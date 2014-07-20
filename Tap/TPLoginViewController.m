@@ -7,21 +7,28 @@
 //
 
 #import "TPLoginViewController.h"
+#import "TPAppDelegate.h"
+
 #import <Parse/Parse.h>
 
 @interface TPLoginViewController ()
-
+@property (strong, nonatomic) TPAppDelegate *appDelegate;
 @end
 
 @implementation TPLoginViewController
 
+-(TPAppDelegate *)appDelegate {
+    if (!_appDelegate) {
+        _appDelegate = (TPAppDelegate *)[[UIApplication sharedApplication] delegate];
+    }
+    return _appDelegate;
+}
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
 }
-
 
 - (IBAction)login:(id)sender {
     NSString *username = [self.usernameField.text stringByTrimmingCharactersInSet:
@@ -40,6 +47,7 @@
                 [alertView show];
             }
             else {
+                [self.appDelegate loadFriends];
                  [self dismissViewControllerAnimated:YES completion:nil];
             }
         }];
