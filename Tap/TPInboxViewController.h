@@ -7,8 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "SWTableViewCell.h"
 #import <Parse/Parse.h>
 
-@interface TPInboxViewController : PFQueryTableViewController
+@interface TPInboxViewController : PFQueryTableViewController <SWTableViewCellDelegate>
+
 
 @end

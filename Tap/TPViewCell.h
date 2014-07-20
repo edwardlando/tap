@@ -8,8 +8,9 @@
 
 #import <UIKit/UIKit.h>
 #import <Parse/Parse.h>
+#import "SWTableViewCell.h"
 
-@interface TPViewCell : UITableViewCell
+@interface TPViewCell : SWTableViewCell
 @property (strong, nonatomic) PFUser *sendingUser;
 @property (strong, nonatomic) NSArray *taps;
 @property (strong, nonatomic) NSNumber *justVisited;
