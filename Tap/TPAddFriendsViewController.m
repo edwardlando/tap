@@ -123,11 +123,17 @@
     // Background color
     //    if (section == 0) {
 //    view.tintColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"blue"]];
-    view.tintColor = [UIColor blackColor];
+    view.tintColor = [UIColor whiteColor];
     // Text Color
     UITableViewHeaderFooterView *header = (UITableViewHeaderFooterView *)view;
-    [header.textLabel setTextColor:[UIColor whiteColor]];
-    //    }
+    [header.textLabel setTextColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"black"]]];
+    [header.textLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Bold" size:15.0f]];
+    
+    CALayer *BottomBorder = [CALayer layer];
+    BottomBorder.frame = CGRectMake(0.0f, view.frame.size.height - 0.7f, view.frame.size.width, 0.7f);
+    BottomBorder.backgroundColor = [[UIColor lightGrayColor] colorWithAlphaComponent:0.5].CGColor;
+    [view.layer addSublayer:BottomBorder];
+    
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section{

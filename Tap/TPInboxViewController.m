@@ -139,6 +139,7 @@
 
 - (void)tableView:(UITableView *)tableView willDisplayHeaderView:(UIView *)view forSection:(NSInteger)section
 {
+    
     // Background color
     //    if (section == 0) {
     //    view.tintColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"blue"]];
@@ -160,11 +161,9 @@
     BottomBorder.backgroundColor = [[UIColor lightGrayColor] colorWithAlphaComponent:0.5].CGColor;
     [view.layer addSublayer:BottomBorder];
     
-    
     UITableViewHeaderFooterView *header = (UITableViewHeaderFooterView *)view;
     [header.textLabel setTextColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"black"]]];
     [header.textLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Bold" size:15.0f]];
-
     
 }
 
@@ -344,7 +343,7 @@
 
 
  - (TPViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-
+     NSLog(@"CEll For Row");
      if (indexPath.section == 0) {
          static NSString *CellIdentifier = @"sentTap";
          
@@ -397,6 +396,8 @@
                      [tapsCounter setHidden: YES];
                      [ind startAnimating];
                      [ind setHidden:NO];
+                 } else {
+                     NSLog(@"No Objects");
                  }
                  
                  [self.allTaps setObject:objects forKey:broadcastId];
@@ -535,7 +536,7 @@
          [dateFormat setDateFormat:@"EEE, dd MMM yy HH:mm:ss VVVV"];
         cell.userInteractionEnabled = NO;
          cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:20.0];
-         cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ ago",
+         cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ ago - no new taps 😭",
           [self dateDiff:[dateFormat stringFromDate:created]]];/*, (unsigned long)[objects count]*/
 
          @try {

@@ -62,6 +62,7 @@
     PFObject *flipcast = [PFObject objectWithClassName:@"Flipcast"];
     flipcast[@"owner"] = [PFUser currentUser];
     flipcast[@"batchId"] = batchId;
+    flipcast[@"read"] = [[NSMutableArray alloc] init];
     [flipcast saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         NSLog(@"Created Flipcasts");
     }];
