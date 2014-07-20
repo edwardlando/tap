@@ -49,6 +49,12 @@
 		B6CB8EC3196930AB002996E8 /* TPHandleContacts.m in Sources */ = {isa = PBXBuildFile; fileRef = B6CB8EC2196930AB002996E8 /* TPHandleContacts.m */; };
 		B6CB8EC61969C16E002996E8 /* TPFriendRequestsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B6CB8EC51969C16E002996E8 /* TPFriendRequestsViewController.m */; };
 		BC2E7CD419691C14007CB5F9 /* TPAskForContactsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BC2E7CD319691C14007CB5F9 /* TPAskForContactsViewController.m */; };
+		BCC9C2C4197C7E600069F043 /* NSMutableArray+SWUtilityButtons.m in Sources */ = {isa = PBXBuildFile; fileRef = BCC9C2B9197C7E600069F043 /* NSMutableArray+SWUtilityButtons.m */; };
+		BCC9C2C5197C7E600069F043 /* SWCellScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = BCC9C2BB197C7E600069F043 /* SWCellScrollView.m */; };
+		BCC9C2C6197C7E600069F043 /* SWLongPressGestureRecognizer.m in Sources */ = {isa = PBXBuildFile; fileRef = BCC9C2BD197C7E600069F043 /* SWLongPressGestureRecognizer.m */; };
+		BCC9C2C7197C7E600069F043 /* SWTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = BCC9C2BF197C7E600069F043 /* SWTableViewCell.m */; };
+		BCC9C2C8197C7E600069F043 /* SWUtilityButtonTapGestureRecognizer.m in Sources */ = {isa = PBXBuildFile; fileRef = BCC9C2C1197C7E600069F043 /* SWUtilityButtonTapGestureRecognizer.m */; };
+		BCC9C2C9197C7E600069F043 /* SWUtilityButtonView.m in Sources */ = {isa = PBXBuildFile; fileRef = BCC9C2C3197C7E600069F043 /* SWUtilityButtonView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -125,6 +131,18 @@
 		B6CB8EC51969C16E002996E8 /* TPFriendRequestsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TPFriendRequestsViewController.m; sourceTree = "<group>"; };
 		BC2E7CD219691C14007CB5F9 /* TPAskForContactsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPAskForContactsViewController.h; sourceTree = "<group>"; };
 		BC2E7CD319691C14007CB5F9 /* TPAskForContactsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TPAskForContactsViewController.m; sourceTree = "<group>"; };
+		BCC9C2B8197C7E600069F043 /* NSMutableArray+SWUtilityButtons.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMutableArray+SWUtilityButtons.h"; sourceTree = "<group>"; };
+		BCC9C2B9197C7E600069F043 /* NSMutableArray+SWUtilityButtons.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMutableArray+SWUtilityButtons.m"; sourceTree = "<group>"; };
+		BCC9C2BA197C7E600069F043 /* SWCellScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SWCellScrollView.h; sourceTree = "<group>"; };
+		BCC9C2BB197C7E600069F043 /* SWCellScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SWCellScrollView.m; sourceTree = "<group>"; };
+		BCC9C2BC197C7E600069F043 /* SWLongPressGestureRecognizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SWLongPressGestureRecognizer.h; sourceTree = "<group>"; };
+		BCC9C2BD197C7E600069F043 /* SWLongPressGestureRecognizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SWLongPressGestureRecognizer.m; sourceTree = "<group>"; };
+		BCC9C2BE197C7E600069F043 /* SWTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SWTableViewCell.h; sourceTree = "<group>"; };
+		BCC9C2BF197C7E600069F043 /* SWTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SWTableViewCell.m; sourceTree = "<group>"; };
+		BCC9C2C0197C7E600069F043 /* SWUtilityButtonTapGestureRecognizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SWUtilityButtonTapGestureRecognizer.h; sourceTree = "<group>"; };
+		BCC9C2C1197C7E600069F043 /* SWUtilityButtonTapGestureRecognizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SWUtilityButtonTapGestureRecognizer.m; sourceTree = "<group>"; };
+		BCC9C2C2197C7E600069F043 /* SWUtilityButtonView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SWUtilityButtonView.h; sourceTree = "<group>"; };
+		BCC9C2C3197C7E600069F043 /* SWUtilityButtonView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SWUtilityButtonView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -217,6 +235,7 @@
 		B6CB8E4B1967C41C002996E8 /* Tap */ = {
 			isa = PBXGroup;
 			children = (
+				BCC9C2B7197C7E600069F043 /* SWTCell */,
 				B6CB8E541967C41C002996E8 /* TPAppDelegate.h */,
 				B6CB8E551967C41C002996E8 /* TPAppDelegate.m */,
 				B6CB8E571967C41C002996E8 /* Main.storyboard */,
@@ -392,6 +411,25 @@
 			name = "Ask for contacts";
 			sourceTree = "<group>";
 		};
+		BCC9C2B7197C7E600069F043 /* SWTCell */ = {
+			isa = PBXGroup;
+			children = (
+				BCC9C2B8197C7E600069F043 /* NSMutableArray+SWUtilityButtons.h */,
+				BCC9C2B9197C7E600069F043 /* NSMutableArray+SWUtilityButtons.m */,
+				BCC9C2BA197C7E600069F043 /* SWCellScrollView.h */,
+				BCC9C2BB197C7E600069F043 /* SWCellScrollView.m */,
+				BCC9C2BC197C7E600069F043 /* SWLongPressGestureRecognizer.h */,
+				BCC9C2BD197C7E600069F043 /* SWLongPressGestureRecognizer.m */,
+				BCC9C2BE197C7E600069F043 /* SWTableViewCell.h */,
+				BCC9C2BF197C7E600069F043 /* SWTableViewCell.m */,
+				BCC9C2C0197C7E600069F043 /* SWUtilityButtonTapGestureRecognizer.h */,
+				BCC9C2C1197C7E600069F043 /* SWUtilityButtonTapGestureRecognizer.m */,
+				BCC9C2C2197C7E600069F043 /* SWUtilityButtonView.h */,
+				BCC9C2C3197C7E600069F043 /* SWUtilityButtonView.m */,
+			);
+			path = SWTCell;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -499,11 +537,16 @@
 				B6CB8EA61967CB68002996E8 /* TPInboxViewController.m in Sources */,
 				B6B3E16C196B59620095BEF9 /* TPViewCell.m in Sources */,
 				B6CB8E9A1967CB0A002996E8 /* TPVerifyViewController.m in Sources */,
+				BCC9C2C7197C7E600069F043 /* SWTableViewCell.m in Sources */,
+				BCC9C2C9197C7E600069F043 /* SWUtilityButtonView.m in Sources */,
+				BCC9C2C4197C7E600069F043 /* NSMutableArray+SWUtilityButtons.m in Sources */,
+				BCC9C2C6197C7E600069F043 /* SWLongPressGestureRecognizer.m in Sources */,
 				B6CB8E561967C41C002996E8 /* TPAppDelegate.m in Sources */,
 				B6CB8EB61967CF69002996E8 /* CaptureSessionManager.m in Sources */,
 				B619B6FC197A380900B84DF9 /* TPAddFriendsViewController.m in Sources */,
 				B6CB8EA91967CB8D002996E8 /* TPMyGroupViewController.m in Sources */,
 				B6CB8EA31967CB50002996E8 /* TPCameraViewController.m in Sources */,
+				BCC9C2C5197C7E600069F043 /* SWCellScrollView.m in Sources */,
 				B6CB8E9D1967CB2A002996E8 /* TPLandingViewController.m in Sources */,
 				B6CB8EA01967CB3F002996E8 /* TPLoginViewController.m in Sources */,
 				B6CB8EBF1967E09A002996E8 /* TPSingleTapViewController.m in Sources */,
@@ -511,6 +554,7 @@
 				B6CB8EC3196930AB002996E8 /* TPHandleContacts.m in Sources */,
 				BC2E7CD419691C14007CB5F9 /* TPAskForContactsViewController.m in Sources */,
 				B6CB8E521967C41C002996E8 /* main.m in Sources */,
+				BCC9C2C8197C7E600069F043 /* SWUtilityButtonTapGestureRecognizer.m in Sources */,
 				B6CB8EAC1967CBA4002996E8 /* TPAllContactsViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

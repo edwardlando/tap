@@ -342,6 +342,29 @@
     }
 }
 
+- (void) initializeSwipeableCell:(TPViewCell *) cell {
+    // Add utility buttons
+//    NSMutableArray *leftUtilityButtons = [NSMutableArray new];
+    NSMutableArray *rightUtilityButtons = [NSMutableArray new];
+    
+    
+    
+    [rightUtilityButtons sw_addUtilityButtonWithColor:
+     [UIColor colorWithRed:0.78f green:0.78f blue:0.8f alpha:1.0]
+                                                title:@"Edit"];
+//    [rightUtilityButtons sw_addUtilityButtonWithColor:
+//     [UIColor colorWithRed:1.0f green:0.231f blue:0.188 alpha:1.0f]
+//                                                title:@"Delete"];
+    
+//    cell.leftUtilityButtons = leftUtilityButtons;
+    cell.rightUtilityButtons = rightUtilityButtons;
+    cell.delegate = self;
+    
+    // Configure the cell...
+    // cell.patternLabel.text = [patterns objectAtIndex:indexPath.row];
+    // cell.patternImageView.image = [UIImage imageNamed:[patternImages objectAtIndex:indexPath.row]];
+}
+
 
  - (TPViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
 
@@ -349,6 +372,10 @@
          static NSString *CellIdentifier = @"sentTap";
          
          TPViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
+         
+         // For swipeable cell
+         [self initializeSwipeableCell:cell];
+         
          UIActivityIndicatorView *ind = (UIActivityIndicatorView *)[cell viewWithTag:5];
          [ind setHidden:YES];
          PFObject *flipcast = [self.myFlipcasts objectAtIndex:indexPath.row];
@@ -678,8 +705,8 @@
 
 
 -(void)editFlipcast:(id)sender {
-    UIView *senderButton = (UIView*) sender;
-    UITableViewCell *cell =(UITableViewCell *)[[[sender superview] superview] superview];
+//    UIView *senderButton = (UIView*) sender;
+    UITableViewCell *cell =sender;//(UITableViewCell *)[[[sender superview] superview] superview];
     self.cellToRemove = cell;
     NSIndexPath *indexPath = [self.tableView indexPathForCell: cell];
     
@@ -904,4 +931,34 @@
         vc.directRecipient = sender;
     }
 }
+
+- (void)swipeableTableViewCell:(SWTableViewCell *)cell didTriggerRightUtilityButtonWithIndex:(NSInteger)index {
+    switch (index) {
+        case 0:
+        {
+            // Edit button is pressed
+//            UIActionSheet *shareActionSheet = [[UIActionSheet alloc] initWithTitle:@"Share" delegate:nil cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Share on Facebook", @"Share on Twitter", nil];
+//            [shareActionSheet showInView:self.view];
+            
+            
+            [self editFlipcast:cell];
+            
+            [cell hideUtilityButtonsAnimated:YES];
+            break;
+        }
+//        case 1:
+//        {
+//            // Delete button is pressed
+//            NSIndexPath *cellIndexPath = [self.tableView indexPathForCell:cell];
+////            [patterns removeObjectAtIndex:cellIndexPath.row];
+////            [patternImages removeObjectAtIndex:cellIndexPath.row];
+//            [self.tableView deleteRowsAtIndexPaths:@[cellIndexPath] withRowAnimation:UITableViewRowAnimationLeft];
+//            break;
+//        }
+        default:
+            break;
+    }
+}
+
+
 @end
