@@ -432,7 +432,7 @@
                 [ind stopAnimating];
                 [ind setHidden:YES];
                 [self.appDelegate.friendRequestsSent addObject:[user objectForKey:@"phoneNumber"]];
-                UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Friend Request Sent" message:@"Succesfuly sent friend request to this dude" delegate:nil cancelButtonTitle:nil otherButtonTitles:@"FUCK YEAH!", nil];
+                UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Friend Request Sent" message:@"Succesfuly sent friend request" delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK", nil];
                 [alert show];
                 
                 // adding friend to friend requests sent

@@ -147,17 +147,25 @@
     PFObject *friendRequest = [self.objects objectAtIndex:indexPath.row];
     
     PFUser *user = [friendRequest objectForKey:@"requestingUser"];
+    
     NSString *friendRequesterPhoneNumber = [friendRequest objectForKey:@"requestingUserPhoneNumber"];
+    
     NSString *friendRequesterNameInMyContacts = [self.appDelegate.contactsDict objectForKey:friendRequesterPhoneNumber];
+    
     NSString *friendRequesterUsername = [friendRequest objectForKey:@"requestingUserUsername"];
     
-    NSLog(@"Adding this guy as a friend %@", friendRequesterUsername);
+    NSLog(@"Adding %@ as a friend", friendRequesterUsername);
     if (![[self.user objectForKey:@"friendsArray"] containsObject:user]) {
         
         PFUser *currentUser = [PFUser currentUser];
         
         [[currentUser objectForKey:@"friendsArray"] addObject:user];
-        [[currentUser objectForKey:@"friendsPhones"] addObject:friendRequesterPhoneNumber];
+        NSMutableArray *friendsPhones = [[currentUser objectForKey:@"friendsPhones"] mutableCopy];
+
+        [friendsPhones addObject:friendRequesterPhoneNumber];
+
+        [currentUser setObject:friendsPhones forKey:@"friendsPhones"];
+
         [[currentUser objectForKey:@"friendsPhonesDict"] setObject:friendRequesterNameInMyContacts forKey:friendRequesterPhoneNumber];
             
 //        [[user objectForKey:@"friendsArray"] addObject:currentUser];
@@ -179,7 +187,8 @@
                                                         if (error) {
                                                             NSLog(@"Error: %@", error);
                                                         } else {
-                                                            UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Accepted Friend Request" message:@"You're now friends with this dude" delegate:nil cancelButtonTitle:nil otherButtonTitles:@"FUCK YEAH!", nil];
+                                                            NSString *message = [NSString stringWithFormat:@"You are now friends with %@", friendRequesterNameInMyContacts];
+                                                            UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Accepted Friend Request" message:message delegate:nil cancelButtonTitle:nil otherButtonTitles:@"FUCK YEAH!", nil];
                                                             [alert show];
                                                             [self viewDidLoad];
                                                         }

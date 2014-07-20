@@ -93,8 +93,8 @@
     NSString *nameInContacts = [self.appDelegate.contactsDict objectForKey:directPhoneNumber];
     NSString *replyMsg = [NSString stringWithFormat:@"You are replying directly to %@", nameInContacts];
     if (self.isReply) {
-        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Direct Reply" message:replyMsg delegate:nil cancelButtonTitle:nil otherButtonTitles:@"FUCK YEAH!", nil];
-        [alert show];
+//        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Direct Reply" message:replyMsg delegate:nil cancelButtonTitle:nil otherButtonTitles:@"FUCK YEAH!", nil];
+//        [alert show];
     }
     [self fetchPhoneContacts];
 

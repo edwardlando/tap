@@ -145,7 +145,7 @@
         }];
 //        }
         
-        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Great Success!" message:@"Welcome to Tap" delegate:nil cancelButtonTitle:nil otherButtonTitles:@"FUCK YEAH!", nil];
+        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Great Success!" message:@"Welcome to Tap. Tap anywhere to take and upload a photo. Tap on the black square to view your friends' taps and add more friends. Have fun! 🐶" delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK!", nil];
         [alert show];
         
         [[NSNotificationCenter defaultCenter] postNotificationName:@"onboardingFinished"
