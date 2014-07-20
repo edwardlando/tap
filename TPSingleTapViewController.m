@@ -9,6 +9,7 @@
 #import "TPSingleTapViewController.h"
 #import "TPCameraViewController.h"
 #import "TPAppDelegate.h"
+#import "QuartzCore/QuartzCore.h"
 
 @interface TPSingleTapViewController () {
     int taps;
@@ -44,22 +45,31 @@
 
     UILabel *tapsLabel = (UILabel *)[self.view viewWithTag:10];
     tapsLabel.layer.cornerRadius = 5;
+    tapsLabel.layer.borderColor = [UIColor whiteColor].CGColor;
+    tapsLabel.layer.borderWidth = 2.0f;
+    tapsLabel.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.2f];
+
 
     self.sortedKeysArray = [[self.allInteractionTaps allKeys] sortedArrayUsingSelector:
                                 @selector(localizedCaseInsensitiveCompare:)];
 //    self.allBatchImages = [self allInteractionTapsToArray];
 
     currentTap = currentBatch = 0;
+    
+
+//    NSLog(@"self.sortedKeysArray %@", self.sortedKeysArray);
+//    NSLog(@"self.allInteractionTaps %@", self.allInteractionTaps);
+    
+    
     numberOfTapsInBatch = (int)[[self.allInteractionTaps objectForKey:[self.sortedKeysArray objectAtIndex:0]] count];
     if ([self.sortedKeysArray count] == 1) {
         lastBatch = YES;
     }
     
-    
     taps = [@(self.objects.count) intValue];
     
     if (taps > 2) {
-        tapsLabel.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"pink"]];
+//        tapsLabel.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"pink"]];
     }
 
 //    NSLog(@"self.objects.count %d", taps);
@@ -129,10 +139,10 @@
 
     PFObject *messageToShow = [sortedBatchPhotos objectAtIndex:currentTap];
     
-    NSLog(@"Message to Show %@", messageToShow);
+    NSLog(@"Message to show imageId %@", [messageToShow objectForKey:@"imageId"]);
     
-    
-    UIImage *singleTapImage = [messageToShow objectForKey:@"image"];
+    NSData *data = [messageToShow objectForKey:@"imageData"];
+    UIImage *singleTapImage = [[UIImage alloc] initWithData:data];
                             
     
 //    UIImage *singleTapImage = [[self.allBatchImages objectAtIndex:taps - 1] objectForKey:@"image"];

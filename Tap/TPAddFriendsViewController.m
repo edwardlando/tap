@@ -94,8 +94,7 @@
     
 //    [self alertIfNoFriends];
     
-    
-    self.sections = @[@"REQUESTS", @"CONTACTS ON FLIPCAST", @"INVITE CONTACTS"];
+    self.sections = @[@"REQUESTS", @"CONTACTS ON TAP", @"INVITE CONTACTS"];
     
     [self setNavbarIcon];
     [self setupNavBarStyle];
@@ -305,8 +304,12 @@
     NSArray *friendsPhoneNumbers = self.appDelegate.friendsPhoneNumbersArray;
     
     [query whereKey:@"phoneNumber" containedIn:self.appDelegate.contactsPhoneNumbersArray];
+    NSArray *forbiddenNumbers = [friendsPhoneNumbers arrayByAddingObjectsFromArray: self.appDelegate.friendRequestsSent];
     
-    [query whereKey:@"phone" notContainedIn:[friendsPhoneNumbers arrayByAddingObjectsFromArray: self.appDelegate.friendRequestsSent ]];
+    NSMutableArray *forbiddenNumbersWithOwnNumber = [forbiddenNumbers mutableCopy];
+    [forbiddenNumbersWithOwnNumber addObject:[[PFUser currentUser] objectForKey:@"phoneNumber"]];
+    
+    [query whereKey:@"phone" notContainedIn: forbiddenNumbersWithOwnNumber];
     
     query.cachePolicy =  kPFCachePolicyCacheThenNetwork;
     return query;

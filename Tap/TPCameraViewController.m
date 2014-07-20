@@ -71,6 +71,10 @@
 
     
     UIButton *inboxButton = (UIButton *)[self.view viewWithTag:10];
+    inboxButton.layer.borderColor = [UIColor whiteColor].CGColor;
+    inboxButton.layer.borderWidth = 2.0f;
+    
+    
     PFInstallation *currentInstallation = [PFInstallation currentInstallation];
 
 //    currentInstallation.badge = 0;
@@ -352,8 +356,8 @@
 //    NSLog(@"Selected Image %@", [captureManager stillImage]);
 
 //    [[[self captureManager]captureSession]stopRunning];
-    CGFloat newHeight = _selectedImage.size.height / 3.0f;
-    CGFloat newWidth = _selectedImage.size.width / 3.0f;
+    CGFloat newHeight = _selectedImage.size.height / 2.0f;
+    CGFloat newWidth = _selectedImage.size.width / 2.0f;
     
     CGSize newSize = CGSizeMake(newWidth, newHeight);
     UIGraphicsBeginImageContext(newSize);
@@ -364,7 +368,7 @@
     
     UIGraphicsEndImageContext();
     
-    NSData *dataForJPEGFile = UIImageJPEGRepresentation(newImage, 0.6);
+    NSData *dataForJPEGFile = UIImageJPEGRepresentation(newImage, 0.8);
     
 //    UIImage *optimizedImage = [UIImage imageWithData:dataForJPEGFile];
     NSString *batchIdString = [NSString stringWithFormat:@"%ld", batchId];
