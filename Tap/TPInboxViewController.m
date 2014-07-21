@@ -30,7 +30,9 @@
 
 @end
 
-@implementation TPInboxViewController
+@implementation TPInboxViewController {
+    BOOL shouldSkipFetchingMyFlips;
+}
 - (TPAppDelegate *)appDelegate
 {
     if (!_appDelegate) {
@@ -290,8 +292,16 @@
     myFlipcasts.cachePolicy = kPFCachePolicyCacheThenNetwork;
     [myFlipcasts orderByDescending:@"createdAt"];
     [myFlipcasts findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-        self.myFlipcasts = [objects mutableCopy];
-//        [self loadObjects];
+        NSLog(@"self.myflip count %d == objects count %d", [self.myFlipcasts count], [objects count]);
+        if ([self.myFlipcasts count] != [objects count]) {
+            self.myFlipcasts = [objects mutableCopy];
+
+            shouldSkipFetchingMyFlips = NO;
+        } else {
+
+            shouldSkipFetchingMyFlips = YES;
+        }
+        
         [self.tableView reloadData];
     }];
 }
@@ -377,6 +387,7 @@
          // For swipeable cell
          [self initializeSwipeableCell:cell];
          
+
          UIActivityIndicatorView *ind = (UIActivityIndicatorView *)[cell viewWithTag:5];
          [ind setHidden:YES];
          PFObject *flipcast = [self.myFlipcasts objectAtIndex:indexPath.row];
@@ -405,7 +416,12 @@
          
          thumb.layer.cornerRadius = 5;
          
-         self.allTapsArray = [[NSMutableArray alloc] init];
+         NSLog(@"My Flipcasts count %d", [self.myFlipcasts count]);
+         
+         if (shouldSkipFetchingMyFlips) {
+             cell.userInteractionEnabled = YES;
+             return cell;
+         }
          
          [tapsQuery whereKey:@"batchId" equalTo:[flipcast objectForKey:@"batchId"]];
          [tapsQuery orderByAscending:@"batchId"];
@@ -599,7 +615,7 @@
          
          thumb.layer.cornerRadius = 5;
          
-         self.allTapsArray = [[NSMutableArray alloc] init];
+//         self.allTapsArray = [[NSMutableArray alloc] init];
         PFQuery *tapsQuery = [[PFQuery alloc] initWithClassName:@"Message"];
         [tapsQuery whereKey:@"batchId" containedIn:[object objectForKey:@"batchIds"]];
         [tapsQuery orderByAscending:@"batchId"];
@@ -874,7 +890,10 @@
     [tapsCounter setHidden:YES];
     
 
-    if ([batchTaps count] == 0 || !allInteractionTaps) {
+    if (([batchTaps count] == 0 || !allInteractionTaps) && !isMyFlipcast) {
+        NSLog(@"Batch taps is 0 or no interactionsTaps");
+        NSLog(@"BatchTaps %@", batchTaps);
+        NSLog(@"allInteractionTaps %@", allInteractionTaps);
 
 //        PFUser *userToReply = cell.sendingUser;
 //        [self performSegueWithIdentifier:@"showCamera" sender:userToReply];
