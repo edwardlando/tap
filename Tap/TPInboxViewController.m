@@ -290,6 +290,7 @@
     [myFlipcasts orderByDescending:@"createdAt"];
     [myFlipcasts findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         self.myFlipcasts = [objects mutableCopy];
+//        [self loadObjects];
         [self.tableView reloadData];
     }];
 }
@@ -393,7 +394,7 @@
          cell.myFlipcast = [NSNumber numberWithBool:YES];
          
          PFQuery *tapsQuery = [[PFQuery alloc] initWithClassName:@"Message"];
-         tapsQuery.cachePolicy = kPFCachePolicyCacheElseNetwork;
+         tapsQuery.cachePolicy = kPFCachePolicyCacheThenNetwork;
 //         tapsQuery.cachePolicy = kPFCachePolicyCacheOnly;
          NSString *broadcastId = [flipcast objectId];
          
@@ -588,7 +589,7 @@
              NSLog(@"Exception: %@", exception);
          }
          
-         PFQuery *tapsQuery = [[PFQuery alloc] initWithClassName:@"Message"];
+
 
          NSString *broadcastId = [object objectId];
          
@@ -598,7 +599,7 @@
          thumb.layer.cornerRadius = 5;
          
          self.allTapsArray = [[NSMutableArray alloc] init];
-         
+        PFQuery *tapsQuery = [[PFQuery alloc] initWithClassName:@"Message"];
         [tapsQuery whereKey:@"batchId" containedIn:[object objectForKey:@"batchIds"]];
         [tapsQuery orderByAscending:@"batchId"];
         [tapsQuery whereKey:@"sender" equalTo:cell.sendingUser];

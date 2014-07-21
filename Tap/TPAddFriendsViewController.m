@@ -270,23 +270,16 @@
         return cell;
     } else {
         NSLog(@"section is 2");
+        
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"inviteContactCell" forIndexPath:indexPath];
-
-//            NSArray *keys = [self.appDelegate.contactsDict allKeys];
-//        
-//            NSString *number = [keys objectAtIndex:indexPath.row];
-//        
-//            NSString *name = [self.appDelegate.contactsDict objectForKey:number];
-//            cell.textLabel.text = name;
-//            cell.detailTextLabel.text = number;
+        UIButton *inviteFriendButton = (UIButton *) [cell viewWithTag:3];
+        [inviteFriendButton addTarget:self action:@selector(inviteFriend:) forControlEvents:UIControlEventTouchUpInside];
         
-        
+        inviteFriendButton.layer.cornerRadius = 5;
         NSArray *keys = [self.appDelegate.contactsDict allKeys];
         
         NSString *number = [keys objectAtIndex:indexPath.row];
-        
         NSString *name = [self.appDelegate.contactsDict objectForKey:number];
-//        NSDictionary *contact = self.appDelegate.
         
         cell.textLabel.text = name;
         cell.detailTextLabel.text = number;
@@ -410,6 +403,17 @@
 }
 
 
+-(void)inviteFriend:(id )sender {
+    NSLog(@"invite friend");
+    UIView *senderButton = (UIView*) sender;
+    NSIndexPath *indexPath = [self.tableView indexPathForCell: (UITableViewCell *)[[[senderButton superview]superview] superview]];
+    NSArray *keys = [self.appDelegate.contactsDict allKeys];
+    
+    NSString *number = [keys objectAtIndex:indexPath.row];
+    
+    UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Invite" message:[NSString stringWithFormat:@"This will open a text message with this number %@", number] delegate:nil cancelButtonTitle:nil otherButtonTitles:@"FUCK YEAH!", nil];
+    [alert show];
+}
 -(void)sendFriendRequest:(id )sender {
     NSLog(@"send friend request");
     UIView *senderButton = (UIView*) sender;
