@@ -12,6 +12,7 @@
 #import "TPViewCell.h"
 #import "TPCameraViewController.h"
 #import "QuartzCore/QuartzCore.h"
+#import "CustomBadge.h"
 
 @interface TPInboxViewController () <UIAlertViewDelegate>
 - (IBAction)goToCamera:(id)sender;
@@ -571,7 +572,7 @@
          [dateFormat setDateFormat:@"EEE, dd MMM yy HH:mm:ss VVVV"];
         cell.userInteractionEnabled = NO;
          cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:20.0];
-         cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ ago - no new taps 😭",
+         cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ ago - no new taps",
           [self dateDiff:[dateFormat stringFromDate:created]]];/*, (unsigned long)[objects count]*/
 
          @try {
@@ -829,9 +830,27 @@
     [query countObjectsInBackgroundWithBlock:^(int number, NSError *error) {
         NSLog(@"counted friend requests %d", number);
         self.appDelegate.pendingFriendRequests = @(number);
+        [self initFriendRequestsBadge];
     }];
 }
 
+-(void)initFriendRequestsBadge {
+    NSLog(@"initFriendRequestsBadge");
+    
+    if ([self.appDelegate.pendingFriendRequests intValue] > 0) {
+        CustomBadge *customBadge1 = [CustomBadge customBadgeWithString:[self.appDelegate.pendingFriendRequests stringValue]
+                                                       withStringColor:[UIColor whiteColor]
+                                                        withInsetColor:[UIColor blackColor]
+                                                        withBadgeFrame:YES
+                                                   withBadgeFrameColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"blue"]]
+                                                             withScale:1.0
+                                                           withShining:NO];
+        
+    [customBadge1 setFrame:CGRectMake(self.view.frame.size.width - 35, 20, customBadge1.frame.size.width, customBadge1.frame.size.height)];
+    [self.navigationController.view addSubview:customBadge1];
+//        ;
+    }
+}
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
 

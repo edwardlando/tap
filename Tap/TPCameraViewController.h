@@ -14,7 +14,7 @@
 #import <Parse/Parse.h>
 #import <ImageIO/ImageIO.h>
 
-@interface TPCameraViewController : UIViewController <UIGestureRecognizerDelegate>
+@interface TPCameraViewController : UIViewController <UIGestureRecognizerDelegate, UIAlertViewDelegate>
 
 @property (strong, nonatomic) IBOutlet UIView *cameraView;
 @property (nonatomic,retain) CaptureSessionManager *captureManager;

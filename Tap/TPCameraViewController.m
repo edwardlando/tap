@@ -259,6 +259,11 @@
     NSLog(@"Registered for notifications");
     
     [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(handleNeedsUpdateNotification:)
+                                                 name:@"needsUpdate"
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(saveImage)
                                                  name:kImageCapturedSuccessfully
                                                object:nil];
@@ -292,8 +297,8 @@
 
 -(void) unsubscribeFromNotifications {
     NSLog(@"Unsubscribed from notifications");
-
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:kImageCapturedSuccessfully object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:@"needsUpdate"];
+    [[NSNotificationCenter defaultCenter] removeObserver:kImageCapturedSuccessfully];
     [[NSNotificationCenter defaultCenter] removeObserver:@"onboardingFinished"];
     [[NSNotificationCenter defaultCenter] removeObserver:@"newTaps"];
     [[NSNotificationCenter defaultCenter] removeObserver:@"appEnteredBackground"];
@@ -369,7 +374,7 @@
     
     UIGraphicsEndImageContext();
     
-    NSData *dataForJPEGFile = UIImageJPEGRepresentation(newImage, 0.6);
+    NSData *dataForJPEGFile = UIImageJPEGRepresentation(newImage, 0.8);
     
 //    UIImage *optimizedImage = [UIImage imageWithData:dataForJPEGFile];
     NSString *batchIdString = [NSString stringWithFormat:@"%ld", batchId];
@@ -506,5 +511,23 @@
         allPeople = nil;
     }
 }
+
+-(void)handleNeedsUpdateNotification:(NSNotification *)notification {
+    NSString *content = notification.object;
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"New Version!" message:content delegate:self cancelButtonTitle:@"Later" otherButtonTitles:@"Update Now!", nil];
+    [alert setTag:500];
+    [alert show];
+}
+
+-(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    NSLog(@"Alert view delegate");
+    if(alertView.tag == 500){
+        if(buttonIndex == 1){
+            NSString *appStoreLink = @"https://itunes.apple.com/us/app/notice-anonymous-campus/id829934488?mt=8";
+            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:appStoreLink]];
+        }
+    }
+}
+
 
 @end

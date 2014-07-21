@@ -79,6 +79,31 @@
     }];
 }
 
+-(void)checkForUpdates {
+    NSString *version = [[NSBundle mainBundle] objectForInfoDictionaryKey: @"CFBundleShortVersionString"];
+
+    if ([PFUser currentUser].isAuthenticated) {
+        PFQuery *query = [PFQuery queryWithClassName:@"Settings"];
+        [query whereKey:@"Type" equalTo:@"version"];
+        [query getFirstObjectInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+            if (!error) {
+                NSString *uptodateVersion = [object objectForKey:@"Number"];
+                NSString *content = [object objectForKey:@"content"];
+                if (![version isEqual:uptodateVersion]) {
+                    [[NSNotificationCenter defaultCenter] postNotificationName:@"needsUpdate"
+                                                                        object:content
+                                                                      userInfo:nil];
+                } else {
+                    NSLog(@"Version is up to date");
+                }
+            } else {
+                NSLog(@"Error finding version settings: %@", error);
+            }
+        }];
+        
+    }
+}
+
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
@@ -94,7 +119,9 @@
 
     [self checkIfActive];
     
-    NSDictionary *notificationPayload = launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey];
+//    NSDictionary *notificationPayload = launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey];
+    
+    [self checkForUpdates];
     
     self.contactsDict = [[NSMutableDictionary alloc] init];
     self.allReadTaps = [[NSMutableArray alloc] init];
