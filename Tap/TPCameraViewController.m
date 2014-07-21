@@ -312,6 +312,7 @@
     NSLog(@"handleSavedImageNotification, incremented messagesSaved %d", [self.appDelegate.messagesSaved intValue]);
     NSLog(@"num of messages saved %d / num if taps %d / object %@", [self.appDelegate.messagesSaved intValue], [self.appDelegate.taps intValue], notification.object);
     
+    self.sendingIndicator.text = [NSString stringWithFormat:@"Sending...%d/%d",[self.appDelegate.messagesSaved intValue], [self.appDelegate.taps intValue]] ;
 //    self.tapsCounter.text = [NSString stringWithFormat:@"%d", [self.tapsCounter.text intValue] - 1];
     
     if ([self.appDelegate.messagesSaved intValue] == [self.appDelegate.taps intValue]) {
@@ -319,7 +320,7 @@
         self.appDelegate.sending = @(NO);
         
         // Need to reset metrics here?
-        
+        self.sendingIndicator.text = @"Sending...";
         NSLog(@"Object %@", /*[sender objectForKey:@"object"]*/ notification.object);
         [self.sendingIndicator setHidden:YES];
     }
@@ -356,8 +357,8 @@
 //    NSLog(@"Selected Image %@", [captureManager stillImage]);
 
 //    [[[self captureManager]captureSession]stopRunning];
-    CGFloat newHeight = _selectedImage.size.height / 2.0f;
-    CGFloat newWidth = _selectedImage.size.width / 2.0f;
+    CGFloat newHeight = _selectedImage.size.height / 2.5f;
+    CGFloat newWidth = _selectedImage.size.width / 2.5f;
     
     CGSize newSize = CGSizeMake(newWidth, newHeight);
     UIGraphicsBeginImageContext(newSize);
@@ -368,7 +369,7 @@
     
     UIGraphicsEndImageContext();
     
-    NSData *dataForJPEGFile = UIImageJPEGRepresentation(newImage, 0.8);
+    NSData *dataForJPEGFile = UIImageJPEGRepresentation(newImage, 0.6);
     
 //    UIImage *optimizedImage = [UIImage imageWithData:dataForJPEGFile];
     NSString *batchIdString = [NSString stringWithFormat:@"%ld", batchId];

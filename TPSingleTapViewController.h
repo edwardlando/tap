@@ -14,7 +14,9 @@
 @property (strong, nonatomic) NSMutableArray *objects;
 @property (strong, nonatomic) NSMutableArray *allBatchImages;
 @property (strong, nonatomic) PFObject *spray;
+@property (strong, nonatomic) NSArray *allFlipCasts;
 @property (strong, nonatomic) IBOutlet PFImageView *imageView;
 @property (strong, nonatomic) NSMutableDictionary *allInteractionTaps;
 @property (strong, nonatomic) NSNumber *isMyFlipcast;
+@property (strong, nonatomic) PFUser *sendingUser;
 @end

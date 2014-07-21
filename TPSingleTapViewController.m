@@ -21,6 +21,7 @@
 
 @property (strong, nonatomic) IBOutlet UILabel *tapsLabel;
 @property (strong, nonatomic) NSMutableArray *tapsToSave;
+@property (strong, nonatomic) NSMutableArray *flipCastsToSave;
 @property (strong, nonatomic) TPAppDelegate *appDelegate;
 @property (strong, nonatomic) NSArray *sortedKeysArray;
 
@@ -41,6 +42,7 @@
 {
     [super viewDidLoad];
     self.tapsToSave = [[NSMutableArray alloc] init];
+    self.flipCastsToSave = [[NSMutableArray alloc] init];
     [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationNone];
 
     UILabel *tapsLabel = (UILabel *)[self.view viewWithTag:10];
@@ -49,17 +51,10 @@
     tapsLabel.layer.borderWidth = 2.0f;
     tapsLabel.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.2f];
 
-
     self.sortedKeysArray = [[self.allInteractionTaps allKeys] sortedArrayUsingSelector:
                                 @selector(localizedCaseInsensitiveCompare:)];
-//    self.allBatchImages = [self allInteractionTapsToArray];
 
     currentTap = currentBatch = 0;
-    
-
-//    NSLog(@"self.sortedKeysArray %@", self.sortedKeysArray);
-//    NSLog(@"self.allInteractionTaps %@", self.allInteractionTaps);
-    
     
     numberOfTapsInBatch = (int)[[self.allInteractionTaps objectForKey:[self.sortedKeysArray objectAtIndex:0]] count];
     if ([self.sortedKeysArray count] == 1) {
@@ -104,6 +99,9 @@
     
     if (!lastBatch) {
         if (currentTap == numberOfTapsInBatch) {
+            if (![self.isMyFlipcast boolValue]) {
+                [self markFlipcastAsRead:[self.allFlipCasts objectAtIndex:currentBatch]];
+            }
             currentBatch++;
             NSString *batchId = [self.sortedKeysArray objectAtIndex:currentBatch];
             numberOfTapsInBatch = (int)[[self.allInteractionTaps objectForKey:batchId] count];
@@ -191,13 +189,23 @@
     
     if (![self.isMyFlipcast boolValue]) {
         
+        if ([self.flipCastsToSave count] > 0) {
+            [PFObject saveAllInBackground:self.flipCastsToSave block:^(BOOL succeeded, NSError *error) {
+                if (succeeded) {
+                    self.flipCastsToSave = nil;
+                    NSLog(@"just saved flipcasts as read background like a boss");
+                } else {
+                    NSLog(@"Error: %@", error);
+                }
+                
+            }];
+        }
 
-        [[self.spray objectForKey:@"read"] addObject:[PFUser currentUser]];
-        [self.spray saveEventually];
         
         if ([self.tapsToSave count] > 0) {
             [PFObject saveAllInBackground:self.tapsToSave block:^(BOOL succeeded, NSError *error) {
                 if (succeeded) {
+                    self.tapsToSave = nil;
                     NSLog(@"just saved taps background like a boss");
                 } else {
                     NSLog(@"Error: %@", error);
@@ -226,6 +234,29 @@
     [self.appDelegate.allReadTaps addObject:[message objectId]];
     NSLog(@"message read %@", [message objectId]);
     [self.tapsToSave addObject:message];
+}
+
+-(void)markFlipcastAsRead:(NSString *)flipcast {
+    NSLog(@"Marking flipcast as read");
+    NSLog(@"batchId %@", flipcast);
+    NSLog(@"owner %@", self.sendingUser);
+    
+    PFQuery *flipCastQuery = [PFQuery queryWithClassName:@"Flipcast"];
+
+    [flipCastQuery whereKey:@"batchId" equalTo:flipcast];
+    
+    [flipCastQuery whereKey:@"owner" equalTo:self.sendingUser];
+    
+    [flipCastQuery getFirstObjectInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+        if (!error) {
+            [[object objectForKey:@"read"] addObject:[[PFUser currentUser] objectForKey:@"phoneNumber"]];
+            NSLog(@"flipcast read %@", flipcast);
+            [self.flipCastsToSave addObject:object];
+
+        } else {
+            NSLog(@"Error finding flipcast with batchId %@: %@", flipcast, error);
+        }
+    }];
 }
 
 /*
