@@ -73,7 +73,8 @@
         if (!error) {
             if (!object) {
                 NSLog(@"no broadcast found");
-                [self createUserBroadcast:batchId];
+                return;
+//                [self createUserBroadcast:batchId];
             } else {
                 NSLog(@"Found broadcast");
                 if ([object objectForKey:@"batchIds"]) {

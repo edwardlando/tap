@@ -110,9 +110,14 @@
     // Override point for customization after application launch.
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
     
-    [Parse setApplicationId:@"oa9f1pYhUoLldBojIPFVwPDpcsaMjuhfkSi1bb8a"
-                  clientKey:@"HojAK6PbBNgnHwF4Se5RV2X9fFVnqAhb2yLSo7ad"];
+    // Tap Parse Production
+//    [Parse setApplicationId:@"oa9f1pYhUoLldBojIPFVwPDpcsaMjuhfkSi1bb8a"
+//                  clientKey:@"HojAK6PbBNgnHwF4Se5RV2X9fFVnqAhb2yLSo7ad"];
     
+    //Tap Parse Dev
+    [Parse setApplicationId:@"IS47HJgxN8vMhUoJOBjvnU6HVJzgLFODFSJqbLEf"
+                  clientKey:@"ueUDdVpQkoytRo95nFGcJKsKi4FZ3cAUJnUakG5o"];
+
     [PFAnalytics trackAppOpenedWithLaunchOptions:launchOptions];
     
     NSSetUncaughtExceptionHandler(&uncaughtExceptionHandler);

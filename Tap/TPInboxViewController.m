@@ -146,7 +146,6 @@
     // Background color
     //    if (section == 0) {
     //    view.tintColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"blue"]];
-    view.tintColor = [UIColor whiteColor];
     view.backgroundColor = [UIColor whiteColor];
     // Text Color
 //    if (section == 0) {
@@ -202,6 +201,7 @@
 
 -(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    [self checkUserSituation];
     [self.appDelegate loadFriends];
     [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationFade];
     [self countFriendRequests];
@@ -282,6 +282,10 @@
 }
 
 -(void)queryMyFlipcasts {
+    if (![PFUser currentUser] || ![PFUser currentUser].isAuthenticated) {
+        [self checkUserSituation];
+        return;
+    }
     NSLog(@"querying my broadcasts");
 
     PFQuery *myFlipcasts = [PFQuery queryWithClassName:@"Flipcast"];
@@ -321,6 +325,7 @@
 - (PFQuery *)queryForTable {
 
     if (![PFUser currentUser] || ![PFUser currentUser].isAuthenticated) {
+        [self checkUserSituation];
         return nil;
     }
     
@@ -863,9 +868,29 @@
                                                            withShining:NO];
         
     [customBadge1 setFrame:CGRectMake(self.view.frame.size.width - 35, 20, customBadge1.frame.size.width, customBadge1.frame.size.height)];
+    
+        customBadge1.userInteractionEnabled = YES;
+        UITapGestureRecognizer *pgr = [[UITapGestureRecognizer alloc]
+                                       initWithTarget:self action:@selector(showFriends:)];
+        pgr.delegate = self;
+        [customBadge1 addGestureRecognizer:pgr];
+        
+    
+        
     [self.navigationController.view addSubview:customBadge1];
 //        ;
     }
+}
+
+-(void)checkUserSituation {
+    PFUser *currentUser = [PFUser currentUser];
+    if (!currentUser && currentUser.isAuthenticated) {
+        NSLog(@"No user on inbox");
+        [self dismissViewControllerAnimated:YES completion:nil];
+    }
+}
+-(void)showFriends:(id)sender {
+    [self performSegueWithIdentifier:@"showFriends" sender:self];
 }
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{

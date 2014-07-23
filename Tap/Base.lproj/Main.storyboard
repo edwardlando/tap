@@ -390,7 +390,9 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
-                    <navigationItem key="navigationItem" title="TAP" id="sfq-bJ-b8Z"/>
+                    <navigationItem key="navigationItem" title="TAP" id="sfq-bJ-b8Z">
+                        <barButtonItem key="backBarButtonItem" title="back" id="Sxl-gy-dXr"/>
+                    </navigationItem>
                     <connections>
                         <outlet property="cameraView" destination="QUu-xs-5q7" id="C1Q-Wm-2ar"/>
                         <outlet property="imageView" destination="fcU-79-8tM" id="ULg-60-MwU"/>
@@ -512,13 +514,12 @@
                         <barButtonItem key="rightBarButtonItem" image="addFriends4" id="jHS-mL-yYr">
                             <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             <connections>
-                                <segue destination="c7d-0a-4kl" kind="modal" animates="NO" id="b3q-L3-h2q"/>
+                                <segue destination="c7d-0a-4kl" kind="modal" identifier="showFriends" animates="NO" id="b3q-L3-h2q"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
                     <connections>
                         <segue destination="sx4-49-ihh" kind="modal" identifier="showTap" animates="NO" id="6fd-lM-wCn"/>
-                        <segue destination="VtX-dh-37U" kind="push" id="dVD-i1-Gfu"/>
                         <segue destination="mMY-s0-lSu" kind="modal" identifier="showCamera" id="PM3-J0-NI8"/>
                     </connections>
                 </tableViewController>
@@ -557,19 +558,37 @@
             </objects>
             <point key="canvasLocation" x="3605" y="379"/>
         </scene>
-        <!--Table View Controller - SETTINGS-->
+        <!--Settings View Controller - settings-->
         <scene sceneID="hYQ-lB-IhJ">
             <objects>
-                <tableViewController id="VtX-dh-37U" sceneMemberID="viewController">
+                <tableViewController id="VtX-dh-37U" customClass="TPSettingsViewController" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="7DE-Ak-wB3">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                        <view key="tableFooterView" contentMode="scaleToFill" id="Dyd-0a-nh4">
+                            <rect key="frame" x="0.0" y="309" width="320" height="165"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <subviews>
+                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="v1.0" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="8tU-ZP-VG7">
+                                    <rect key="frame" x="107" y="91" width="107" height="21"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="15"/>
+                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                                <imageView userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="logo2" id="6uZ-3n-f9U">
+                                    <rect key="frame" x="124" y="9" width="73" height="60"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                </imageView>
+                            </subviews>
+                            <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                        </view>
                         <sections>
                             <tableViewSection headerTitle="General" id="7kF-Y6-qb3">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="lmw-pD-a8K" detailTextLabel="NCt-d1-Lm3" style="IBUITableViewCellStyleValue1" id="mbs-xb-Ysk">
-                                        <rect key="frame" x="0.0" y="119" width="320" height="44"/>
+                                        <rect key="frame" x="0.0" y="55" width="320" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="mbs-xb-Ysk" id="sc7-vh-urw">
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
@@ -594,7 +613,7 @@
                                         <inset key="separatorInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="Arm-HG-a7z" detailTextLabel="Pax-fZ-AuE" style="IBUITableViewCellStyleValue1" id="fm6-8T-wXZ">
-                                        <rect key="frame" x="0.0" y="163" width="320" height="44"/>
+                                        <rect key="frame" x="0.0" y="99" width="320" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="fm6-8T-wXZ" id="tFa-JY-oJJ">
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
@@ -621,8 +640,8 @@
                             </tableViewSection>
                             <tableViewSection headerTitle="Account" id="ghL-NC-ISQ">
                                 <cells>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="Y7s-03-fBz" style="IBUITableViewCellStyleDefault" id="0M2-3h-l9P">
-                                        <rect key="frame" x="0.0" y="255" width="320" height="44"/>
+                                    <tableViewCell tag="10" contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="Y7s-03-fBz" style="IBUITableViewCellStyleDefault" id="0M2-3h-l9P">
+                                        <rect key="frame" x="0.0" y="191" width="320" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="0M2-3h-l9P" id="8nm-YS-fbG">
                                             <rect key="frame" x="0.0" y="0.0" width="287" height="43"/>
@@ -638,8 +657,8 @@
                                             </subviews>
                                         </tableViewCellContentView>
                                     </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="fQp-9i-q2T" style="IBUITableViewCellStyleDefault" id="5f8-CA-EA0">
-                                        <rect key="frame" x="0.0" y="299" width="320" height="44"/>
+                                    <tableViewCell tag="11" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="fQp-9i-q2T" style="IBUITableViewCellStyleDefault" id="5f8-CA-EA0">
+                                        <rect key="frame" x="0.0" y="235" width="320" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="5f8-CA-EA0" id="s7f-cL-8Tx">
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
@@ -666,11 +685,16 @@
                             <outlet property="delegate" destination="VtX-dh-37U" id="c0e-Ss-baO"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="SETTINGS" id="JFg-nX-5XA"/>
+                    <navigationItem key="navigationItem" title="settings" id="JFg-nX-5XA"/>
+                    <connections>
+                        <outlet property="phonenumberLabel" destination="Pax-fZ-AuE" id="kCa-yT-xZa"/>
+                        <outlet property="usernameLabel" destination="NCt-d1-Lm3" id="cX1-CT-Zxh"/>
+                        <outlet property="versionLabel" destination="8tU-ZP-VG7" id="XRS-ls-q9O"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="mRt-nw-WPt" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1996" y="-618"/>
+            <point key="canvasLocation" x="4912" y="-222"/>
         </scene>
         <!--My Group View Controller - My Group-->
         <scene sceneID="l63-zZ-ji8">
@@ -914,6 +938,12 @@
                                 <action selector="backButton:" destination="uHL-VO-cEb" id="wlZ-kA-N6X"/>
                             </connections>
                         </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" image="settingsIcon" id="Rq0-US-nVQ">
+                            <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            <connections>
+                                <segue destination="VtX-dh-37U" kind="push" id="nmv-Ef-L4m"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <connections>
                         <segue destination="RSO-S3-LAp" kind="push" identifier="showFriendRequests" id="OYY-de-IUM"/>
@@ -953,16 +983,8 @@
                                             <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" id="yZs-LC-U42">
-                                            <rect key="frame" x="245" y="25" width="20" height="20"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        </activityIndicatorView>
-                                        <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" id="lnh-B1-o8V">
-                                            <rect key="frame" x="285" y="25" width="20" height="20"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        </activityIndicatorView>
                                         <button opaque="NO" tag="55" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="l93-sW-ZTy">
-                                            <rect key="frame" x="240" y="20" width="30" height="30"/>
+                                            <rect key="frame" x="215" y="20" width="55" height="30"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <color key="backgroundColor" red="0.10931797445255474" green="0.70329607664233573" blue="0.31951414233576642" alpha="1" colorSpace="calibratedRGB"/>
                                             <state key="normal" image="tick">
@@ -977,6 +999,14 @@
                                                 <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                             </state>
                                         </button>
+                                        <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" id="yZs-LC-U42">
+                                            <rect key="frame" x="232" y="25" width="20" height="20"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        </activityIndicatorView>
+                                        <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" id="lnh-B1-o8V">
+                                            <rect key="frame" x="285" y="25" width="20" height="20"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        </activityIndicatorView>
                                     </subviews>
                                 </tableViewCellContentView>
                                 <inset key="separatorInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
@@ -1100,8 +1130,10 @@
         <image name="cameraIcon3" width="37" height="28"/>
         <image name="cancel" width="20" height="20"/>
         <image name="findFriends4" width="37" height="28"/>
+        <image name="logo2" width="50" height="50"/>
         <image name="minues" width="20" height="20"/>
         <image name="plus" width="20" height="20"/>
+        <image name="settingsIcon" width="37" height="28"/>
         <image name="tick" width="20" height="20"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">

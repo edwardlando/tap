@@ -1,0 +1,14 @@
+{
+    "applications": {
+        "Tap Dev": {
+            "applicationId": "IS47HJgxN8vMhUoJOBjvnU6HVJzgLFODFSJqbLEf", 
+            "masterKey": "PCCP2AHVovtsZ63QN7Dyjt9MKzW487hQ299EJ6L8"
+        }, 
+        "_default": {
+            "link": "Tap Dev"
+        }
+    }, 
+    "global": {
+        "parseVersion": "1.2.19"
+    }
+}

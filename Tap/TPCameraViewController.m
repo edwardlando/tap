@@ -140,7 +140,7 @@
 
 -(void)checkUserSituation {
     PFUser *currentUser = [PFUser currentUser];
-    if (currentUser) {
+    if (currentUser && currentUser.isAuthenticated) {
         [currentUser refreshInBackgroundWithBlock:^(PFObject *object, NSError *error) {
             if (![[PFUser currentUser] objectForKey:@"phoneVerified"]) {
                 UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Uh Oh!" message:@"Please verify your phone number!" delegate:nil cancelButtonTitle:@"OK!" otherButtonTitles: nil];
@@ -153,6 +153,7 @@
     }
     else {
         NSLog(@"No user");
+        
         disappearOnSegue = YES;
         [self performSegueWithIdentifier:@"showLanding" sender:self];
         

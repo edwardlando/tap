@@ -112,7 +112,7 @@
 {
     // Background color
     //    if (section == 0) {
-    view.tintColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"blue"]];
+    view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"blue"]];
     
     // Text Color
     UITableViewHeaderFooterView *header = (UITableViewHeaderFooterView *)view;

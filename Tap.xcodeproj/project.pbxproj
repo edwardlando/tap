@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		B619B6FC197A380900B84DF9 /* TPAddFriendsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B619B6FB197A380900B84DF9 /* TPAddFriendsViewController.m */; };
 		B67B133B197CB1BD003F411E /* CustomBadge.m in Sources */ = {isa = PBXBuildFile; fileRef = B67B133A197CB1BD003F411E /* CustomBadge.m */; };
+		B67B133F197DAEDF003F411E /* TPSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B67B133E197DAEDF003F411E /* TPSettingsViewController.m */; };
 		B6B3E16C196B59620095BEF9 /* TPViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B6B3E16B196B59620095BEF9 /* TPViewCell.m */; };
 		B6CB8E461967C41C002996E8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B6CB8E451967C41C002996E8 /* Foundation.framework */; };
 		B6CB8E481967C41C002996E8 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B6CB8E471967C41C002996E8 /* CoreGraphics.framework */; };
@@ -73,6 +74,8 @@
 		B619B6FB197A380900B84DF9 /* TPAddFriendsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TPAddFriendsViewController.m; sourceTree = "<group>"; };
 		B67B1339197CB1BD003F411E /* CustomBadge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomBadge.h; sourceTree = "<group>"; };
 		B67B133A197CB1BD003F411E /* CustomBadge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomBadge.m; sourceTree = "<group>"; };
+		B67B133D197DAEDF003F411E /* TPSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPSettingsViewController.h; sourceTree = "<group>"; };
+		B67B133E197DAEDF003F411E /* TPSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TPSettingsViewController.m; sourceTree = "<group>"; };
 		B6B3E16A196B59620095BEF9 /* TPViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPViewCell.h; sourceTree = "<group>"; };
 		B6B3E16B196B59620095BEF9 /* TPViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TPViewCell.m; sourceTree = "<group>"; };
 		B6CB8E421967C41C002996E8 /* Tap.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tap.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -202,6 +205,15 @@
 			name = "Custom Classes";
 			sourceTree = "<group>";
 		};
+		B67B1340197DAEE3003F411E /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				B67B133D197DAEDF003F411E /* TPSettingsViewController.h */,
+				B67B133E197DAEDF003F411E /* TPSettingsViewController.m */,
+			);
+			name = Settings;
+			sourceTree = "<group>";
+		};
 		B6CB8E391967C41C002996E8 = {
 			isa = PBXGroup;
 			children = (
@@ -259,6 +271,7 @@
 				B6CB8EAD1967CC17002996E8 /* All Contacts */,
 				B6CB8EB01967CC3F002996E8 /* Login */,
 				B6CB8EB11967CC7C002996E8 /* My Group */,
+				B67B1340197DAEE3003F411E /* Settings */,
 				B6CB8EB21967CC84002996E8 /* Camera */,
 				B6CB8EC01968A219002996E8 /* Single Tap */,
 				B67B133C197CB1C3003F411E /* Custom Classes */,
@@ -562,6 +575,7 @@
 				B6CB8EA31967CB50002996E8 /* TPCameraViewController.m in Sources */,
 				BCC9C2C5197C7E600069F043 /* SWCellScrollView.m in Sources */,
 				B6CB8E9D1967CB2A002996E8 /* TPLandingViewController.m in Sources */,
+				B67B133F197DAEDF003F411E /* TPSettingsViewController.m in Sources */,
 				B6CB8EA01967CB3F002996E8 /* TPLoginViewController.m in Sources */,
 				B6CB8EBF1967E09A002996E8 /* TPSingleTapViewController.m in Sources */,
 				B6CB8EBC1967D59E002996E8 /* TPProcessImage.m in Sources */,
@@ -703,6 +717,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Tap/Tap-Prefix.pch";
 				INFOPLIST_FILE = "Tap/Tap-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
@@ -723,6 +738,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Tap/Tap-Prefix.pch";
 				INFOPLIST_FILE = "Tap/Tap-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
