@@ -117,7 +117,7 @@
                 }
 
             } else {
-                NSLog(@"Error finding version settings: %@", error);
+                NSLog(@"Error finding invite message settings: %@", error);
             }
         }];
         

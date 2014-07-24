@@ -11,8 +11,11 @@
 #import <AddressBook/ABPerson.h>
 #import <AddressBook/ABAddressBook.h>
 #import "TPAppDelegate.h"
+#import <MessageUI/MessageUI.h>
 
-@interface TPAddFriendsViewController () {
+
+
+@interface TPAddFriendsViewController () <MFMessageComposeViewControllerDelegate> {
     BOOL pendingFriendReqs;
 }
 
@@ -449,13 +452,37 @@
     NSLog(@"invite friend");
     UIView *senderButton = (UIView*) sender;
     NSIndexPath *indexPath = [self.tableView indexPathForCell: (UITableViewCell *)[[[senderButton superview]superview] superview]];
-    NSArray *keys = [self.appDelegate.contactsDict allKeys];
+    id contact = [self.appDelegate.alphabeticalPhonebook objectAtIndex:indexPath.row];
     
-    NSString *number = [keys objectAtIndex:indexPath.row];
+    NSString *number = [contact objectForKey:@"number"];
     
-    UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Invite" message:[NSString stringWithFormat:@"This will open a text message with this number %@", number] delegate:nil cancelButtonTitle:nil otherButtonTitles:@"FUCK YEAH!", nil];
-    [alert show];
+//    UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Invite" message:[NSString stringWithFormat:@"This will open a text message with this number %@", number] delegate:nil cancelButtonTitle:nil otherButtonTitles:@"FUCK YEAH!", nil];
+//    [alert show];
+    
+    [self showSMS:self.appDelegate.inviteMessageText andRecipients:number];
 }
+
+- (void)showSMS:(NSString*)message andRecipients:(NSString *)number {
+    
+    if(![MFMessageComposeViewController canSendText]) {
+        UIAlertView *warningAlert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Your device doesn't support SMS!" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [warningAlert show];
+        return;
+    }
+    
+    NSArray *recipents = @[number];
+//    NSString *message = message;
+    
+    MFMessageComposeViewController *messageController = [[MFMessageComposeViewController alloc] init];
+    messageController.messageComposeDelegate = self;
+    [messageController setRecipients:recipents];
+    [messageController setBody:message];
+    
+    // Present message view controller on screen
+    [self presentViewController:messageController animated:YES completion:nil];
+}
+
+
 -(void)sendFriendRequest:(id )sender {
     NSLog(@"send friend request");
     UIView *senderButton = (UIView*) sender;
@@ -515,6 +542,30 @@
         [alert show];
     }
     
+}
+
+- (void)messageComposeViewController:(MFMessageComposeViewController *)controller didFinishWithResult:(MessageComposeResult) result
+{
+    switch (result) {
+        case MessageComposeResultCancelled:
+            break;
+            
+        case MessageComposeResultFailed:
+        {
+            UIAlertView *warningAlert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Failed to send SMS!" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            [warningAlert show];
+            break;
+        }
+            
+        case MessageComposeResultSent:
+            NSLog(@"sent invite");
+            break;
+            
+        default:
+            break;
+    }
+    
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 @end
