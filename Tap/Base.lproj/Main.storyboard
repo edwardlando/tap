@@ -56,7 +56,7 @@
                                 <rect key="frame" x="0.0" y="477" width="320" height="93"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="28"/>
-                                <state key="normal" title="WHAT IS TAP?">
+                                <state key="normal" title="WHAT IS POPCAST?">
                                     <color key="titleColor" cocoaTouchSystemColor="tableCellGroupedBackgroundColor"/>
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
@@ -446,7 +446,7 @@
             </objects>
             <point key="canvasLocation" x="1555" y="250"/>
         </scene>
-        <!--Inbox View Controller - tap-->
+        <!--Inbox View Controller - popcast-->
         <scene sceneID="kVH-CU-c5W">
             <objects>
                 <tableViewController id="XH0-bJ-Dxg" customClass="TPInboxViewController" sceneMemberID="viewController">
@@ -544,7 +544,7 @@
                         </connections>
                     </tableView>
                     <toolbarItems/>
-                    <navigationItem key="navigationItem" title="tap" id="WsJ-wj-uDx">
+                    <navigationItem key="navigationItem" title="popcast" id="WsJ-wj-uDx">
                         <barButtonItem key="leftBarButtonItem" image="cameraIcon3" id="Cjm-e8-eYp">
                             <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             <connections>
@@ -755,11 +755,13 @@
                                         <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Friend Requests" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="SKk-Lq-9Mb">
                                             <rect key="frame" x="15" y="0.0" width="270" height="51"/>
                                             <autoresizingMask key="autoresizingMask"/>
-                                            <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="16"/>
+                                            <fontDescription key="fontDescription" name="HelveticaNeue-Medium" family="Helvetica Neue" pointSize="16"/>
+                                            <color key="textColor" red="0.96862745100000003" green="0.96862745100000003" blue="0.96862745100000003" alpha="1" colorSpace="calibratedRGB"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                     </subviews>
                                 </tableViewCellContentView>
+                                <color key="backgroundColor" red="0.12941176469999999" green="0.75686274509999996" blue="0.97647058819999999" alpha="1" colorSpace="calibratedRGB"/>
                                 <inset key="separatorInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                             </tableViewCell>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="userCell" textLabel="Ntj-AW-6us" detailTextLabel="jr4-pT-Tsu" rowHeight="65" style="IBUITableViewCellStyleSubtitle" id="h66-2D-7oc">
@@ -794,7 +796,7 @@
                                             </state>
                                         </button>
                                         <activityIndicatorView hidden="YES" opaque="NO" tag="55" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="gray" id="mmV-P0-Jsp">
-                                            <rect key="frame" x="248" y="22" width="20" height="20"/>
+                                            <rect key="frame" x="266" y="22" width="20" height="20"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <color key="color" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                         </activityIndicatorView>
@@ -907,11 +909,11 @@
                                                 <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                             </state>
                                         </button>
-                                        <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="gray" id="yZs-LC-U42">
+                                        <activityIndicatorView hidden="YES" opaque="NO" tag="5" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="gray" id="yZs-LC-U42">
                                             <rect key="frame" x="232" y="25" width="20" height="20"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         </activityIndicatorView>
-                                        <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="gray" id="lnh-B1-o8V">
+                                        <activityIndicatorView hidden="YES" opaque="NO" tag="4" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="gray" id="lnh-B1-o8V">
                                             <rect key="frame" x="285" y="25" width="20" height="20"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         </activityIndicatorView>

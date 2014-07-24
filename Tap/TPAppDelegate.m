@@ -64,7 +64,7 @@
 
 -(void)checkIfActive {
     PFQuery *query = [PFQuery queryWithClassName:@"Settings"];
-    [query whereKey:@"Number" equalTo:@"1"];
+    [query whereKey:@"Number" equalTo:@"2"];
     [query whereKey:@"Type" equalTo:@"active"];
     [query getFirstObjectInBackgroundWithBlock:^(PFObject *object, NSError *error) {
         NSLog(@"object %d", [[object objectForKey:@"boolValue"] boolValue]);
@@ -104,11 +104,32 @@
     }
 }
 
+-(void)queryInviteMessage {
+//    if ([PFUser currentUser].isAuthenticated) {
+        PFQuery *query = [PFQuery queryWithClassName:@"Settings"];
+        [query whereKey:@"Type" equalTo:@"inviteText"];
+        [query getFirstObjectInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+            if (!error) {
+//                NSString *uptodateVersion = [object objectForKey:@"Number"];
+                NSString *content = [object objectForKey:@"content"];
+                if (content) {
+                    self.inviteMessageText = content;
+                }
+
+            } else {
+                NSLog(@"Error finding version settings: %@", error);
+            }
+        }];
+        
+//    }
+
+}
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     // Override point for customization after application launch.
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
+
 
     
     UIPageControl *pageControl = [UIPageControl appearance];
@@ -119,19 +140,19 @@
     pageControl.backgroundColor = [UIColor whiteColor];
     
     // Tap Parse Production
-//    [Parse setApplicationId:@"oa9f1pYhUoLldBojIPFVwPDpcsaMjuhfkSi1bb8a"
-//                  clientKey:@"HojAK6PbBNgnHwF4Se5RV2X9fFVnqAhb2yLSo7ad"];
+    [Parse setApplicationId:@"oa9f1pYhUoLldBojIPFVwPDpcsaMjuhfkSi1bb8a"
+                clientKey:@"HojAK6PbBNgnHwF4Se5RV2X9fFVnqAhb2yLSo7ad"];
     
     //Tap Parse Dev
-    [Parse setApplicationId:@"IS47HJgxN8vMhUoJOBjvnU6HVJzgLFODFSJqbLEf"
-                  clientKey:@"ueUDdVpQkoytRo95nFGcJKsKi4FZ3cAUJnUakG5o"];
+//    [Parse setApplicationId:@"IS47HJgxN8vMhUoJOBjvnU6HVJzgLFODFSJqbLEf"
+//                  clientKey:@"ueUDdVpQkoytRo95nFGcJKsKi4FZ3cAUJnUakG5o"];
 
     [PFAnalytics trackAppOpenedWithLaunchOptions:launchOptions];
     
     NSSetUncaughtExceptionHandler(&uncaughtExceptionHandler);
 
     [self checkIfActive];
-    
+    [self queryInviteMessage];
 //    NSDictionary *notificationPayload = launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey];
     
     [self checkForUpdates];
@@ -139,7 +160,7 @@
     self.contactsDict = [[NSMutableDictionary alloc] init];
     self.allReadTaps = [[NSMutableArray alloc] init];
     self.friendRequestsSent = [[NSMutableArray alloc] init];
-    
+    self.alphabeticalPhonebook = [[NSMutableArray alloc] init];
     self.numbersToUsernamesDict = [[NSMutableDictionary alloc] init];
     
     if ([PFUser currentUser]) {

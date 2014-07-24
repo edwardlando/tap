@@ -113,6 +113,13 @@
                     [self.appDelegate.contactsPhoneNumbersArray addObject:strippedPhone];
                     if (![self.appDelegate.contactsDict objectForKey:strippedPhone]) {
                         [self.appDelegate.contactsDict setObject:compositeName forKey:strippedPhone];
+                        
+                        id contact = @{@"name": compositeName, @"number": strippedPhone};
+
+                        if (![self.appDelegate.alphabeticalPhonebook containsObject:contact])
+                            [self.appDelegate.alphabeticalPhonebook addObject:contact];
+                        
+                        
                         [[[PFUser currentUser] objectForKey:@"contactsDict"] setObject:compositeName forKey:strippedPhone];
                         
                     }
@@ -128,10 +135,11 @@
         CFRelease(addressBook);
         
         NSSortDescriptor *sort = [NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES];
-        for (NSString *key in [self.alphabeticalPhonebook allKeys]) {
-            [[self.alphabeticalPhonebook objectForKey:key ] sortUsingDescriptors:[NSArray arrayWithObject:sort]];
-        }
-        NSLog(@"alphabetical phonebook %@", self.alphabeticalPhonebook);
+//        for (NSString *key in [self.alphabeticalPhonebook allKeys]) {
+            [self.appDelegate.alphabeticalPhonebook sortUsingDescriptors:[NSArray arrayWithObject:sort]];
+        
+//        }
+
         //        [self.phonebook sortUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
         allPeople = nil;
 //        NSArray *temp = [[PFUser currentUser]objectForKey:@"contactsDict"];

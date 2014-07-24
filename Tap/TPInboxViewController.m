@@ -107,6 +107,8 @@
         // Uncomment the following line to specify the key of a PFFile on the PFObject to display in the imageView of the default cell style
         // self.imageKey = @"image";
         
+        self.loadingViewEnabled = NO;
+        
         // Whether the built-in pull-to-refresh is enabled
         self.pullToRefreshEnabled = YES;
         
@@ -501,10 +503,11 @@
                             numOfTaps = number  + 1;
                             if (viewsCount > 0) {
                                 if ([cell.hasLoaded boolValue] || [self.loadedTapsByIndexPaths containsObject:indexPath]) {
-                                    cell.detailTextLabel.text = (viewsCount == 1) ? [NSString stringWithFormat:@"Tap to Load - %d taps - %ld view", number+1, viewsCount] : [NSString stringWithFormat:@"Tap to Load - %d taps - %ld views", number + 1, viewsCount];
+                                    cell.detailTextLabel.text = (viewsCount == 1) ? [NSString stringWithFormat:@"Tap to Open - %d taps - %ld view", number+1, viewsCount] : [NSString stringWithFormat:@"Tap to Open - %d taps - %ld views", number + 1, viewsCount];
                                     
                                 } else {
-                                    cell.detailTextLabel.text = (viewsCount == 1) ? [NSString stringWithFormat:@"Tap to Open - %d taps - %ld view", number+1, viewsCount] : [NSString stringWithFormat:@"Tap to Open - %d taps - %ld views", number + 1, viewsCount];
+                                    cell.detailTextLabel.text = (viewsCount == 1) ? [NSString stringWithFormat:@"Tap to Load - %d taps - %ld view", number+1, viewsCount] : [NSString stringWithFormat:@"Tap to Load - %d taps - %ld views", number + 1, viewsCount];
+
                                 }
                                 
                             } else {
@@ -670,6 +673,9 @@
 -(void) countFriendRequests {
     PFQuery *query = [PFQuery queryWithClassName:@"FriendRequest"];
     [query whereKey:@"targetUser" equalTo:[PFUser currentUser] ];
+    
+    NSLog(@"Friends phone numbers array %@", self.appDelegate.friendsPhoneNumbersArray);
+    [query whereKey:@"requestingUserPhoneNumber" notContainedIn:self.appDelegate.friendsPhoneNumbersArray];
     [query whereKey:@"status" equalTo:@"pending"];
     [query countObjectsInBackgroundWithBlock:^(int number, NSError *error) {
         NSLog(@"counted friend requests %d", number);
@@ -1051,7 +1057,9 @@
         
         cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ ago - Loading...",
                                      [self dateDiff:[dateFormat stringFromDate:created]]];
-        cell.backgroundColor = [UIColor whiteColor];
+
+        if (!cell.hasNewTaps || ![self.loadedTapsByIndexPaths containsObject:indexPath])
+            cell.backgroundColor = [UIColor whiteColor];
         
         @try {
             if ([self.selectedBroadcast isKindOfClass:[PFObject class]]) {

@@ -141,32 +141,33 @@
 -(void)checkUserSituation {
     PFUser *currentUser = [PFUser currentUser];
     [currentUser refresh];
-    if (currentUser && currentUser.isAuthenticated && [[currentUser objectForKey:@"phoneVerified"] boolValue]) {
+    if (currentUser && currentUser.isAuthenticated) {
 //        [currentUser refreshInBackgroundWithBlock:^(PFObject *object, NSError *error) {
-            if (![[PFUser currentUser] objectForKey:@"phoneVerified"]) {
+            if (![[[PFUser currentUser] objectForKey:@"phoneVerified"] boolValue]) {
                 UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Uh Oh!" message:@"Please verify your phone number!" delegate:nil cancelButtonTitle:@"OK!" otherButtonTitles: nil];
                 [alertView show];
-                [self performSegueWithIdentifier:@"showLanding" sender:self];
+                [self performSegueWithIdentifier:@"verifyPhone" sender:self];
             }
 //        }];
         
         NSLog(@"Current user: %@", currentUser.username);
     }
     else {
-        NSLog(@"No user");
+        NSLog(@"No user %@", currentUser);
         
-        if (![[currentUser objectForKey:@"phoneVerified"] boolValue]) {
+//        if (![[currentUser objectForKey:@"phoneVerified"] boolValue]) {
 
-            [self performSegueWithIdentifier:@"verifyPhone" sender:self];
-        } else {
+//            [self performSegueWithIdentifier:@"verifyPhone" sender:self];
+//        } else {
             [PFUser logOut];
             [self performSegueWithIdentifier:@"showLanding" sender:self];
-        }
+//        }
 
         disappearOnSegue = YES;
 
         
     }
+
 }
 
 -(void)setupCameraScreen {
@@ -515,10 +516,22 @@
                 if (![self.appDelegate.contactsDict objectForKey:strippedPhone]) {
                     [self.appDelegate.contactsDict setObject:compositeName forKey:strippedPhone];
                 }
+                
+                id contactRecord = @{@"name": compositeName, @"number": strippedPhone};
+                
+                if (![self.appDelegate.alphabeticalPhonebook containsObject:contact])
+                    [self.appDelegate.alphabeticalPhonebook addObject:contactRecord];
+                
             }
         }
         CFRelease(addressBook);
         allPeople = nil;
+        
+        NSSortDescriptor *sort = [NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES];
+        //        for (NSString *key in [self.alphabeticalPhonebook allKeys]) {
+        [self.appDelegate.alphabeticalPhonebook sortUsingDescriptors:[NSArray arrayWithObject:sort]];
+        
+        
     }
 }
 

@@ -89,11 +89,7 @@
     }
 
     
-    if ([self.appDelegate.pendingFriendRequests intValue] > 0) {
-        pendingFriendReqs = YES;
-    } else {
-        pendingFriendReqs = NO;
-    }
+
     
 //    [self alertIfNoFriends];
     
@@ -222,13 +218,13 @@
             return 0;
         }
     } else if (section == 1) {
-        NSLog(@"section title %@ want to return %ld", [self.sections objectAtIndex:section], [self.objects count]);
+//        NSLog(@"section title %@ want to return %ld", [self.sections objectAtIndex:section], [self.objects count]);
 //        return 0;
         return [self.objects count];
     }
     else if (section == 2){
-        NSLog(@"section title %@ want to return %ld", [self.sections objectAtIndex:section], [[self.appDelegate.contactsDict allKeys] count]);
-        return [[self.appDelegate.contactsDict allKeys] count];
+//        NSLog(@"section title %@ want to return %ld", [self.sections objectAtIndex:section], [[self.appDelegate.contactsDict allKeys] count]);
+        return [self.appDelegate.alphabeticalPhonebook count];
     }
 
     return 0;
@@ -242,6 +238,7 @@
 }
 
 
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
 
 //    NSLog(@"cell for row");
@@ -249,7 +246,7 @@
     if (indexPath.section == 0) {
 //        NSLog(@"section is 0");
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"friendRequests" forIndexPath:indexPath];
-        cell.textLabel.text = [NSString stringWithFormat:@"Friends Requests (%d)", [self.appDelegate.pendingFriendRequests intValue]];
+        cell.textLabel.text = [NSString stringWithFormat:@"Friend Requests (%d)", [self.appDelegate.pendingFriendRequests intValue]];
         
         return cell;
         
@@ -293,8 +290,10 @@
         inviteFriendButton.layer.cornerRadius = 5;
         NSArray *keys = [self.appDelegate.contactsDict allKeys];
         
-        NSString *number = [keys objectAtIndex:indexPath.row];
-        NSString *name = [self.appDelegate.contactsDict objectForKey:number];
+        NSDictionary *contact = [self.appDelegate.alphabeticalPhonebook objectAtIndex:indexPath.row];
+        
+        NSString *number = [contact objectForKey:@"number"];
+        NSString *name = [contact objectForKey:@"name"];
         
         cell.textLabel.text = name;
         cell.detailTextLabel.text = number;
@@ -320,6 +319,11 @@
     
     [query whereKey:@"phoneNumber" containedIn:self.appDelegate.contactsPhoneNumbersArray];
     NSArray *forbiddenNumbers = [friendsPhoneNumbers arrayByAddingObjectsFromArray: self.appDelegate.friendRequestsSent];
+
+    NSLog(@"These are friend requests sent: %@",[[PFUser currentUser]objectForKey:@"friendRequestsSent"]);
+    NSArray *friendRequestsSent = [[PFUser currentUser] objectForKey:@"friendRequestsSent"];
+    
+    [query whereKey:@"objectId" notContainedIn:friendRequestsSent];
     
     NSMutableArray *forbiddenNumbersWithOwnNumber = [forbiddenNumbers mutableCopy];
     [forbiddenNumbersWithOwnNumber addObject:[[PFUser currentUser] objectForKey:@"phoneNumber"]];
@@ -328,9 +332,7 @@
     
     query.cachePolicy =  kPFCachePolicyCacheThenNetwork;
     return query;
-    
 }
-
 
 - (IBAction)backButton:(id)sender {
     //    [self.navigationController popViewControllerAnimated:YES];
@@ -345,9 +347,30 @@
     
 }
 
+-(void) countFriendRequests {
+    PFQuery *query = [PFQuery queryWithClassName:@"FriendRequest"];
+    [query whereKey:@"targetUser" equalTo:[PFUser currentUser] ];
+    
+    NSLog(@"Friends phone numbers array %@", self.appDelegate.friendsPhoneNumbersArray);
+    [query whereKey:@"requestingUserPhoneNumber" notContainedIn:self.appDelegate.friendsPhoneNumbersArray];
+    [query whereKey:@"status" equalTo:@"pending"];
+    [query countObjectsInBackgroundWithBlock:^(int number, NSError *error) {
+        NSLog(@"counted friend requests %d", number);
+        self.appDelegate.pendingFriendRequests = @(number);
+    }];
+}
+
 -(void) viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    [self.tableView reloadData];
+    [self countFriendRequests];
+    [self loadObjects];
+
+    if ([self.appDelegate.pendingFriendRequests intValue] > 0) {
+        pendingFriendReqs = YES;
+    } else {
+        pendingFriendReqs = NO;
+    }
+//    [self.tableView reloadData];
 }
 
 -(void) fetchPhoneContacts {
@@ -446,7 +469,6 @@
 
     PFUser *user = [self.objects objectAtIndex:indexPath.row];
     
-    
     if (![[[PFUser currentUser] objectForKey:@"friendsArray"] containsObject:user] || [[[PFUser currentUser] objectForKey:@"friendRequestsSent"] containsObject:[user objectId]]) {
         PFObject *friendRequest = [[PFObject alloc] initWithClassName:@"FriendRequest"];
         friendRequest[@"requestingUser"] = [PFUser currentUser];
@@ -462,7 +484,7 @@
                 [ind stopAnimating];
                 [ind setHidden:YES];
                 [self.appDelegate.friendRequestsSent addObject:[user objectForKey:@"phoneNumber"]];
-                UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Friend Request Sent" message:@"Succesfuly sent friend request" delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK", nil];
+                UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Friend Request Sent" message:@"Successfuly sent friend request" delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK", nil];
                 [alert show];
                 
                 // adding friend to friend requests sent
@@ -470,6 +492,8 @@
                 
                 [[PFUser currentUser] saveEventually:^(BOOL succeeded, NSError *error) {
                     NSLog(@"Added %@ to friend requests sent ", [user objectId]);
+                    [self loadObjects];
+                    [self.tableView reloadData];
                 }];
                 
                 //                }];
@@ -477,6 +501,12 @@
             } else {
                 NSLog(@"Error: %@", error);
             }
+            
+//            [self.appDelegate.friendRequestsSent addObject:[user objectForKey:@"phoneNumber"]];
+            [self.tableView reloadData];
+            
+//            [self.tableView deleteRowsAtIndexPaths:@[[self.tableView indexPathForCell:cell]] withRowAnimation:UITableViewRowAnimationAutomatic];
+            
             
         }];
         

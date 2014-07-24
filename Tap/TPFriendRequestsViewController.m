@@ -139,11 +139,31 @@
     }];
 }
 
+-(void) countFriendRequests {
+    PFQuery *query = [PFQuery queryWithClassName:@"FriendRequest"];
+    [query whereKey:@"targetUser" equalTo:[PFUser currentUser] ];
+    
+    NSLog(@"Friends phone numbers array %@", self.appDelegate.friendsPhoneNumbersArray);
+    [query whereKey:@"requestingUserPhoneNumber" notContainedIn:self.appDelegate.friendsPhoneNumbersArray];
+    [query whereKey:@"status" equalTo:@"pending"];
+    [query countObjectsInBackgroundWithBlock:^(int number, NSError *error) {
+        NSLog(@"counted friend requests %d", number);
+        self.appDelegate.pendingFriendRequests = @(number);
+    }];
+}
+
+
 -(void)confirmFriendRequest:(id)sender {
     UIView *senderButton = (UIView*) sender;
     
-    NSIndexPath *indexPath = [self.tableView indexPathForCell: (UITableViewCell *)[[[senderButton superview]superview] superview]];
+    [senderButton setHidden:YES];
+    UITableViewCell *cell = (UITableViewCell *)[[[senderButton superview]superview] superview];
     
+    NSIndexPath *indexPath = [self.tableView indexPathForCell: cell];
+    
+    UIActivityIndicatorView *ind = (UIActivityIndicatorView *)[cell viewWithTag:5];
+    [ind startAnimating];
+    [ind setHidden:NO];
     PFObject *friendRequest = [self.objects objectAtIndex:indexPath.row];
     
     PFUser *user = [friendRequest objectForKey:@"requestingUser"];
@@ -188,7 +208,7 @@
                                                             NSLog(@"Error: %@", error);
                                                         } else {
                                                             NSString *message = [NSString stringWithFormat:@"You are now friends with %@", friendRequesterNameInMyContacts];
-                                                            UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Accepted Friend Request" message:message delegate:nil cancelButtonTitle:nil otherButtonTitles:@"FUCK YEAH!", nil];
+                                                            UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Accepted Friend Request" message:message delegate:nil cancelButtonTitle:nil otherButtonTitles:@"Ok", nil];
                                                             [alert show];
                                                             [self viewDidLoad];
                                                         }
@@ -196,8 +216,11 @@
                                                     }];
                     } else {
                         NSLog(@"Error: %@", error);
+                        [senderButton setHidden:NO];
                     }
-                    
+                    [self countFriendRequests];
+                    [ind stopAnimating];
+                    [ind setHidden:YES];
                 }];
 
 
