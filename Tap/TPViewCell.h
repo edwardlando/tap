@@ -15,5 +15,7 @@
 @property (strong, nonatomic) NSArray *taps;
 @property (strong, nonatomic) NSNumber *justVisited;
 @property (strong, nonatomic) NSNumber *myFlipcast;
+@property (strong, nonatomic) NSNumber *hasLoaded;
+@property (strong, nonatomic) NSNumber *hasNewTaps;
 
 @end

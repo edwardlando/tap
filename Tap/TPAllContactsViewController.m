@@ -76,6 +76,8 @@
     self.tableView.sectionIndexBackgroundColor = [UIColor clearColor];
     self.tableView.sectionIndexTrackingBackgroundColor = [UIColor lightGrayColor];
     self.tableView.sectionIndexColor = [UIColor darkGrayColor];
+    
+
 
     if ([self.appDelegate.friendsArray count] == 0) {
         NSLog(@"No friends in app delegate");
@@ -112,7 +114,8 @@
 {
     // Background color
     //    if (section == 0) {
-    view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"blue"]];
+    view.tintColor = [UIColor whiteColor];
+//    view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"blue"]];
     
     // Text Color
     UITableViewHeaderFooterView *header = (UITableViewHeaderFooterView *)view;

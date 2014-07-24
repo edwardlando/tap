@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		B619B6FC197A380900B84DF9 /* TPAddFriendsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B619B6FB197A380900B84DF9 /* TPAddFriendsViewController.m */; };
+		B65458061980964D0006E314 /* TPTutorialViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B65458051980964D0006E314 /* TPTutorialViewController.m */; };
+		B654580C198098EC0006E314 /* TPTutorialContentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B654580B198098EC0006E314 /* TPTutorialContentViewController.m */; };
+		B65458101980A3DC0006E314 /* TPTutorialHelperViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B654580F1980A3DC0006E314 /* TPTutorialHelperViewController.m */; };
 		B67B133B197CB1BD003F411E /* CustomBadge.m in Sources */ = {isa = PBXBuildFile; fileRef = B67B133A197CB1BD003F411E /* CustomBadge.m */; };
 		B67B133F197DAEDF003F411E /* TPSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B67B133E197DAEDF003F411E /* TPSettingsViewController.m */; };
 		B6B3E16C196B59620095BEF9 /* TPViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B6B3E16B196B59620095BEF9 /* TPViewCell.m */; };
@@ -72,6 +75,12 @@
 /* Begin PBXFileReference section */
 		B619B6FA197A380900B84DF9 /* TPAddFriendsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPAddFriendsViewController.h; sourceTree = "<group>"; };
 		B619B6FB197A380900B84DF9 /* TPAddFriendsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TPAddFriendsViewController.m; sourceTree = "<group>"; };
+		B65458041980964D0006E314 /* TPTutorialViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPTutorialViewController.h; sourceTree = "<group>"; };
+		B65458051980964D0006E314 /* TPTutorialViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TPTutorialViewController.m; sourceTree = "<group>"; };
+		B654580A198098EC0006E314 /* TPTutorialContentViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TPTutorialContentViewController.h; path = ../TPTutorialContentViewController.h; sourceTree = "<group>"; };
+		B654580B198098EC0006E314 /* TPTutorialContentViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TPTutorialContentViewController.m; path = ../TPTutorialContentViewController.m; sourceTree = "<group>"; };
+		B654580E1980A3DC0006E314 /* TPTutorialHelperViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPTutorialHelperViewController.h; sourceTree = "<group>"; };
+		B654580F1980A3DC0006E314 /* TPTutorialHelperViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TPTutorialHelperViewController.m; sourceTree = "<group>"; };
 		B67B1339197CB1BD003F411E /* CustomBadge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomBadge.h; sourceTree = "<group>"; };
 		B67B133A197CB1BD003F411E /* CustomBadge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomBadge.m; sourceTree = "<group>"; };
 		B67B133D197DAEDF003F411E /* TPSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPSettingsViewController.h; sourceTree = "<group>"; };
@@ -196,6 +205,19 @@
 			name = "Add Friends";
 			sourceTree = "<group>";
 		};
+		B654580D198099170006E314 /* Tutorial */ = {
+			isa = PBXGroup;
+			children = (
+				B654580E1980A3DC0006E314 /* TPTutorialHelperViewController.h */,
+				B654580F1980A3DC0006E314 /* TPTutorialHelperViewController.m */,
+				B65458041980964D0006E314 /* TPTutorialViewController.h */,
+				B65458051980964D0006E314 /* TPTutorialViewController.m */,
+				B654580A198098EC0006E314 /* TPTutorialContentViewController.h */,
+				B654580B198098EC0006E314 /* TPTutorialContentViewController.m */,
+			);
+			name = Tutorial;
+			sourceTree = "<group>";
+		};
 		B67B133C197CB1C3003F411E /* Custom Classes */ = {
 			isa = PBXGroup;
 			children = (
@@ -263,6 +285,7 @@
 				B6CB8E541967C41C002996E8 /* TPAppDelegate.h */,
 				B6CB8E551967C41C002996E8 /* TPAppDelegate.m */,
 				B6CB8E571967C41C002996E8 /* Main.storyboard */,
+				B654580D198099170006E314 /* Tutorial */,
 				B6CB8EBA1967D59E002996E8 /* TPProcessImage.h */,
 				B6CB8EBB1967D59E002996E8 /* TPProcessImage.m */,
 				B6CB8EB71967D20D002996E8 /* Onboarding */,
@@ -557,6 +580,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B65458061980964D0006E314 /* TPTutorialViewController.m in Sources */,
 				B6CB8E941967CAE4002996E8 /* TPSignUpViewController.m in Sources */,
 				B6CB8EC61969C16E002996E8 /* TPFriendRequestsViewController.m in Sources */,
 				B6CB8E971967CAFB002996E8 /* TPPhoneNumberViewController.m in Sources */,
@@ -564,6 +588,7 @@
 				B6B3E16C196B59620095BEF9 /* TPViewCell.m in Sources */,
 				B6CB8E9A1967CB0A002996E8 /* TPVerifyViewController.m in Sources */,
 				BCC9C2C7197C7E600069F043 /* SWTableViewCell.m in Sources */,
+				B654580C198098EC0006E314 /* TPTutorialContentViewController.m in Sources */,
 				BCC9C2C9197C7E600069F043 /* SWUtilityButtonView.m in Sources */,
 				BCC9C2C4197C7E600069F043 /* NSMutableArray+SWUtilityButtons.m in Sources */,
 				BCC9C2C6197C7E600069F043 /* SWLongPressGestureRecognizer.m in Sources */,
@@ -575,6 +600,7 @@
 				B6CB8EA31967CB50002996E8 /* TPCameraViewController.m in Sources */,
 				BCC9C2C5197C7E600069F043 /* SWCellScrollView.m in Sources */,
 				B6CB8E9D1967CB2A002996E8 /* TPLandingViewController.m in Sources */,
+				B65458101980A3DC0006E314 /* TPTutorialHelperViewController.m in Sources */,
 				B67B133F197DAEDF003F411E /* TPSettingsViewController.m in Sources */,
 				B6CB8EA01967CB3F002996E8 /* TPLoginViewController.m in Sources */,
 				B6CB8EBF1967E09A002996E8 /* TPSingleTapViewController.m in Sources */,

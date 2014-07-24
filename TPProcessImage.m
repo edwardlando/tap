@@ -17,13 +17,24 @@
 
 +(void)sendTapTo:(NSMutableArray *)recipients andImage:(NSData *)imageData inBatch:(NSString *)batchId withImageId: (int) taps completed:(void (^)(BOOL success))completed{
         NSLog(@"trying to save");
+    if (![PFUser currentUser].isAuthenticated) {
+        NSLog(@"User not auth");
+        return;
+    }
     if(imageData){
 
         NSLog(@"Yes Image Data");
         PFFile *file = [PFFile fileWithName:@"image.png" data:imageData];
         
         [file saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+            
             NSLog(@"Saved file in background");
+            NSLog(@"Recipients %@", recipients);
+            NSLog(@"batchId %@", batchId);
+            NSLog(@"imageId %d", taps);
+            NSLog(@"Sender phone number %@", [[PFUser currentUser] objectForKey:@"phoneNumber"]);
+            
+            
             PFObject *msg = [PFObject objectWithClassName:@"Message"];
             msg[@"img"] = file;
             msg[@"sender"] = [PFUser currentUser];

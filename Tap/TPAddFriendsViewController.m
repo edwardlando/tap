@@ -1,4 +1,4 @@
-//
+///
 //  TPAllContactsViewController.m
 //  Tap
 //
@@ -7,7 +7,6 @@
 //
 
 #import "TPAddFriendsViewController.h"
-
 #import <AddressBook/AddressBook.h>
 #import <AddressBook/ABPerson.h>
 #import <AddressBook/ABAddressBook.h>
@@ -50,6 +49,8 @@
         // Uncomment the following line to specify the key of a PFFile on the PFObject to display in the imageView of the default cell style
         // self.imageKey = @"image";
         
+        self.loadingViewEnabled = NO;
+        
         // Whether the built-in pull-to-refresh is enabled
         self.pullToRefreshEnabled = YES;
         
@@ -73,6 +74,8 @@
     self.tableView.sectionIndexBackgroundColor = [UIColor clearColor];
     self.tableView.sectionIndexTrackingBackgroundColor = [UIColor lightGrayColor];
     self.tableView.sectionIndexColor = [UIColor darkGrayColor];
+    
+    [self.navigationController.navigationBar setTintColor:[UIColor whiteColor]];
     
     if ([self.appDelegate.friendsArray count] == 0) {
         NSLog(@"No friends in app delegate");
@@ -120,16 +123,28 @@
 
 - (void)tableView:(UITableView *)tableView willDisplayHeaderView:(UIView *)view forSection:(NSInteger)section
 {
+    UITableViewHeaderFooterView *header = (UITableViewHeaderFooterView *)view;
+
+    [header.textLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Bold" size:15.0f]];
+    
+    if (section == 0) {
+        [header.textLabel setTextColor:[UIColor blackColor]];
+//        view.tintColor = [UIColor whiteColor];
+    } else if (section == 1) {
+//        [header.textLabel setTextColor:[UIColor whiteColor]];
+//        view.tintColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"hypemGreen"]];
+    } else {
+//        [header.textLabel setTextColor:[UIColor whiteColor]];
+//        view.tintColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"radRed"]];
+    }
     // Background color
     //    if (section == 0) {
 //    view.tintColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"blue"]];
-    
-    view.backgroundColor = [UIColor whiteColor];
+//    view.tintColor = [UIColor whiteColor];
+//    view.backgroundColor = [UIColor whiteColor];
     
     // Text Color
-    UITableViewHeaderFooterView *header = (UITableViewHeaderFooterView *)view;
-    [header.textLabel setTextColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"black"]]];
-    [header.textLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Bold" size:15.0f]];
+
     
     CALayer *BottomBorder = [CALayer layer];
     BottomBorder.frame = CGRectMake(0.0f, view.frame.size.height - 0.7f, view.frame.size.width, 0.7f);
@@ -232,7 +247,7 @@
 //    NSLog(@"cell for row");
     
     if (indexPath.section == 0) {
-        NSLog(@"section is 0");
+//        NSLog(@"section is 0");
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"friendRequests" forIndexPath:indexPath];
         cell.textLabel.text = [NSString stringWithFormat:@"Friends Requests (%d)", [self.appDelegate.pendingFriendRequests intValue]];
         
@@ -240,7 +255,7 @@
         
     } else if (indexPath.section == 1) {
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"userCell" forIndexPath:indexPath];
-        NSLog(@"section is 1");
+//        NSLog(@"section is 1");
         cell.detailTextLabel.textColor = [UIColor grayColor];
         //    NSInteger index = indexPath.row;
         
@@ -269,7 +284,7 @@
         
         return cell;
     } else {
-        NSLog(@"section is 2");
+//        NSLog(@"section is 2");
         
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"inviteContactCell" forIndexPath:indexPath];
         UIButton *inviteFriendButton = (UIButton *) [cell viewWithTag:3];
@@ -330,6 +345,10 @@
     
 }
 
+-(void) viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    [self.tableView reloadData];
+}
 
 -(void) fetchPhoneContacts {
     CFErrorRef error;

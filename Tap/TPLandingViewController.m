@@ -7,7 +7,6 @@
 //
 
 #import "TPLandingViewController.h"
-
 #import <AVFoundation/AVFoundation.h>
 #import "CaptureSessionManager.h"
 #import <MobileCoreServices/MobileCoreServices.h>

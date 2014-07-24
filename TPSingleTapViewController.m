@@ -141,7 +141,6 @@
     
     NSData *data = [messageToShow objectForKey:@"imageData"];
     UIImage *singleTapImage = [[UIImage alloc] initWithData:data];
-                            
     
 //    UIImage *singleTapImage = [[self.allBatchImages objectAtIndex:taps - 1] objectForKey:@"image"];
     
@@ -149,6 +148,9 @@
         [self markAsRead:singleTap];
     }
 
+    
+
+    
     self.imageView.image = singleTapImage;
 }
 
@@ -163,13 +165,23 @@
     [self.view addGestureRecognizer:tap];
     tap.delegate = self;
     
+    UISwipeGestureRecognizer *swipeUpGestureRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(noMoreTaps)];
+    swipeUpGestureRecognizer.direction = UISwipeGestureRecognizerDirectionUp;
+    
+//    [self.view addGestureRecognizer:swipeUpGestureRecognizer];
+    
+    swipeUpGestureRecognizer.delegate = self;
+    
+    UISwipeGestureRecognizer *swipeDownGestureRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(noMoreTaps)];
+    swipeDownGestureRecognizer.direction = UISwipeGestureRecognizerDirectionDown;
+    
+//    [self.view addGestureRecognizer:swipeDownGestureRecognizer];
+    
+    swipeDownGestureRecognizer.delegate = self;
+    
 }
 
 -(void) tap:(UITapGestureRecognizer *)recognizer {
-
-    
-
-    
     if (taps >= 1) {
         taps--;
         currentTap++;
@@ -186,7 +198,7 @@
 //    [self presentViewController:camera animated:NO completion:^{
 //        //
 //    }];
-    
+    NSLog(@"No More Taps");
     if (![self.isMyFlipcast boolValue]) {
         
         if ([self.flipCastsToSave count] > 0) {
@@ -222,7 +234,7 @@
     }
     
     [[NSNotificationCenter defaultCenter] postNotificationName:@"singleTapViewDismissed"
-                                                        object:self.isMyFlipcast
+                                                        object:self.indexPath
                                                       userInfo:nil];
     
     [self dismissViewControllerAnimated:NO completion:nil];

@@ -19,4 +19,5 @@
 @property (strong, nonatomic) NSMutableDictionary *allInteractionTaps;
 @property (strong, nonatomic) NSNumber *isMyFlipcast;
 @property (strong, nonatomic) PFUser *sendingUser;
+@property (strong, nonatomic) NSIndexPath *indexPath;
 @end

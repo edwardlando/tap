@@ -128,9 +128,9 @@
 -(void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
     NSLog(@"View Will Disappear");
-    if ([self.appDelegate.taps intValue] > 0) {
-        [self createInteraction];
-    }
+//    if ([self.appDelegate.taps intValue] > 0) {
+//        [self createInteraction];
+//    }
     if (![self.appDelegate.sending boolValue]) {
         self.appDelegate.taps = @(0);
     }
@@ -140,22 +140,31 @@
 
 -(void)checkUserSituation {
     PFUser *currentUser = [PFUser currentUser];
-    if (currentUser && currentUser.isAuthenticated) {
-        [currentUser refreshInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+    [currentUser refresh];
+    if (currentUser && currentUser.isAuthenticated && [[currentUser objectForKey:@"phoneVerified"] boolValue]) {
+//        [currentUser refreshInBackgroundWithBlock:^(PFObject *object, NSError *error) {
             if (![[PFUser currentUser] objectForKey:@"phoneVerified"]) {
                 UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Uh Oh!" message:@"Please verify your phone number!" delegate:nil cancelButtonTitle:@"OK!" otherButtonTitles: nil];
                 [alertView show];
                 [self performSegueWithIdentifier:@"showLanding" sender:self];
             }
-        }];
+//        }];
         
         NSLog(@"Current user: %@", currentUser.username);
     }
     else {
         NSLog(@"No user");
         
+        if (![[currentUser objectForKey:@"phoneVerified"] boolValue]) {
+
+            [self performSegueWithIdentifier:@"verifyPhone" sender:self];
+        } else {
+            [PFUser logOut];
+            [self performSegueWithIdentifier:@"showLanding" sender:self];
+        }
+
         disappearOnSegue = YES;
-        [self performSegueWithIdentifier:@"showLanding" sender:self];
+
         
     }
 }
@@ -383,7 +392,7 @@
     if (self.isReply) {
         [self.recipients addObject:self.directRecipient];
     } else {
-        self.recipients = self.appDelegate.myGroup;
+        self.recipients = [[NSMutableArray alloc] init];//self.appDelegate.myGroup;
     }
 
 //    NSLog(@"sending to %@", recipients);

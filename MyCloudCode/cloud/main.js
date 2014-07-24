@@ -258,9 +258,10 @@ Parse.Cloud.define("confirmFriendRequest", function(request, response) {
                     // object is user requesting the friends request
                     var friendsArray = friend.get("friendsArray");
                     var friendsPhones = friend.get("friendsPhones");
-                    if (!friendsArray.arrayContains(user) && !friendsPhones.arrayContains(user.phoneNumber)) {
+                    var userPhoneNumber = user.get("phoneNumber");
+                    if (!friendsArray.arrayContains(user) && !friendsPhones.arrayContains(userPhoneNumber)) {
                         friendsArray.push(user);
-                        friendsPhones.push(user.phoneNumber);
+                        friendsPhones.push(userPhoneNumber);
                     } else {
                         return;
                     }

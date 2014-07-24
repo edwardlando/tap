@@ -53,10 +53,14 @@
 
     self.phoneField.leftViewMode = UITextFieldViewModeAlways;
 
+
+    // Do any additional setup after loading the view.
+}
+
+-(void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
     [self.phoneField becomeFirstResponder];
     [self setupCamera];
-    
-    // Do any additional setup after loading the view.
 }
 
 - (BOOL)prefersStatusBarHidden {
