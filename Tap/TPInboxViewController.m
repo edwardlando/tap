@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 Yagil Burowski. All rights reserved.
 //
 
-#define FONTSIZE 20.0f
+#define FONTSIZE 18.0f
 
 #import "TPInboxViewController.h"
 #import "TPSingleTapViewController.h"
@@ -461,8 +461,7 @@
         NSString *username = [[object objectForKey:@"owner"] objectForKey:@"username"];
         cell.textLabel.text = (friendNameInMyContacts) ? friendNameInMyContacts : username;
         
-        cell.detailTextLabel.text = [NSString stringWithFormat:@"%@",agoString];
-
+//        cell.detailTextLabel.text = [NSString stringWithFormat:@"%@",agoString];
     }
         
 
@@ -503,18 +502,18 @@
                             numOfTaps = number  + 1;
                             if (viewsCount > 0) {
                                 if ([cell.hasLoaded boolValue] || [self.loadedTapsByIndexPaths containsObject:indexPath]) {
-                                    cell.detailTextLabel.text = (viewsCount == 1) ? [NSString stringWithFormat:@"Tap to Open - %d taps - %ld view", number+1, viewsCount] : [NSString stringWithFormat:@"Tap to Open - %d taps - %ld views", number + 1, viewsCount];
+                                    cell.detailTextLabel.text = (viewsCount == 1) ? [NSString stringWithFormat:@"Tap to Open - %d Popcasts - %ld view", number+1, viewsCount] : [NSString stringWithFormat:@"Tap to Open - %d Popcasts - %ld views", number + 1, viewsCount];
                                     
                                 } else {
-                                    cell.detailTextLabel.text = (viewsCount == 1) ? [NSString stringWithFormat:@"Tap to Load - %d taps - %ld view", number+1, viewsCount] : [NSString stringWithFormat:@"Tap to Load - %d taps - %ld views", number + 1, viewsCount];
+                                    cell.detailTextLabel.text = (viewsCount == 1) ? [NSString stringWithFormat:@"Tap to Load - %d Popcasts - %ld view", number+1, viewsCount] : [NSString stringWithFormat:@"Tap to Load - %d Popcasts - %ld views", number + 1, viewsCount];
 
                                 }
                                 
                             } else {
                                 if ([cell.hasLoaded boolValue] || [self.loadedTapsByIndexPaths containsObject:indexPath]) {
-                                    cell.detailTextLabel.text = [NSString stringWithFormat:@"Tap to Open - %d taps", number + 1];
+                                    cell.detailTextLabel.text = [NSString stringWithFormat:@"Tap to Open - %d Popcasts", number + 1];
                                 } else {
-                                    cell.detailTextLabel.text = [NSString stringWithFormat:@"Tap to Load - %d taps", number + 1];
+                                    cell.detailTextLabel.text = [NSString stringWithFormat:@"Tap to Load - %d Popcasts", number + 1];
                                 }
 
                             }
@@ -552,6 +551,7 @@
             } else {
                 [ind stopAnimating];
                 [ind setHidden:YES];
+                cell.detailTextLabel.text = @"";
                cell.hasNewTaps = @(NO);
                 NSLog(@"Error finding first object: %@", error);
             }
@@ -886,6 +886,7 @@
         
         [tapsQuery whereKey:@"batchId" equalTo:[flipcast objectForKey:@"batchId"]];
         [tapsQuery orderByAscending:@"batchId"];
+        [tapsQuery whereKey:@"privacy" equalTo:@"public"];
         [tapsQuery whereKey:@"sender" equalTo:cell.sendingUser];
         [tapsQuery whereKey:@"readArray" notEqualTo:[[PFUser currentUser] objectId]];
         [tapsQuery whereKey:@"objectId" notContainedIn:self.appDelegate.allReadTaps];

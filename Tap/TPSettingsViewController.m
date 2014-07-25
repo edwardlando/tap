@@ -8,8 +8,9 @@
 
 #import "TPSettingsViewController.h"
 #import <Parse/Parse.h>
+#import <MessageUI/MFMailComposeViewController.h>
 
-@interface TPSettingsViewController ()
+@interface TPSettingsViewController () <MFMailComposeViewControllerDelegate>
 @property (strong, nonatomic) IBOutlet UILabel *usernameLabel;
 @property (strong, nonatomic) IBOutlet UILabel *phonenumberLabel;
 @property (strong, nonatomic) IBOutlet UILabel *versionLabel;
@@ -39,20 +40,82 @@
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
     if (cell.tag == 10) {
+        NSURL *url = [NSURL URLWithString:@"http://www.gopopcast.com/privacy"];
+        
+        if (![[UIApplication sharedApplication] openURL:url]) {
+            NSLog(@"%@%@",@"Failed to open url:",[url description]);
+        }
+        
         NSLog(@"This is privacy");
-    } else if (cell.tag == 11) {
+    } else if (cell.tag == 15) {
+        [self sendFeedback];
+    }else if (cell.tag == 11) {
+        
+        
+        
         [PFUser logOut];
+        
+        
         NSLog(@"This is logout");
 //        [self.navigationController popToRootViewControllerAnimated:YES];
-        [self dismissViewControllerAnimated:YES completion:nil];
+        [self dismissViewControllerAnimated:YES completion:^{
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"userLoggedOut" object:nil];
+
+        }];
 
     }
+}
+
+
+- (void)sendFeedback {
+    // Email Subject
+    NSString *emailTitle = @"Feedback on Popcast";
+    // Email Content
+    NSString *messageBody = @"Your feedback";
+    // To address
+    NSArray *toRecipents = [NSArray arrayWithObject:@"founders@gopopcast.com"];
+    
+    MFMailComposeViewController *mc = [[MFMailComposeViewController alloc] init];
+    mc.mailComposeDelegate = self;
+    [mc setSubject:emailTitle];
+    [mc setMessageBody:messageBody isHTML:NO];
+    [mc setToRecipients:toRecipents];
+    
+    // Present mail view controller on screen
+    [self presentViewController:mc animated:YES completion:NULL];
 }
 
 -(void)initCredentialsRows {
     self.usernameLabel.text = [[PFUser currentUser] objectForKey:@"username"];
     self.phonenumberLabel.text = [[PFUser currentUser] objectForKey:@"phoneNumber"];
 }
+
+
+- (void) mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error
+{
+    switch (result)
+    {
+        case MFMailComposeResultCancelled:
+            if (DEBUG) NSLog(@"Mail cancelled");
+            break;
+        case MFMailComposeResultSaved:
+            if (DEBUG) NSLog(@"Mail saved");
+            break;
+        case MFMailComposeResultSent:
+            if (DEBUG) NSLog(@"Mail sent");
+            break;
+        case MFMailComposeResultFailed:
+            if (DEBUG) NSLog(@"Mail sent failure: %@", [error localizedDescription]);
+            break;
+        default:
+            break;
+    }
+    
+//    // Close the Mail Interface
+    [self dismissViewControllerAnimated:YES completion:NULL];
+}
+
+
 #pragma mark - Table view data source
 
 //- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView

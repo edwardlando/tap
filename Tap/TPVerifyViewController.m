@@ -11,7 +11,6 @@
 #import <AVFoundation/AVFoundation.h>
 #import "CaptureSessionManager.h"
 #import <MobileCoreServices/MobileCoreServices.h>
-#import <Parse/Parse.h>
 #import <ImageIO/ImageIO.h>
 
 @interface TPVerifyViewController ()

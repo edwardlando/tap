@@ -15,7 +15,7 @@
 #import <AddressBook/ABPerson.h>
 #import <AddressBook/ABAddressBook.h>
 
-@interface TPCameraViewController (){
+@interface TPCameraViewController () {
  
     BOOL takingPicture;
     int taps;
@@ -25,12 +25,18 @@
     BOOL interactionCreated;
     BOOL disappearOnSegue;
     BOOL shouldCreateInteraction;
+    BOOL tutIsOn;
+    int tutStep;
+    
 }
 
 @property (strong, nonatomic) IBOutlet UILabel *tapsCounter;
 @property (strong, nonatomic) TPAppDelegate *appDelegate;
 @property (strong, nonatomic) IBOutlet UILabel *sendingIndicator;
 @property (strong, nonatomic) NSMutableArray *recipients;
+@property (strong, nonatomic) NSArray *tutorialSteps;
+@property (strong, nonatomic) IBOutlet UIImageView *tutImageView;
+
 @end
 
 @implementation TPCameraViewController
@@ -45,6 +51,12 @@
     return _appDelegate;
 }
 
+-(NSArray *)tutorialSteps {
+    if (!_tutorialSteps) {
+        _tutorialSteps = @[@"tut1", @"tut2", @"tut2", @"tut2", @"tut3", @"tut4"];
+    }
+    return _tutorialSteps;
+}
 
 - (void)viewDidLoad
 {
@@ -91,7 +103,9 @@
     
     NSString *directPhoneNumber = [self.directRecipient objectForKey:@"phoneNumber"];
     NSString *nameInContacts = [self.appDelegate.contactsDict objectForKey:directPhoneNumber];
+    
     NSString *replyMsg = [NSString stringWithFormat:@"You are replying directly to %@", nameInContacts];
+    
     if (self.isReply) {
 //        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Direct Reply" message:replyMsg delegate:nil cancelButtonTitle:nil otherButtonTitles:@"FUCK YEAH!", nil];
 //        [alert show];
@@ -110,6 +124,8 @@
 -(void) viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
+    [self checkUserSituation];
+    
     [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationFade];
     
 //    taps = 0;
@@ -123,10 +139,60 @@
     self.recipients = [[NSMutableArray alloc] init];
     NSLog(@"View Will Appear");
     [self setupCameraScreen];
+    [self setupTap];
+    
+        
+    [self displayTutorial];
+    
+}
+
+-(void)displayTutorial {
+    NSLog(@"Display Tut");
+    if(![[NSUserDefaults standardUserDefaults] boolForKey:@"hasSeenTutorial"]) {
+        [self initTutorial];
+        
+
+
+    } else {
+        NSLog(@"Already seen tut");
+//        [self didFinishTutorial];
+    }
+}
+
+-(void)initTutorial {
+    tutIsOn = YES;
+    tutStep = 0;
+    [self.tutImageView setHidden:NO];
+    NSString *nextImageName = [self.tutorialSteps objectAtIndex:tutStep];
+    UIImage *image = [UIImage imageNamed:nextImageName];
+    self.tutImageView.image = image;
+}
+
+-(void)tutNextStep {
+    NSLog(@"Tut next step");
+    tutStep++;
+    if (tutStep == [self.tutorialSteps count]) {
+        [self shouldFinishTutorial];
+    }
+    
+    NSString *nextImageName = [self.tutorialSteps objectAtIndex:tutStep];
+    UIImage *image = [UIImage imageNamed:nextImageName];
+    self.tutImageView.image = image;
+}
+
+-(void)shouldFinishTutorial {
+    [self.tutImageView setHidden:YES];
+    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"hasSeenTutorial"];
+    [self didFinishTutorial];
+}
+
+-(void)didFinishTutorial {
+    NSLog(@"Finished tutorial");
 }
 
 -(void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
+    [self shouldFinishTutorial];
     NSLog(@"View Will Disappear");
 //    if ([self.appDelegate.taps intValue] > 0) {
 //        [self createInteraction];
@@ -134,8 +200,6 @@
     if (![self.appDelegate.sending boolValue]) {
         self.appDelegate.taps = @(0);
     }
-
-    
 }
 
 -(void)checkUserSituation {
@@ -182,7 +246,7 @@
     }
     frontCam = NO;
     [self resetBatchId];
-    [self setupTap];
+
     [self setupCamera];
     
     takingPicture = true;
@@ -199,6 +263,7 @@
 }
 
 -(void)setupTap{
+
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(touch:)];
     [self.view addGestureRecognizer:tap];
     tap.delegate = self;
@@ -235,8 +300,25 @@
 
     NSLog(@"Tap");
 
+    if ([self.appDelegate.taps intValue] >= 150) {
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Slow Down!" message:@"Hold it right there, young grasshopper. You cannot send more than 150 Pops a cast. Or casts a pop. Either way, slow down! 👋" delegate:nil cancelButtonTitle:@"OK!" otherButtonTitles: nil];
+        [alertView show];
+        return;
+    }
+    
+    if ([self.appDelegate.isBlocked boolValue]) {
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Uh Oh" message:@"It seems that you are blocked from sending Popcasts. If you believe this is a mistake, please contact us." delegate:nil cancelButtonTitle:@"OK!" otherButtonTitles: nil];
+        [alertView show];
+        return;
+    }
+    
     [self takePicture];
     
+    if (tutIsOn && tutStep != 4) {
+        NSLog(@"Tut is on so next step %d out of %ld", tutStep, [self.tutorialSteps count]);
+        [self tutNextStep];
+    }
+
     
 //    taps++;
 
@@ -280,7 +362,7 @@
                                                object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(setupCameraScreen)
+                                             selector:@selector(handleOnboardingFinished)
                                                  name:@"onboardingFinished"
                                                object:nil];
 
@@ -303,6 +385,11 @@
                                              selector:@selector(handleSavedImageNotification:)
                                                  name:@"savedImageToServer"
                                                object:nil];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(checkUserSituation)
+                                                 name:@"userLoggedOut"
+                                               object:nil];
     
 }
 
@@ -312,10 +399,17 @@
     [[NSNotificationCenter defaultCenter] removeObserver:kImageCapturedSuccessfully];
     [[NSNotificationCenter defaultCenter] removeObserver:@"onboardingFinished"];
     [[NSNotificationCenter defaultCenter] removeObserver:@"newTaps"];
+    [[NSNotificationCenter defaultCenter] removeObserver:@"userLoggedOut"];
     [[NSNotificationCenter defaultCenter] removeObserver:@"appEnteredBackground"];
     [[NSNotificationCenter defaultCenter] removeObserver:@"appEnteredForeground"];
     [[NSNotificationCenter defaultCenter] removeObserver:@"savedImageToServer"];
 
+}
+
+-(void)handleOnboardingFinished {
+    [self setupCameraScreen];
+    [self initTutorial];
+    
 }
 
 -(void)handleSavedImageNotification:(NSNotification *)notification {
@@ -329,7 +423,7 @@
     NSLog(@"num of messages saved %d / num if taps %d / object %@", [self.appDelegate.messagesSaved intValue], [self.appDelegate.taps intValue], notification.object);
     
     self.sendingIndicator.text = [NSString stringWithFormat:@"Sending...%d/%d",[self.appDelegate.messagesSaved intValue], [self.appDelegate.taps intValue]] ;
-//    self.tapsCounter.text = [NSString stringWithFormat:@"%d", [self.tapsCounter.text intValue] - 1];
+
     
     if ([self.appDelegate.messagesSaved intValue] == [self.appDelegate.taps intValue]) {
         NSLog(@"That was the last one");
@@ -361,6 +455,12 @@
 }
 
 -(void)swapCamera {
+    if (tutIsOn && tutStep == 4) {
+        NSLog(@"Tut is on so next step %d out of %ld", tutStep, [self.tutorialSteps count]);
+        [self tutNextStep];
+    }
+
+    
     frontCam = !frontCam;
     [captureManager addVideoInputFrontCamera:frontCam];
 }

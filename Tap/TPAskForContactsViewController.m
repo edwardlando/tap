@@ -12,13 +12,19 @@
 #import <AddressBook/ABPerson.h>
 #import <AddressBook/ABAddressBook.h>
 #import "TPAppDelegate.h"
-
+#import <AVFoundation/AVFoundation.h>
+#import "CaptureSessionManager.h"
+#import <MobileCoreServices/MobileCoreServices.h>
+#import <ImageIO/ImageIO.h>
 
 @interface TPAskForContactsViewController ()
 @property (nonatomic, strong) NSMutableArray *phonebook;
 @property (nonatomic, strong) NSMutableDictionary *alphabeticalPhonebook;
 @property (nonatomic, strong) NSArray *sections;
 @property (strong, nonatomic) TPAppDelegate *appDelegate;
+@property (strong, nonatomic) IBOutlet UIView *cameraView;
+@property (nonatomic,retain) CaptureSessionManager *captureManager;
+
 
 @end
 
@@ -33,10 +39,31 @@
     return _appDelegate;
 }
 
+-(void)setupCamera{
+    if(TARGET_IPHONE_SIMULATOR){
+        return;
+    }
+    
+    [self setCaptureManager:[[CaptureSessionManager alloc] init]];
+	[[self captureManager] addVideoInputFrontCamera:NO]; // set to YES for Front Camera, No for Back camer
+    [[self captureManager] addStillImageOutput];
+	[[self captureManager] addVideoPreviewLayer];
+	CGRect layerRect = [[[self cameraView] layer] bounds];
+    [[[self captureManager] previewLayer] setBounds:layerRect];
+    [[[self captureManager] previewLayer] setPosition:CGPointMake(CGRectGetMidX(layerRect),CGRectGetMidY(layerRect))];
+	[[[self cameraView] layer] addSublayer:[[self captureManager] previewLayer]];
+    
+    [[[self captureManager]captureSession]startRunning];
+    
+    //    UIButton *mainMenu = (UIButton *)[self.view viewWithTag:10];
+    //    mainMenu.layer.cornerRadius = 5;
+}
+
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    [self setupCamera];
     // Do any additional setup after loading the view.
    
 }
@@ -153,8 +180,8 @@
         }];
 //        }
         
-        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Great Success!" message:@"Welcome to Tap. Tap anywhere to take and upload a photo. Tap on the black square to view your friends' taps and add more friends. Have fun! 🐶" delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK!", nil];
-        [alert show];
+//        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Great Success!" message:@"Welcome to Tap. Tap anywhere to take and upload a photo. Tap on the black square to view your friends' taps and add more friends. Have fun! 🐶" delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK!", nil];
+//        [alert show];
         
         [[NSNotificationCenter defaultCenter] postNotificationName:@"onboardingFinished"
                                                             object:nil

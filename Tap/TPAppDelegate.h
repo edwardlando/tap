@@ -21,6 +21,7 @@
 @property (strong, nonatomic) NSMutableArray *friendsArray;
 
 @property (strong, nonatomic) NSNumber *pendingFriendRequests;
+@property (strong, nonatomic) NSNumber *isBlocked;
 
 @property (nonatomic, strong) NSMutableArray *alphabeticalPhonebook;
 

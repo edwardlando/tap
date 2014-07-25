@@ -6,8 +6,11 @@
 //  Copyright (c) 2014 Yagil Burowski. All rights reserved.
 //
 
+#define MIXPANEL_TOKEN @"98677c640dfade631369fad2cc78bb66"
+
 #import "TPAppDelegate.h"
 #import <Parse/Parse.h>
+//#import <Mixpanel/Mixpanel.h>
 
 @implementation TPAppDelegate
 
@@ -72,7 +75,7 @@
             if ([[object objectForKey:@"boolValue"]boolValue]) {
                 NSLog(@"App is active");
             } else {
-                exit(0);
+//                exit(0);
             }
             
         }
@@ -129,8 +132,6 @@
 {
     // Override point for customization after application launch.
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
-
-
     
     UIPageControl *pageControl = [UIPageControl appearance];
     pageControl.pageIndicatorTintColor = [UIColor lightGrayColor];
@@ -149,6 +150,21 @@
 
     [PFAnalytics trackAppOpenedWithLaunchOptions:launchOptions];
     
+//    [Mixpanel sharedInstanceWithToken:MIXPANEL_TOKEN];
+//    Mixpanel *mixpanel = [Mixpanel sharedInstance];
+//
+//    if ([PFUser currentUser].isAuthenticated) {
+//        [mixpanel track:@"Launched app" properties:@{
+//                                                     @"User": [[PFUser currentUser]objectId]
+//                                                     }];
+//        
+//    } else {
+//        [mixpanel track:@"Launched app" properties:@{
+//                                                     @"User": @"Not Logged In"
+//                                                     }];
+//
+//    }
+    
     NSSetUncaughtExceptionHandler(&uncaughtExceptionHandler);
 
     [self checkIfActive];
@@ -166,6 +182,11 @@
     if ([PFUser currentUser]) {
         [[PFUser currentUser] refreshInBackgroundWithBlock:^(PFObject *object, NSError *error) {
             NSLog(@"Refreshed user");
+            if ([[object objectForKey:@"blocked"]boolValue]) {
+                self.isBlocked = @(YES);
+            } else {
+                self.isBlocked = @(NO);
+            }
         }];
     }
     

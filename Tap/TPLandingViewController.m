@@ -45,8 +45,12 @@
     [[self navigationController] setNavigationBarHidden:YES animated:NO];
         [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationNone];
     self.mainMenu.layer.cornerRadius = 5;
-    [self setupCamera];
     // Do any additional setup after loading the view.
+}
+
+-(void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    [self setupCamera];
 }
 
 - (BOOL)prefersStatusBarHidden {

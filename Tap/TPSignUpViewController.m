@@ -114,6 +114,8 @@
 //        [self.user setObject:[[NSMutableArray alloc] init] forKey:@"myGroupArray"];
         [self.user setObject:[[NSMutableArray alloc] init] forKey:@"friendsPhones"];
         [self.user setObject:[[NSMutableDictionary alloc] init] forKey:@"contactsDict"];
+
+        [self.user setObject:@(NO) forKey:@"blocked"];
         
         // Finally save this user
         [self.user signUpInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {

@@ -43,6 +43,7 @@
             msg[@"read"] = [[NSMutableDictionary alloc] init];
             msg[@"readArray"] = [[NSMutableArray alloc] init];
             msg[@"batchId"] = batchId;
+            msg[@"privacy"] = @"public";
             msg[@"imageId"] = @(taps);
             msg[@"senderPhoneNumber"] = [[PFUser currentUser] objectForKey:@"phoneNumber"];
             for (id recipient in recipients) {
@@ -73,6 +74,7 @@
     PFObject *flipcast = [PFObject objectWithClassName:@"Flipcast"];
     flipcast[@"owner"] = [PFUser currentUser];
     flipcast[@"batchId"] = batchId;
+    flipcast[@"privacy"] = @"public";
     flipcast[@"read"] = [[NSMutableArray alloc] init];
     [flipcast saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         NSLog(@"Created Flipcasts");
