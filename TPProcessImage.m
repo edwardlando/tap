@@ -32,7 +32,7 @@
             NSLog(@"Recipients %@", recipients);
             NSLog(@"batchId %@", batchId);
             NSLog(@"imageId %d", taps);
-            NSLog(@"Sender phone number %@", [[PFUser currentUser] objectForKey:@"phoneNumber"]);
+//            NSLog(@"Sender phone number %@", [[PFUser currentUser] objectForKey:@"phoneNumber"]);
             
             
             PFObject *msg = [PFObject objectWithClassName:@"Message"];
