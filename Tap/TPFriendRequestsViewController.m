@@ -102,7 +102,7 @@
     
     NSLog(@"Friend reqester name %@", friendRequesterNameInMyContacts);
     
-        if ([friendRequesterNameInMyContacts isEqual:@""]) {
+        if (!friendRequesterNameInMyContacts || [friendRequesterNameInMyContacts isEqual:@""]) {
             cell.textLabel.text = friendRequesterUsername;
             cell.detailTextLabel.text = friendRequesterPhoneNumber;
         } else {
@@ -134,6 +134,7 @@
     PFObject *friendRequest = [self.objects objectAtIndex:indexPath.row];
     
     friendRequest[@"status"] = @"rejected";
+    [TPAppDelegate sendMixpanelEvent:@"Rejected friend request"];
     [friendRequest saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         [self.tableView reloadData];
     }];
@@ -190,10 +191,10 @@
             
 //        [[user objectForKey:@"friendsArray"] addObject:currentUser];
 //        [[currentUser objectForKey:@"friendRequestsArray"] removeObject:user];
-        [self.appDelegate.friendsArray addObject:user];
-        [self.appDelegate.friendsPhoneNumbersArray addObject:friendRequesterPhoneNumber];
+
         
         friendRequest[@"status"] = @"approved";
+        [TPAppDelegate sendMixpanelEvent:@"Approved friend request"];
         [friendRequest saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
             if (succeeded) {
                 NSLog(@"Friend request saved in background");
@@ -207,8 +208,12 @@
                                                         if (error) {
                                                             NSLog(@"Error: %@", error);
                                                         } else {
-                                                            NSString *message = [NSString stringWithFormat:@"You are now friends with %@", friendRequesterNameInMyContacts];
+
+                                                            NSString *message = friendRequesterNameInMyContacts ?[NSString stringWithFormat:@"You are now friends with %@", friendRequesterNameInMyContacts] : [NSString stringWithFormat:@"You are now friends with %@", friendRequesterUsername];
+                                                            
                                                             UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Accepted Friend Request" message:message delegate:nil cancelButtonTitle:nil otherButtonTitles:@"Ok", nil];
+                                                            [self.appDelegate.friendsArray addObject:user];
+                                                            [self.appDelegate.friendsPhoneNumbersArray addObject:friendRequesterPhoneNumber];
                                                             [alert show];
                                                             [self viewDidLoad];
                                                         }

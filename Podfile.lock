@@ -1,0 +1,13 @@
+PODS:
+  - MBProgressHUD (0.8)
+  - Mixpanel (2.4.1)
+
+DEPENDENCIES:
+  - MBProgressHUD (~> 0.8)
+  - Mixpanel
+
+SPEC CHECKSUMS:
+  MBProgressHUD: c356980b0cd097f19acec959b49dca5eb8ec31be
+  Mixpanel: a29ff32db93936dea24162f0dc4fecc4a8f17071
+
+COCOAPODS: 0.33.1

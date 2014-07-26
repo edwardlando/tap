@@ -37,6 +37,6 @@
 @property (strong, nonatomic) NSNumber *messagesSaved;
 @property (strong, nonatomic) NSNumber *sending;
 
-
++(void)sendMixpanelEvent:(NSString *)event;
 -(void)loadFriends;
 @end

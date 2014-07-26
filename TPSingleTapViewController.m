@@ -74,7 +74,14 @@
         [self setupTap];
         
 //        NSLog(@"objects %@", self.objects);
-        [self showTap];
+        @try {
+            [self showTap];
+        }
+        @catch (NSException *exception) {
+            NSLog(@"Can't view tap exception: %@", exception);
+            [self noMoreTaps];
+        }
+
     }
 }
 
@@ -132,10 +139,20 @@
     NSArray *batchImages = [self.allInteractionTaps objectForKey:currentBatchId];
     
     NSSortDescriptor *imageIdDescriptor = [[NSSortDescriptor alloc] initWithKey:@"imageId" ascending:YES];
+
     NSArray *sortDescriptors = @[imageIdDescriptor];
     NSArray *sortedBatchPhotos = [batchImages sortedArrayUsingDescriptors:sortDescriptors];
+    PFObject *messageToShow;
+    
+    @try {
+        messageToShow = [sortedBatchPhotos objectAtIndex:currentTap];
+    }
+    @catch (NSException *exception) {
+        NSLog(@"Coulnd't fetch tap exception %@", exception);
+        [self noMoreTaps];
+    }
 
-    PFObject *messageToShow = [sortedBatchPhotos objectAtIndex:currentTap];
+
     
     NSLog(@"Message to show imageId %@", [messageToShow objectForKey:@"imageId"]);
     

@@ -58,11 +58,17 @@
     return _tutorialSteps;
 }
 
+-(void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    [self checkUserSituation];
+    [self displayTutorial];
+}
+                               
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    [self checkUserSituation];
-    
+
+//    [self checkUserSituation];
     [self registerForNotifications];
     
 //    messagesSaved = 0;
@@ -77,7 +83,12 @@
     [self setupCameraScreen];
 //    [self setupCameraScreen];
 //    taps = 0;
+    self.tapsCounter.layer.cornerRadius = 5;
+    self.tapsCounter.layer.borderWidth = 2.0f;
+    [self initCounterStyle];
 
+
+    
 //    self.tapsCounter.text = [NSString stringWithFormat:@"%d", taps];
     self.tapsCounter.text = [NSString stringWithFormat:@"%d", [self.appDelegate.taps intValue]];
 
@@ -123,8 +134,8 @@
 
 -(void) viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    
-    [self checkUserSituation];
+//    [self checkUserSituation];
+    [TPAppDelegate sendMixpanelEvent:@"Opened camera"];
     
     [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationFade];
     
@@ -141,21 +152,15 @@
     [self setupCameraScreen];
     [self setupTap];
     
-        
-    [self displayTutorial];
-    
 }
 
 -(void)displayTutorial {
     NSLog(@"Display Tut");
+    
     if(![[NSUserDefaults standardUserDefaults] boolForKey:@"hasSeenTutorial"]) {
         [self initTutorial];
-        
-
-
     } else {
         NSLog(@"Already seen tut");
-//        [self didFinishTutorial];
     }
 }
 
@@ -173,11 +178,21 @@
     tutStep++;
     if (tutStep == [self.tutorialSteps count]) {
         [self shouldFinishTutorial];
+        return;
     }
     
-    NSString *nextImageName = [self.tutorialSteps objectAtIndex:tutStep];
-    UIImage *image = [UIImage imageNamed:nextImageName];
-    self.tutImageView.image = image;
+    @try {
+
+        NSString *nextImageName = [self.tutorialSteps objectAtIndex:tutStep];
+        UIImage *image = [UIImage imageNamed:nextImageName];
+        self.tutImageView.image = image;
+
+    }
+    @catch (NSException *exception) {
+        NSLog(@"Tut error %@", exception);
+        [self shouldFinishTutorial];
+    }
+
 }
 
 -(void)shouldFinishTutorial {
@@ -204,7 +219,10 @@
 
 -(void)checkUserSituation {
     PFUser *currentUser = [PFUser currentUser];
-    [currentUser refresh];
+    [currentUser refreshInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+        //
+        NSLog(@"Refreshed user");
+    }];
     if (currentUser && currentUser.isAuthenticated) {
 //        [currentUser refreshInBackgroundWithBlock:^(PFObject *object, NSError *error) {
             if (![[[PFUser currentUser] objectForKey:@"phoneVerified"] boolValue]) {
@@ -218,13 +236,13 @@
     }
     else {
         NSLog(@"No user %@", currentUser);
+        [self performSegueWithIdentifier:@"showLanding" sender:self];
         
 //        if (![[currentUser objectForKey:@"phoneVerified"] boolValue]) {
-
 //            [self performSegueWithIdentifier:@"verifyPhone" sender:self];
 //        } else {
             [PFUser logOut];
-            [self performSegueWithIdentifier:@"showLanding" sender:self];
+
 //        }
 
         disappearOnSegue = YES;
@@ -323,7 +341,7 @@
 //    taps++;
 
     NSLog(@"Incremented app del taps %d", [self.appDelegate.taps intValue]);
-    
+//    [self sendingCounterStyle];
     if ([self.appDelegate.taps intValue] == 0) {
         [self createInteraction];
     }
@@ -335,12 +353,14 @@
 -(void) makeMainMenuPink {
     NSLog(@"making menu pink");
     UIButton *inboxButton = (UIButton *)[self.view viewWithTag:10];
-    [inboxButton setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"pink"]]];
+    [inboxButton setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"blue"]]];
 }
+
 
 -(void)takePicture{
     NSLog(@"Take Picture");
     [self.sendingIndicator setHidden:NO];
+//    [[self.view viewWithTag:929] setHidden:NO];
     [[self captureManager]captureStillImage];
 }
 
@@ -421,7 +441,6 @@
     
     NSLog(@"handleSavedImageNotification, incremented messagesSaved %d", [self.appDelegate.messagesSaved intValue]);
     NSLog(@"num of messages saved %d / num if taps %d / object %@", [self.appDelegate.messagesSaved intValue], [self.appDelegate.taps intValue], notification.object);
-    
     self.sendingIndicator.text = [NSString stringWithFormat:@"Sending...%d/%d",[self.appDelegate.messagesSaved intValue], [self.appDelegate.taps intValue]] ;
 
     
@@ -431,9 +450,24 @@
         
         // Need to reset metrics here?
         self.sendingIndicator.text = @"Sending...";
+        [self initCounterStyle];
+        
         NSLog(@"Object %@", /*[sender objectForKey:@"object"]*/ notification.object);
         [self.sendingIndicator setHidden:YES];
+        [[self.view viewWithTag:929] setHidden:YES];
     }
+}
+
+-(void)initCounterStyle {
+    self.tapsCounter.layer.borderColor = [UIColor clearColor].CGColor;
+    self.tapsCounter.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.3];
+}
+
+-(void)sendingCounterStyle {
+//    self.tapsCounter.layer.borderColor = [UIColor colorWithRed:90 green:0 blue:0 alpha:1.0].CGColor;
+    self.tapsCounter.layer.borderColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"purpleColor"]].CGColor;
+//    self.tapsCounter.backgroundColor = [UIColor colorWithRed:90 green:0 blue:0 alpha:1.0];
+    self.tapsCounter.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"purpleColor"]];
 }
 
 -(void)createInteraction {
@@ -501,6 +535,7 @@
 //    [self.sendingIndicator setHidden:NO];
     
     self.appDelegate.taps = @([self.appDelegate.taps intValue] + 1);
+    [self sendingCounterStyle];
     self.tapsCounter.text = [NSString stringWithFormat:@"%d", [self.appDelegate.taps intValue]];
     self.appDelegate.sending = @(YES);
     [TPProcessImage sendTapTo:self.recipients andImage:dataForJPEGFile inBatch:batchIdString withImageId: [self.appDelegate.taps intValue] completed:^(BOOL success) {

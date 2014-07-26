@@ -12,6 +12,7 @@
 #import "CaptureSessionManager.h"
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <ImageIO/ImageIO.h>
+#import <MBProgressHUD/MBProgressHUD.h>
 
 @interface TPVerifyViewController ()
 
@@ -34,7 +35,7 @@
 
 -(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    //    [self createUserBroadcast];
+    [self createUserBroadcast];
     [self.verifyField becomeFirstResponder];
 }
 -(void)setupCamera{
@@ -63,14 +64,16 @@
 
 - (void)verifyPhone
 {
-    
     NSString *code = [self.verifyField.text stringByTrimmingCharactersInSet:
                        [NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    
+    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    hud.labelText = @"Verifying Code...";
     
     // Twilio
     [PFCloud callFunctionInBackground:@"verifyCode" withParameters:@{@"code": code} block:^(id object, NSError *error) {
         if(!error && ![object isEqual: @"false"]){
-            //[self dismissViewControllerAnimated:YES completion:nil];
+            [hud hide:YES];
             
             [self performSegueWithIdentifier:@"showAsk" sender:self];
             

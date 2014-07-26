@@ -16,7 +16,7 @@
 #import <AVFoundation/AVFoundation.h>
 #import "CaptureSessionManager.h"
 #import <MobileCoreServices/MobileCoreServices.h>
-
+#import "MBProgressHUD.h"
 #import <ImageIO/ImageIO.h>
 
 @interface TPLoginViewController ()
@@ -72,6 +72,10 @@
     [self setupCamera];
 }
 - (IBAction)login:(id)sender {
+    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+//    hud.mode = MBProgressHUDModeAnnularDeterminate;
+    hud.labelText = @"Logging in...";
+    
     NSString *username = [self.usernameField.text stringByTrimmingCharactersInSet:
                           [NSCharacterSet whitespaceAndNewlineCharacterSet]];
     NSString *password = [self.passwordField.text stringByTrimmingCharactersInSet:
@@ -79,6 +83,7 @@
     
     if ([username length] == 0 || [password length] == 0) {
         UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Oops!" message:@"Make sure you enter a username and a password!" delegate:nil cancelButtonTitle:@"OK!" otherButtonTitles: nil];
+         [hud hide:YES];
         [alertView show];
     }
     else {
@@ -86,9 +91,11 @@
             if (error) {
                 UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Sorry!" message:[error.userInfo objectForKey:@"error"] delegate:nil cancelButtonTitle:@"OK!" otherButtonTitles: nil];
                 [alertView show];
+                 [hud hide:YES];
             }
             else {
                 [self.appDelegate loadFriends];
+                 [hud hide:YES];
                  [self dismissViewControllerAnimated:YES completion:nil];
             }
         }];

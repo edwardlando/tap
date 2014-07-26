@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		73C4CE85A8A7458199DE34FE /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AB0FAA79DE484B0F8349D725 /* libPods.a */; };
 		B619B6FC197A380900B84DF9 /* TPAddFriendsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B619B6FB197A380900B84DF9 /* TPAddFriendsViewController.m */; };
 		B65458061980964D0006E314 /* TPTutorialViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B65458051980964D0006E314 /* TPTutorialViewController.m */; };
 		B654580C198098EC0006E314 /* TPTutorialContentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B654580B198098EC0006E314 /* TPTutorialContentViewController.m */; };
@@ -53,6 +54,12 @@
 		B6CB8EBF1967E09A002996E8 /* TPSingleTapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B6CB8EBE1967E09A002996E8 /* TPSingleTapViewController.m */; };
 		B6CB8EC3196930AB002996E8 /* TPHandleContacts.m in Sources */ = {isa = PBXBuildFile; fileRef = B6CB8EC2196930AB002996E8 /* TPHandleContacts.m */; };
 		B6CB8EC61969C16E002996E8 /* TPFriendRequestsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B6CB8EC51969C16E002996E8 /* TPFriendRequestsViewController.m */; };
+		B6FD071619823BA000FEC776 /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B6FD071519823BA000FEC776 /* FacebookSDK.framework */; };
+		B6FD071F1982F75D00FEC776 /* LaunchImage3-5.png in Resources */ = {isa = PBXBuildFile; fileRef = B6FD07181982F6A400FEC776 /* LaunchImage3-5.png */; };
+		B6FD07201982F75D00FEC776 /* LaunchImage.png in Resources */ = {isa = PBXBuildFile; fileRef = B6FD07171982F67C00FEC776 /* LaunchImage.png */; };
+		B6FD072B198313A300FEC776 /* AppIcon29x29@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B6FD072A1983139700FEC776 /* AppIcon29x29@2x.png */; };
+		B6FD072C198313A300FEC776 /* AppIcon40x40@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B6FD07291983138500FEC776 /* AppIcon40x40@2x.png */; };
+		B6FD072D198313A300FEC776 /* AppIcon60x60@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B6FD07281983137800FEC776 /* AppIcon60x60@2x.png */; };
 		BC2E7CD419691C14007CB5F9 /* TPAskForContactsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BC2E7CD319691C14007CB5F9 /* TPAskForContactsViewController.m */; };
 		BCC9C2C4197C7E600069F043 /* NSMutableArray+SWUtilityButtons.m in Sources */ = {isa = PBXBuildFile; fileRef = BCC9C2B9197C7E600069F043 /* NSMutableArray+SWUtilityButtons.m */; };
 		BCC9C2C5197C7E600069F043 /* SWCellScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = BCC9C2BB197C7E600069F043 /* SWCellScrollView.m */; };
@@ -73,6 +80,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		AB0FAA79DE484B0F8349D725 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B619B6FA197A380900B84DF9 /* TPAddFriendsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPAddFriendsViewController.h; sourceTree = "<group>"; };
 		B619B6FB197A380900B84DF9 /* TPAddFriendsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TPAddFriendsViewController.m; sourceTree = "<group>"; };
 		B65458041980964D0006E314 /* TPTutorialViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPTutorialViewController.h; sourceTree = "<group>"; };
@@ -144,6 +152,12 @@
 		B6CB8EC2196930AB002996E8 /* TPHandleContacts.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TPHandleContacts.m; sourceTree = "<group>"; };
 		B6CB8EC41969C16E002996E8 /* TPFriendRequestsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPFriendRequestsViewController.h; sourceTree = "<group>"; };
 		B6CB8EC51969C16E002996E8 /* TPFriendRequestsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TPFriendRequestsViewController.m; sourceTree = "<group>"; };
+		B6FD071519823BA000FEC776 /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FacebookSDK.framework; sourceTree = "<group>"; };
+		B6FD07171982F67C00FEC776 /* LaunchImage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = LaunchImage.png; path = Tap/LaunchImage.png; sourceTree = "<group>"; };
+		B6FD07181982F6A400FEC776 /* LaunchImage3-5.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "LaunchImage3-5.png"; path = "Tap/LaunchImage3-5.png"; sourceTree = "<group>"; };
+		B6FD07281983137800FEC776 /* AppIcon60x60@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "AppIcon60x60@2x.png"; path = "icon/Beta icon/App Icon [Squared]/AppIcon60x60@2x.png"; sourceTree = "<group>"; };
+		B6FD07291983138500FEC776 /* AppIcon40x40@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "AppIcon40x40@2x.png"; path = "icon/Beta icon/App Icon [Squared]/AppIcon40x40@2x.png"; sourceTree = "<group>"; };
+		B6FD072A1983139700FEC776 /* AppIcon29x29@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "AppIcon29x29@2x.png"; path = "icon/Beta icon/App Icon [Squared]/AppIcon29x29@2x.png"; sourceTree = "<group>"; };
 		BC2E7CD219691C14007CB5F9 /* TPAskForContactsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPAskForContactsViewController.h; sourceTree = "<group>"; };
 		BC2E7CD319691C14007CB5F9 /* TPAskForContactsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TPAskForContactsViewController.m; sourceTree = "<group>"; };
 		BCC9C2B8197C7E600069F043 /* NSMutableArray+SWUtilityButtons.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMutableArray+SWUtilityButtons.h"; sourceTree = "<group>"; };
@@ -158,6 +172,7 @@
 		BCC9C2C1197C7E600069F043 /* SWUtilityButtonTapGestureRecognizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SWUtilityButtonTapGestureRecognizer.m; sourceTree = "<group>"; };
 		BCC9C2C2197C7E600069F043 /* SWUtilityButtonView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SWUtilityButtonView.h; sourceTree = "<group>"; };
 		BCC9C2C3197C7E600069F043 /* SWUtilityButtonView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SWUtilityButtonView.m; sourceTree = "<group>"; };
+		DCC0FF6D4DB54A4DBA2FFC50 /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -173,6 +188,7 @@
 				B6CB8E871967C4DB002996E8 /* MobileCoreServices.framework in Frameworks */,
 				B6CB8E851967C4D6002996E8 /* libz.dylib in Frameworks */,
 				B6CB8E831967C4D0002996E8 /* CoreLocation.framework in Frameworks */,
+				B6FD071619823BA000FEC776 /* FacebookSDK.framework in Frameworks */,
 				B6CB8E481967C41C002996E8 /* CoreGraphics.framework in Frameworks */,
 				B6CB8E811967C4C1002996E8 /* CFNetwork.framework in Frameworks */,
 				B6CB8E7F1967C4B9002996E8 /* AudioToolbox.framework in Frameworks */,
@@ -180,6 +196,7 @@
 				B6CB8E4A1967C41C002996E8 /* UIKit.framework in Frameworks */,
 				B6CB8E7B1967C491002996E8 /* Parse.framework in Frameworks */,
 				B6CB8E461967C41C002996E8 /* Foundation.framework in Frameworks */,
+				73C4CE85A8A7458199DE34FE /* libPods.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -239,10 +256,16 @@
 		B6CB8E391967C41C002996E8 = {
 			isa = PBXGroup;
 			children = (
+				B6FD072A1983139700FEC776 /* AppIcon29x29@2x.png */,
+				B6FD07291983138500FEC776 /* AppIcon40x40@2x.png */,
+				B6FD07281983137800FEC776 /* AppIcon60x60@2x.png */,
+				B6FD07181982F6A400FEC776 /* LaunchImage3-5.png */,
+				B6FD07171982F67C00FEC776 /* LaunchImage.png */,
 				B6CB8E4B1967C41C002996E8 /* Tap */,
 				B6CB8E6A1967C41C002996E8 /* TapTests */,
 				B6CB8E441967C41C002996E8 /* Frameworks */,
 				B6CB8E431967C41C002996E8 /* Products */,
+				DCC0FF6D4DB54A4DBA2FFC50 /* Pods.xcconfig */,
 			);
 			sourceTree = "<group>";
 		};
@@ -258,6 +281,7 @@
 		B6CB8E441967C41C002996E8 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B6FD071519823BA000FEC776 /* FacebookSDK.framework */,
 				B6CB8E901967C4FE002996E8 /* SystemConfiguration.framework */,
 				B6CB8E8E1967C4F8002996E8 /* StoreKit.framework */,
 				B6CB8E8C1967C4F2002996E8 /* Social.framework */,
@@ -274,6 +298,7 @@
 				B6CB8E471967C41C002996E8 /* CoreGraphics.framework */,
 				B6CB8E491967C41C002996E8 /* UIKit.framework */,
 				B6CB8E641967C41C002996E8 /* XCTest.framework */,
+				AB0FAA79DE484B0F8349D725 /* libPods.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -486,9 +511,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B6CB8E741967C41C002996E8 /* Build configuration list for PBXNativeTarget "Tap" */;
 			buildPhases = (
+				90DBE4A752274035869E6501 /* Check Pods Manifest.lock */,
 				B6CB8E3E1967C41C002996E8 /* Sources */,
 				B6CB8E3F1967C41C002996E8 /* Frameworks */,
 				B6CB8E401967C41C002996E8 /* Resources */,
+				7EFA8353B88D4C84B5325958 /* Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -559,6 +586,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B6FD072B198313A300FEC776 /* AppIcon29x29@2x.png in Resources */,
+				B6FD072C198313A300FEC776 /* AppIcon40x40@2x.png in Resources */,
+				B6FD072D198313A300FEC776 /* AppIcon60x60@2x.png in Resources */,
+				B6FD071F1982F75D00FEC776 /* LaunchImage3-5.png in Resources */,
+				B6FD07201982F75D00FEC776 /* LaunchImage.png in Resources */,
 				B6CB8E5E1967C41C002996E8 /* Images.xcassets in Resources */,
 				B6CB8E501967C41C002996E8 /* InfoPlist.strings in Resources */,
 				B6CB8E591967C41C002996E8 /* Main.storyboard in Resources */,
@@ -574,6 +606,39 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		7EFA8353B88D4C84B5325958 /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Pods-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		90DBE4A752274035869E6501 /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		B6CB8E3E1967C41C002996E8 /* Sources */ = {
@@ -731,12 +796,15 @@
 		};
 		B6CB8E751967C41C002996E8 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = DCC0FF6D4DB54A4DBA2FFC50 /* Pods.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = "";
-				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SRCROOT)",
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Tap/Tap-Prefix.pch";
 				INFOPLIST_FILE = "Tap/Tap-Info.plist";
@@ -751,12 +819,15 @@
 		};
 		B6CB8E761967C41C002996E8 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = DCC0FF6D4DB54A4DBA2FFC50 /* Pods.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = "";
-				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SRCROOT)",
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Tap/Tap-Prefix.pch";
 				INFOPLIST_FILE = "Tap/Tap-Info.plist";

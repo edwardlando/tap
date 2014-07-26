@@ -14,9 +14,12 @@
 #import <Parse/Parse.h>
 #import <ImageIO/ImageIO.h>
 
+#import <MBProgressHUD/MBProgressHUD.h>
+
 @interface TPSignUpViewController ()
 @property (strong, nonatomic) IBOutlet UIView *cameraView;
 @property (nonatomic,retain) CaptureSessionManager *captureManager;
+- (IBAction)back:(id)sender;
 
 @end
 
@@ -91,6 +94,7 @@
 
 
 - (void)signup {
+    
     NSString *username = [self.usernameField.text stringByTrimmingCharactersInSet:
                           [NSCharacterSet whitespaceAndNewlineCharacterSet]];
     NSString *password = [self.passwordField.text stringByTrimmingCharactersInSet:
@@ -104,6 +108,10 @@
         [alertView show];
     }
     else {
+        MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+        //    hud.mode = MBProgressHUDModeAnnularDeterminate;
+        hud.labelText = @"Signing Up...";
+
         NSLog(@"password and username not empty");
         // Do I need to initialize the PFUser?
         self.user.username = username;
@@ -119,9 +127,11 @@
         
         // Finally save this user
         [self.user signUpInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+            [hud hide:YES];
             if (error) {
                 UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Sorry!" message:[error.userInfo objectForKey:@"error"] delegate:nil cancelButtonTitle:@"OK!" otherButtonTitles: nil];
                 self.user = nil;
+                
                 [alertView show];
             }
             else {
@@ -152,5 +162,8 @@
 - (IBAction)continueToPhone:(id)sender {
     [self signup];
     
+}
+- (IBAction)back:(id)sender {
+    [self.navigationController popViewControllerAnimated:YES];
 }
 @end

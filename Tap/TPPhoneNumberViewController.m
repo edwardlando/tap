@@ -14,6 +14,7 @@
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <Parse/Parse.h>
 #import <ImageIO/ImageIO.h>
+#import <MBProgressHUD/MBProgressHUD.h>
 
 @interface TPPhoneNumberViewController ()
 @property (strong, nonatomic) IBOutlet UIView *cameraView;
@@ -78,11 +79,19 @@
     }
     else {
         NSLog(@"Phone not length 0");
+        MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+        hud.labelText = @"Verifying...";
         
+
+//        if ([phone characterAtIndex:0] == '+' && [phone characterAtIndex:1] == '1') {
+//            phone = [phone stringByReplacingOccurrencesOfString:@"+1" withString:@"1"];
+//            phone = [phone stringByReplacingOccurrencesOfString:@"+1 " withString:@"1"];
+//        }
         if([phone characterAtIndex:0] != '1'){
             NSString *temp = @"1";
             phone = [temp stringByAppendingString:phone];
         }
+        
         
         [self.user setObject:phone forKey:@"phone"];
         [self.user setObject:phone forKey:@"phoneNumber"];
@@ -90,6 +99,7 @@
         
         
         [PFCloud callFunctionInBackground:@"sendVerificationCode" withParameters:@{@"phoneNumber":phone} block:^(id object, NSError *error) {
+            [hud hide:YES];
             if (error) {
                 NSLog(@"Error sending verification code");
             } else {

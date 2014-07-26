@@ -9,6 +9,7 @@
 #import "TPSettingsViewController.h"
 #import <Parse/Parse.h>
 #import <MessageUI/MFMailComposeViewController.h>
+#import "TPAppDelegate.h"
 
 @interface TPSettingsViewController () <MFMailComposeViewControllerDelegate>
 @property (strong, nonatomic) IBOutlet UILabel *usernameLabel;
@@ -32,6 +33,9 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    [TPAppDelegate sendMixpanelEvent:@"Opened settings page"];
+    
     [self initCredentialsRows];
     [self.navigationController.navigationBar setTintColor:[UIColor whiteColor]];
     [self.navigationController.navigationItem.rightBarButtonItem setTitle:@""];
@@ -40,6 +44,7 @@
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
     if (cell.tag == 10) {
+        [TPAppDelegate sendMixpanelEvent:@"Opened privacy policy"];
         NSURL *url = [NSURL URLWithString:@"http://www.gopopcast.com/privacy"];
         
         if (![[UIApplication sharedApplication] openURL:url]) {
@@ -48,9 +53,11 @@
         
         NSLog(@"This is privacy");
     } else if (cell.tag == 15) {
+        [TPAppDelegate sendMixpanelEvent:@"Tapped send feedback"];
+        
         [self sendFeedback];
     }else if (cell.tag == 11) {
-        
+            [TPAppDelegate sendMixpanelEvent:@"Logged out"];
         
         
         [PFUser logOut];
@@ -96,16 +103,16 @@
     switch (result)
     {
         case MFMailComposeResultCancelled:
-            if (DEBUG) NSLog(@"Mail cancelled");
+            NSLog(@"Mail cancelled");
             break;
         case MFMailComposeResultSaved:
-            if (DEBUG) NSLog(@"Mail saved");
+            NSLog(@"Mail saved");
             break;
         case MFMailComposeResultSent:
-            if (DEBUG) NSLog(@"Mail sent");
+             NSLog(@"Mail sent");
             break;
         case MFMailComposeResultFailed:
-            if (DEBUG) NSLog(@"Mail sent failure: %@", [error localizedDescription]);
+            NSLog(@"Mail sent failure: %@", [error localizedDescription]);
             break;
         default:
             break;

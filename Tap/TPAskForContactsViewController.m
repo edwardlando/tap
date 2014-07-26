@@ -16,6 +16,7 @@
 #import "CaptureSessionManager.h"
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <ImageIO/ImageIO.h>
+#import <MBProgressHUD/MBProgressHUD.h>
 
 @interface TPAskForContactsViewController ()
 @property (nonatomic, strong) NSMutableArray *phonebook;
@@ -69,6 +70,9 @@
 }
 
 -(void) fetchPhoneContacts {
+    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    hud.labelText = @"Preparing...";
+    
     CFErrorRef error;
     ABAddressBookRef addressBook = ABAddressBookCreateWithOptions(NULL, &error);
     
@@ -175,6 +179,7 @@
  
         [[PFUser currentUser]saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
             if (succeeded) {
+                
                 NSLog(@"Saved contacts dict which is %@", self.appDelegate.contactsDict);
             }
         }];
@@ -186,6 +191,7 @@
         [[NSNotificationCenter defaultCenter] postNotificationName:@"onboardingFinished"
                                                             object:nil
                                                           userInfo:nil];
+        [hud hide:YES];
         [self dismissViewControllerAnimated:YES completion:nil];
     }
 }
@@ -195,6 +201,8 @@
 
 
 - (IBAction)askForContacts:(id)sender {
+
+    
      [self fetchPhoneContacts];
     
 }

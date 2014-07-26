@@ -12,16 +12,17 @@
 #import <AddressBook/ABAddressBook.h>
 #import "TPAppDelegate.h"
 #import <MessageUI/MessageUI.h>
+#import <MBProgressHUD/MBProgressHUD.h>
 
 
-
-@interface TPAddFriendsViewController () <MFMessageComposeViewControllerDelegate> {
+@interface TPAddFriendsViewController () <MFMessageComposeViewControllerDelegate, UIAlertViewDelegate> {
     BOOL pendingFriendReqs;
 }
 
 - (IBAction)backButton:(id)sender;
 - (IBAction)refreshPage:(id)sender;
 
+- (IBAction)addByUsername:(id)sender;
 @property (nonatomic, strong) NSMutableArray *phonebook;
 @property (nonatomic, strong) NSMutableDictionary *alphabeticalPhonebook;
 @property (nonatomic, strong) NSArray *sections;
@@ -125,10 +126,12 @@
     UITableViewHeaderFooterView *header = (UITableViewHeaderFooterView *)view;
 
     [header.textLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Bold" size:15.0f]];
+    view.tintColor = [UIColor whiteColor];
+    [header.textLabel setTextColor:[UIColor darkGrayColor]];
     
     if (section == 0) {
-        [header.textLabel setTextColor:[UIColor blackColor]];
-//        view.tintColor = [UIColor whiteColor];
+
+
     } else if (section == 1) {
 //        [header.textLabel setTextColor:[UIColor whiteColor]];
 //        view.tintColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"hypemGreen"]];
@@ -299,7 +302,7 @@
         NSString *name = [contact objectForKey:@"name"];
         
         cell.textLabel.text = name;
-        cell.detailTextLabel.text = number;
+//        cell.detailTextLabel.text = number;
         return cell;
         
     }
@@ -350,7 +353,120 @@
     
 }
 
+- (IBAction)addByUsername:(id)sender {
+    UIAlertView *message = [[UIAlertView alloc] initWithTitle:@"Add Friend"
+                                                      message:@"Enter friend's username"
+                                                     delegate:self
+                                            cancelButtonTitle:@"Cancel"
+                                            otherButtonTitles:@"Add as Friend", nil];
+    
+    [message setAlertViewStyle:UIAlertViewStylePlainTextInput];
+    
+    [message show];
+}
+
+-(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    NSString *title = [alertView buttonTitleAtIndex:buttonIndex];
+    
+    if([title isEqualToString:@"Add as Friend"])
+    {
+        UITextField *usernameField = [alertView textFieldAtIndex:0];
+        NSString *username = usernameField.text;
+        [self getUserByUsernameAndAddAsFriend:username];
+    }
+}
+
+-(void) getUserByUsernameAndAddAsFriend:(NSString *)username {
+    PFQuery *query = [PFUser query];
+    [query whereKey:@"username" equalTo:username];
+    [query getFirstObjectInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+        if (!error) {
+            
+            for (id user in [[PFUser currentUser] objectForKey:@"friendsArray"]) {
+                if ([[user objectId] isEqual:[object objectId]]) {
+                    UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Oops!" message:@"It seems that you are already friends with this user." delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK", nil];
+                    [alert show];
+                    return;
+                }
+            }
+
+            
+            [self addUserAsFriend:(PFUser *)object andActivityIndicator:nil];
+
+            
+        } else {
+            NSLog(@"Error finding user by username");
+            UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Oops!" message:@"We couldn't find any user by that username! Please make sure you've got the right one." delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK", nil];
+            [alert show];
+        }
+    }];
+}
+
+-(void)addUserAsFriend:(PFUser *)user andActivityIndicator:(UIActivityIndicatorView *)ind{
+    if (![[[PFUser currentUser] objectForKey:@"friendsArray"] containsObject:user] || [[[PFUser currentUser] objectForKey:@"friendRequestsSent"] containsObject:[user objectId]]) {
+        PFObject *friendRequest = [[PFObject alloc] initWithClassName:@"FriendRequest"];
+        friendRequest[@"requestingUser"] = [PFUser currentUser];
+        friendRequest[@"targetUser"] = user;
+        friendRequest[@"requestingUserPhoneNumber"] = [[PFUser currentUser] objectForKey:@"phoneNumber"];
+        friendRequest[@"requestingUserUsername"] = [[PFUser currentUser] objectForKey:@"username"];
+        friendRequest[@"status"] = @"pending";
+        MBProgressHUD *hud;
+        if (!ind) {
+            hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+            hud.labelText = @"Adding...";
+        }
+
+        
+        [friendRequest saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+            if (succeeded) {
+                NSLog(@"Saved friend request in background");
+                //                [PFCloud callFunctionInBackground:@"sendFriendRequest" withParameters:@{@"targetUserId":[user objectId]} block:^(id object, NSError *error) {
+                if (ind) {
+                    [ind stopAnimating];
+                    [ind setHidden:YES];
+                } else {
+                    [hud hide:YES];
+                }
+
+                [self.appDelegate.friendRequestsSent addObject:[user objectForKey:@"phoneNumber"]];
+                UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Friend Request Sent" message:@"Successfuly sent friend request" delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK", nil];
+                [alert show];
+                
+                // adding friend to friend requests sent
+                [[[PFUser currentUser] objectForKey:@"friendRequestsSent"] addObject:[user objectId]];
+                
+                [[PFUser currentUser] saveEventually:^(BOOL succeeded, NSError *error) {
+                    NSLog(@"Added %@ to friend requests sent ", [user objectId]);
+                    [self loadObjects];
+                    [self.tableView reloadData];
+                }];
+                
+                //                }];
+                
+            } else {
+                NSLog(@"Error: %@", error);
+            }
+            
+            //            [self.appDelegate.friendRequestsSent addObject:[user objectForKey:@"phoneNumber"]];
+            [self.tableView reloadData];
+            
+            //            [self.tableView deleteRowsAtIndexPaths:@[[self.tableView indexPathForCell:cell]] withRowAnimation:UITableViewRowAnimationAutomatic];
+            
+            
+        }];
+        
+    } else {
+        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Already Sent Friend Request" message:@"You had already sent a friend request to this user" delegate:nil cancelButtonTitle:nil otherButtonTitles:@"Ok", nil];
+        [alert show];
+    }
+    
+}
+
 -(void) countFriendRequests {
+    if (![PFUser currentUser].isAuthenticated){
+        return;
+    }
+    
     PFQuery *query = [PFQuery queryWithClassName:@"FriendRequest"];
     [query whereKey:@"targetUser" equalTo:[PFUser currentUser] ];
     
@@ -363,11 +479,12 @@
     }];
 }
 
+
 -(void) viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     [self countFriendRequests];
     [self loadObjects];
-
+    [TPAppDelegate sendMixpanelEvent:@"Opened Add Friends Screen"];
     if ([self.appDelegate.pendingFriendRequests intValue] > 0) {
         pendingFriendReqs = YES;
     } else {
@@ -448,8 +565,9 @@
 }
 
 
--(void)inviteFriend:(id )sender {
+-(void)inviteFriend:(id)sender {
     NSLog(@"invite friend");
+    [TPAppDelegate sendMixpanelEvent:@"Invited a friend"];
     UIView *senderButton = (UIView*) sender;
     NSIndexPath *indexPath = [self.tableView indexPathForCell: (UITableViewCell *)[[[senderButton superview]superview] superview]];
     id contact = [self.appDelegate.alphabeticalPhonebook objectAtIndex:indexPath.row];
@@ -483,8 +601,9 @@
 }
 
 
--(void)sendFriendRequest:(id )sender {
+-(void)sendFriendRequest:(id)sender {
     NSLog(@"send friend request");
+    [TPAppDelegate sendMixpanelEvent:@"Sent friend request"];
     UIView *senderButton = (UIView*) sender;
     NSIndexPath *indexPath = [self.tableView indexPathForCell: (UITableViewCell *)[[[senderButton superview]superview] superview]];
     
@@ -495,53 +614,7 @@
     [ind setHidden:NO];
 
     PFUser *user = [self.objects objectAtIndex:indexPath.row];
-    
-    if (![[[PFUser currentUser] objectForKey:@"friendsArray"] containsObject:user] || [[[PFUser currentUser] objectForKey:@"friendRequestsSent"] containsObject:[user objectId]]) {
-        PFObject *friendRequest = [[PFObject alloc] initWithClassName:@"FriendRequest"];
-        friendRequest[@"requestingUser"] = [PFUser currentUser];
-        friendRequest[@"targetUser"] = user;
-        friendRequest[@"requestingUserPhoneNumber"] = [[PFUser currentUser] objectForKey:@"phoneNumber"];
-        friendRequest[@"requestingUserUsername"] = [[PFUser currentUser] objectForKey:@"username"];
-        friendRequest[@"status"] = @"pending";
-        [friendRequest saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-            if (succeeded) {
-                NSLog(@"Saved friend request in background");
-                //                [PFCloud callFunctionInBackground:@"sendFriendRequest" withParameters:@{@"targetUserId":[user objectId]} block:^(id object, NSError *error) {
-                
-                [ind stopAnimating];
-                [ind setHidden:YES];
-                [self.appDelegate.friendRequestsSent addObject:[user objectForKey:@"phoneNumber"]];
-                UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Friend Request Sent" message:@"Successfuly sent friend request" delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK", nil];
-                [alert show];
-                
-                // adding friend to friend requests sent
-                [[[PFUser currentUser] objectForKey:@"friendRequestsSent"] addObject:[user objectId]];
-                
-                [[PFUser currentUser] saveEventually:^(BOOL succeeded, NSError *error) {
-                    NSLog(@"Added %@ to friend requests sent ", [user objectId]);
-                    [self loadObjects];
-                    [self.tableView reloadData];
-                }];
-                
-                //                }];
-                
-            } else {
-                NSLog(@"Error: %@", error);
-            }
-            
-//            [self.appDelegate.friendRequestsSent addObject:[user objectForKey:@"phoneNumber"]];
-            [self.tableView reloadData];
-            
-//            [self.tableView deleteRowsAtIndexPaths:@[[self.tableView indexPathForCell:cell]] withRowAnimation:UITableViewRowAnimationAutomatic];
-            
-            
-        }];
-        
-    } else {
-        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Already Sent Friend Request" message:@"You had already sent a friend request to this user" delegate:nil cancelButtonTitle:nil otherButtonTitles:@"Ok", nil];
-        [alert show];
-    }
-    
+    [self addUserAsFriend:user andActivityIndicator:ind];
 }
 
 - (void)messageComposeViewController:(MFMessageComposeViewController *)controller didFinishWithResult:(MessageComposeResult) result

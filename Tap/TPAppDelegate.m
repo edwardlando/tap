@@ -10,14 +10,14 @@
 
 #import "TPAppDelegate.h"
 #import <Parse/Parse.h>
-//#import <Mixpanel/Mixpanel.h>
+#import <Mixpanel/Mixpanel.h>
 
 @implementation TPAppDelegate
 
 
 - (void)loadFriends{
     if([PFUser currentUser].isAuthenticated){
-        NSLog(@"Here");
+        NSLog(@"Loading friends");
 //        [[[PFUser currentUser] objectForKey:@"friendsArray"] fetchIfNeeded];
         NSArray *friendsArray = [[PFUser currentUser] objectForKey:@"friendsArray"];
         
@@ -28,16 +28,9 @@
 
         self.friendsObjectsDict = [[NSMutableDictionary alloc] init];
         
-//        if ([[PFUser currentUser] objectForKey:@"myGroupArray"])  {
-//            [[[PFUser currentUser] objectForKey:@"myGroupArray"] fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
-                self.myGroup = [[PFUser currentUser] objectForKey:@"myGroupArray"] ;
-//            }];
-            
-//        }
-
-        
         if ([friendsArray count] > 0) {
             NSLog(@"Friends array count > 0");
+//            NSLog(@"Friends array %@", friendsArray);
             for (PFUser *friend in friendsArray) {
                 [friend fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
                     
@@ -45,11 +38,11 @@
 
                     if (![self.friendsArray containsObject:friend]) {
                         [self.friendsArray addObject:friend];
-                        NSLog(@"Adding friend to friendsArray appDelegate %ld", [self.friendsArray count]);                        
+//                        NSLog(@"Adding friend to friendsArray appDelegate %ld", [self.friendsArray count]);                        
                     }
                     if (![self.friendsPhoneNumbersArray containsObject:[object objectForKey:@"phoneNumber"]]) {
                         [self.friendsPhoneNumbersArray addObject:[object objectForKey:@"phoneNumber"]];
-                        NSLog(@"added this friend's phone nubmer %@", [object objectForKey:@"phoneNumber"]);
+//                        NSLog(@"added this friend's phone nubmer %@", [object objectForKey:@"phoneNumber"]);
                     }
                 
                     if (![self.numbersToUsernamesDict objectForKey:[object objectForKey:@"username"]]) {
@@ -75,7 +68,7 @@
             if ([[object objectForKey:@"boolValue"]boolValue]) {
                 NSLog(@"App is active");
             } else {
-//                exit(0);
+                exit(0);
             }
             
         }
@@ -149,21 +142,30 @@
 //                  clientKey:@"ueUDdVpQkoytRo95nFGcJKsKi4FZ3cAUJnUakG5o"];
 
     [PFAnalytics trackAppOpenedWithLaunchOptions:launchOptions];
+//    
+    [Mixpanel sharedInstanceWithToken:MIXPANEL_TOKEN];
     
-//    [Mixpanel sharedInstanceWithToken:MIXPANEL_TOKEN];
-//    Mixpanel *mixpanel = [Mixpanel sharedInstance];
-//
-//    if ([PFUser currentUser].isAuthenticated) {
-//        [mixpanel track:@"Launched app" properties:@{
-//                                                     @"User": [[PFUser currentUser]objectId]
-//                                                     }];
-//        
-//    } else {
-//        [mixpanel track:@"Launched app" properties:@{
-//                                                     @"User": @"Not Logged In"
-//                                                     }];
-//
-//    }
+    Mixpanel *mixpanel = [Mixpanel sharedInstance];
+    
+    if ([PFUser currentUser] && [PFUser currentUser].isAuthenticated) {
+        @try {
+            [mixpanel track:@"Launched app" properties:@{
+                                                         @"User": [[PFUser currentUser] objectForKey:@"username"],
+                                                         @"Phone": [[PFUser currentUser] objectForKey:@"phoneNumber"]
+                                                         }];
+            NSLog(@"Sent mixpanel");
+            
+
+        }
+        @catch (NSException *exception) {
+            NSLog(@"Mixpanel exception %@", exception);
+        }
+    } else {
+        [mixpanel track:@"Launched app" properties:@{
+                                                     @"User": @"Not Logged In"
+                                                     }];
+
+    }
     
     NSSetUncaughtExceptionHandler(&uncaughtExceptionHandler);
 
@@ -209,6 +211,26 @@
     
     
     return YES;
+}
+
++(void)sendMixpanelEvent:(NSString *)event {
+    Mixpanel *mixpanel = [Mixpanel sharedInstance];
+    
+    if ([PFUser currentUser].isAuthenticated) {
+        if ([PFUser currentUser].isAuthenticated) {
+            @try {
+                [mixpanel track:event properties:@{
+                                                   @"User": [[PFUser currentUser] objectForKey:@"username"],
+                                                   @"Phone": [[PFUser currentUser] objectForKey:@"phoneNumber"]
+                                                   }];
+                NSLog(@"Sent mixpanel");
+
+            }
+            @catch (NSException *exception) {
+                NSLog(@"Mixpanel excpetion %@", exception);
+            }
+        }
+    }
 }
 
 void uncaughtExceptionHandler(NSException *exception) {

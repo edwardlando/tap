@@ -30,16 +30,16 @@
     
     for (AVCaptureDevice *device in devices) {
         
-        NSLog(@"Device name: %@", [device localizedName]);
+//        NSLog(@"Device name: %@", [device localizedName]);
         
         if ([device hasMediaType:AVMediaTypeVideo]) {
             
             if ([device position] == AVCaptureDevicePositionBack) {
-                NSLog(@"Device position : back");
+//                NSLog(@"Device position : back");
                 backCamera = device;
             }
             else {
-                NSLog(@"Device position : front");
+//                NSLog(@"Device position : front");
                 frontCamera = device;
             }
         }

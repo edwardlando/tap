@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>0E5F7A1A-1D8F-4EBE-966E-63CA98BF04D4</string>
+	<key>IDESourceControlProjectName</key>
+	<string>Tap</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>F1E43B2B-929D-4192-B96B-2F456ACB391A</key>
+		<string>https://github.com/edwardlando/tap.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>Tap.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>F1E43B2B-929D-4192-B96B-2F456ACB391A</key>
+		<string>..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/edwardlando/tap.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>F1E43B2B-929D-4192-B96B-2F456ACB391A</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>F1E43B2B-929D-4192-B96B-2F456ACB391A</string>
+			<key>IDESourceControlWCCName</key>
+			<string>Tap</string>
+		</dict>
+	</array>
+</dict>
+</plist>

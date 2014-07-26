@@ -26,10 +26,13 @@
 @property (strong, nonatomic) NSMutableArray *myFlipcasts;
 @property (strong, nonatomic) TPAppDelegate *appDelegate;
 @property (strong, nonatomic) NSMutableDictionary *allTapsImages;
+@property (strong, nonatomic) NSMutableDictionary *thumbnailForIndexPaths;
 @property (strong, nonatomic) NSMutableArray *allTapsArray;
 @property (strong, nonatomic) NSMutableArray *loadedTapsByIndexPaths;
+@property (strong, nonatomic) NSMutableArray *preLoadedTapsByIndexPaths;
 @property (strong, nonatomic) UITableViewCell *cellToRemove;
 @property (strong, nonatomic) CustomBadge *customBadge;
+
 @end
 
 @implementation TPInboxViewController {
@@ -58,6 +61,13 @@
     return _loadedTapsByIndexPaths;
 }
 
+-(NSMutableArray *)preLoadedTapsByIndexPaths {
+    if (!_preLoadedTapsByIndexPaths) {
+        _preLoadedTapsByIndexPaths = [[NSMutableArray alloc] init];
+    }
+    return _preLoadedTapsByIndexPaths;
+}
+
 -(NSMutableArray *)allTapsArray {
     if (!_allTapsArray) {
         _allTapsArray = [[NSMutableArray alloc] init];
@@ -71,6 +81,14 @@
     }
     return _allTaps;
 }
+
+-(NSMutableDictionary *)thumbnailForIndexPaths {
+    if (!_thumbnailForIndexPaths) {
+        _thumbnailForIndexPaths = [[NSMutableDictionary alloc] init];
+    }
+    return _thumbnailForIndexPaths;
+}
+
 
 -(NSMutableDictionary *)allTapsImages {
     if (!_allTapsImages) {
@@ -128,6 +146,7 @@
     [super viewDidLoad];
     self.sections = @[@"ME", @"FRIENDS"];
     NSLog(@"Inbox view did load");
+//    self.loadedTapsByIndexPaths = nil;
     [self registerForNotifications];
 //    [self setTapLogo];
     [self setNavbarIcon];
@@ -226,6 +245,7 @@
 -(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     [self checkUserSituation];
+    [TPAppDelegate sendMixpanelEvent:@"Opened inbox"];
     [self.appDelegate loadFriends];
     [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationFade];
     [self countFriendRequests];
@@ -274,7 +294,7 @@
     @try {
         
         [self.allTapsImages removeObjectForKey:[self.selectedBroadcast objectId]];
-//        TPViewCell *cell = 
+        
         [self.tableView reloadData];
     }
     @catch (NSException *exception) {
@@ -356,6 +376,9 @@
         return nil;
     }
     
+    self.loadedTapsByIndexPaths = nil;
+    self.preLoadedTapsByIndexPaths = nil;
+    
     PFQuery *friendsBroadcasts = [PFQuery queryWithClassName:self.parseClassName];
 
     [friendsBroadcasts whereKey:@"owner" containedIn:self.appDelegate.friendsArray];
@@ -408,14 +431,46 @@
     // cell.patternImageView.image = [UIImage imageNamed:[patternImages objectAtIndex:indexPath.row]];
 }
 
+-(void)initCell:(TPViewCell *)cell {
+    if ([cell.hasNewTaps boolValue]) return;
+    cell.hasNewTaps = @(NO);
+    cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:FONTSIZE];
+    cell.detailTextLabel.text = @"Loading...";
+//    if (![self.loadedTapsByIndexPaths containsObject:indexPath])
+    [[cell viewWithTag:516] setHidden:YES];
+    cell.backgroundColor = [UIColor whiteColor];
+}
 
+
+-(void)cellHasNoTaps:(TPViewCell *)cell {
+    cell.backgroundColor = [UIColor whiteColor];
+    cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:FONTSIZE];
+    cell.detailTextLabel.text = @"";
+    [[cell viewWithTag:516] setHidden:YES];
+    cell.backgroundColor = [UIColor whiteColor];
+    
+    
+}
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
 //    if (indexPath.section == 0) {
     TPViewCell *cell;
+    cell.detailTextLabel.textColor = [UIColor grayColor];
     PFObject *object;
     if (indexPath.section == 0) {
 
         cell = [tableView dequeueReusableCellWithIdentifier:@"sentTap" forIndexPath:indexPath];
+        
+        if (cell == nil)
+        {
+            cell = [[TPViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"sentTap"];
+            
+        }
+        
+        if (![self.preLoadedTapsByIndexPaths containsObject:indexPath]
+            && ![self.loadedTapsByIndexPaths containsObject:indexPath]) {
+            [self initCell:cell];
+        }
+        
         cell.myFlipcast = [NSNumber numberWithBool:YES];
 
         // object is class Flipcast
@@ -423,6 +478,16 @@
         
     } else {
         cell = [tableView dequeueReusableCellWithIdentifier:@"recievedTap" forIndexPath:indexPath];
+
+        if (cell == nil)
+        {
+            cell = [[TPViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"recievedTap"];
+            
+        }
+        if (![self.preLoadedTapsByIndexPaths containsObject:indexPath]
+            && ![self.loadedTapsByIndexPaths containsObject:indexPath]) {
+            [self initCell:cell];
+        }
 
         // object is class Broadcast
         object = [self.objects objectAtIndex:indexPath.row];
@@ -433,9 +498,6 @@
 
     
     UIActivityIndicatorView *ind = (UIActivityIndicatorView *)[cell viewWithTag:5];
-
-
-    cell.detailTextLabel.textColor = [UIColor grayColor];
 
 //    PFObject *flipcast = [self.myFlipcasts objectAtIndex:indexPath.row];
     NSDate *created = [object updatedAt];
@@ -485,40 +547,32 @@
         [tapsQuery whereKey:@"readArray" notEqualTo:[[PFUser currentUser] objectId]];
         [tapsQuery whereKey:@"objectId" notContainedIn:self.appDelegate.allReadTaps];
         [tapsQuery getFirstObjectInBackgroundWithBlock:^(PFObject *object, NSError *error) {
-
-            
             if (!error) {
                 [ind setHidden:NO];
                 [ind startAnimating];
- 
                 long viewsCount = [[object objectForKey:@"read"] count];
                 __block int numOfTaps = 0;
-
-                 
-                
                     if (indexPath.section == 0) {
                         [tapsQuery whereKey:@"imageId" notEqualTo:@(1)];
                         [tapsQuery countObjectsInBackgroundWithBlock:^(int number, NSError *error) {
                             numOfTaps = number  + 1;
                             if (viewsCount > 0) {
                                 if ([cell.hasLoaded boolValue] || [self.loadedTapsByIndexPaths containsObject:indexPath]) {
-                                    cell.detailTextLabel.text = (viewsCount == 1) ? [NSString stringWithFormat:@"Tap to Open - %d Popcasts - %ld view", number+1, viewsCount] : [NSString stringWithFormat:@"Tap to Open - %d Popcasts - %ld views", number + 1, viewsCount];
+                                    cell.detailTextLabel.text = (viewsCount == 1) ? [NSString stringWithFormat:@"Tap to Open - %d frames - %ld view", number+1, viewsCount] : [NSString stringWithFormat:@"Tap to Open - %d frames - %ld views", number + 1, viewsCount];
                                     
                                 } else {
-                                    cell.detailTextLabel.text = (viewsCount == 1) ? [NSString stringWithFormat:@"Tap to Load - %d Popcasts - %ld view", number+1, viewsCount] : [NSString stringWithFormat:@"Tap to Load - %d Popcasts - %ld views", number + 1, viewsCount];
+                                    cell.detailTextLabel.text = (viewsCount == 1) ? [NSString stringWithFormat:@"Tap to Load - %d frames - %ld view", number+1, viewsCount] : [NSString stringWithFormat:@"Tap to Load - %d frames - %ld views", number + 1, viewsCount];
 
                                 }
                                 
                             } else {
                                 if ([cell.hasLoaded boolValue] || [self.loadedTapsByIndexPaths containsObject:indexPath]) {
-                                    cell.detailTextLabel.text = [NSString stringWithFormat:@"Tap to Open - %d Popcasts", number + 1];
+                                    cell.detailTextLabel.text = [NSString stringWithFormat:@"Tap to Open - %d frames", number + 1];
                                 } else {
-                                    cell.detailTextLabel.text = [NSString stringWithFormat:@"Tap to Load - %d Popcasts", number + 1];
+                                    cell.detailTextLabel.text = [NSString stringWithFormat:@"Tap to Load - %d frames", number + 1];
                                 }
 
                             }
-                            
-                            
                         NSLog(@"This many taps %d", number + 1);
                         }];
                     } else if (indexPath.section == 1) {
@@ -526,38 +580,55 @@
                         cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ - Tap to Load", agoString];
                         cell.backgroundColor = [UIColor groupTableViewBackgroundColor];
                     }
-
-
                 PFFile *image = [object objectForKey:@"img"];
                 NSURL *tapImageUrl = [[NSURL alloc] initWithString:image.url];
                 NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:tapImageUrl];
-                [NSURLConnection sendAsynchronousRequest:request
-                                                   queue:[NSOperationQueue mainQueue]
-                                       completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
-                                           if ( !error )
-                                           {
-                                               UIImage *image = [[UIImage alloc] initWithData:data];
-                                               thumb.image = image;
-//                                               if (indexPath.section == 0)
-//                                                   cell.detailTextLabel.text = @"Tap to Open";//[NSString stringWithFormat:@"Tap to Open - %d taps", numOfTaps];
-                                               
-                                               cell.hasNewTaps = @(YES);
-                                               [ind stopAnimating];
-                                               [ind setHidden:YES];
-                                           } else {
-                                               NSLog(@"Error gettings image");
-                                           }
-                                       }];
+
+                
+                if ([[self.thumbnailForIndexPaths allKeys] containsObject:indexPath]) {
+                    NSData *data =[self.thumbnailForIndexPaths objectForKey:indexPath];
+                    UIImage *image = [[UIImage alloc] initWithData:data];
+                    thumb.image = image;
+                    [thumb setHidden:NO];
+                    cell.hasNewTaps = @(YES);
+                    [ind stopAnimating];
+                    [ind setHidden:YES];
+                } else {
+                    [NSURLConnection sendAsynchronousRequest:request
+                                               queue:[NSOperationQueue mainQueue]
+                                   completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+                                       if ( !error )
+                                       {
+                                           [self.thumbnailForIndexPaths setObject:data forKey:indexPath];
+                                           
+                                           UIImage *image = [[UIImage alloc] initWithData:data];
+                                           
+                                           thumb.image = image;
+                                           [thumb setHidden:NO];
+
+                                           [self.preLoadedTapsByIndexPaths addObject:indexPath];
+                                           //                                               if (indexPath.section == 0)
+                                           //                                                   cell.detailTextLabel.text = @"Tap to Open";//[NSString stringWithFormat:@"Tap to Open - %d taps", numOfTaps];
+                                           
+                                           cell.hasNewTaps = @(YES);
+                                           [ind stopAnimating];
+                                           [ind setHidden:YES];
+                                       } else {
+                                           NSLog(@"Error gettings image");
+                                       }
+                                   }];
+
+                }
             } else {
                 [ind stopAnimating];
                 [ind setHidden:YES];
                 cell.detailTextLabel.text = @"";
-               cell.hasNewTaps = @(NO);
+                cell.hasNewTaps = @(NO);
+                [self.loadedTapsByIndexPaths addObject:indexPath];
+                [self cellHasNoTaps:cell];
                 NSLog(@"Error finding first object: %@", error);
             }
         }];
-//        });
-//    }
     return cell;
 }
 
@@ -671,6 +742,10 @@
 }
 
 -(void) countFriendRequests {
+    if (![PFUser currentUser].isAuthenticated) {
+        return;
+    }
+    
     PFQuery *query = [PFQuery queryWithClassName:@"FriendRequest"];
     [query whereKey:@"targetUser" equalTo:[PFUser currentUser] ];
     
@@ -714,7 +789,7 @@
     PFUser *currentUser = [PFUser currentUser];
     if (!currentUser && currentUser.isAuthenticated) {
         NSLog(@"No user on inbox");
-        [self dismissViewControllerAnimated:YES completion:nil];
+        [self dismissViewControllerAnimated:NO completion:nil];
     }
 }
 -(void)showFriends:(id)sender {
@@ -726,9 +801,17 @@
     
     TPViewCell *cell = (TPViewCell*)[self.tableView cellForRowAtIndexPath:indexPath];
     [tableView deselectRowAtIndexPath:indexPath animated:NO];
+
+    
     NSLog(@"Cell.hasNewTaps %x", [cell.hasNewTaps boolValue]);
     
-    if (![cell.hasNewTaps boolValue]) return;
+    if (![cell.hasNewTaps boolValue]) {
+        NSLog(@"Doesn't have new taps");
+        return;
+    }
+    
+    NSLog(@"self.loadedTapsByIndexPaths %@", self.loadedTapsByIndexPaths);
+    NSLog(@"indexPath %@", indexPath);
     
     if (![self.loadedTapsByIndexPaths containsObject:indexPath]) {
         NSLog(@"Loaded taps doesn't contain this one: %@", indexPath);
@@ -739,14 +822,18 @@
         
         [self loadImagesForIndexPath:indexPath];
         return;
+    } else {
+        NSLog(@"[self.loadedTapsByIndexPaths containsObject:indexPath]");
     }
     
     BOOL isMyFlipcast;
     
     if (indexPath.section == 0) {
+        [TPAppDelegate sendMixpanelEvent:@"Opened own popcast"];
         self.selectedBroadcast =[self.myFlipcasts objectAtIndex:indexPath.row];
         isMyFlipcast = YES;
     } else {
+        [TPAppDelegate sendMixpanelEvent:@"Opened popcast"];
         self.selectedBroadcast =[self.objects objectAtIndex:indexPath.row];
         isMyFlipcast = NO;
     }
@@ -755,6 +842,10 @@
 //    NSMutableArray *batchTapsImages = [self.allTapsImages objectForKey:[self.selectedInteraction objectId]];
     NSMutableDictionary *allInteractionTaps =[self.allTapsImages objectForKey:[self.selectedBroadcast objectId]];
     
+
+    
+//    NSLog(@"self.allTapsImages %@", self.allTapsImages);
+    NSLog(@"[self.selectedBroadcast objectId] %@", [self.selectedBroadcast objectId]);
     
     UILabel *tapsCounter = (UILabel *)[cell viewWithTag:11];
     [tapsCounter setHidden:YES];
@@ -824,6 +915,9 @@
         
         NSDictionary *senderObject = @{@"allInteractionTaps" :allTapsDict, @"allTapObjects": sortedTapsArray, @"isMyFlipcast":@(isMyFlipcast), @"allFlipcastsArray": allFlipcastsArray};
         
+        cell.backgroundColor = [UIColor whiteColor];
+        cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:FONTSIZE];
+//       cell.hasNewTaps = @(NO);
         [self performSegueWithIdentifier:@"showTap" sender:senderObject];
         
     }
@@ -860,7 +954,7 @@
         cell.textLabel.text = [NSString stringWithFormat:@"%@ ago",
                                [self dateDiff:[dateFormat stringFromDate:created]]];
         
-        cell.detailTextLabel.textColor = [UIColor grayColor];
+
         
         cell.sendingUser = [flipcast objectForKey:@"owner"];
         
@@ -974,6 +1068,8 @@
                                                        //                                                        [self.allTapsImages setObject:allPhotosInBatchDict forKey:batchId];
                                                        
                                                        [self.allTapsImages setObject:allPhotosInBatchDict forKey:broadcastId];
+                                                      
+                                                       NSLog(@"All taps images set object %@", broadcastId);
                                                        
                                                        [allPhotosInBatchDict setObject: allPhotosInBatch forKey:batchId];
                                                        //                                                        NSLog(@"all photos in batch %@", allPhotosInBatch);
@@ -984,7 +1080,10 @@
                                                        
                                                        cell.userInteractionEnabled = YES;
                                                        
+                                                       NSLog(@"loadedTapsByIndexPaths add object %@", indexPath);
                                                        [self.loadedTapsByIndexPaths addObject:indexPath];
+                                                       
+                                                       
                                                        tapsCounter.text = [NSString stringWithFormat:@"%ld",(unsigned long)[objects count] ];
                                                        
                                                        [thumb setHidden:NO];
@@ -1050,7 +1149,7 @@
         
         cell.textLabel.text = (friendNameInMyContacts) ? friendNameInMyContacts : username ;
         
-        cell.detailTextLabel.textColor = [UIColor grayColor];
+
         
         NSDate *created = [object updatedAt];
         NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
@@ -1154,6 +1253,7 @@
                                                        // setting the thumbnail
                                                        
                                                        [thumb setAlpha:0.9];
+                                                       NSLog(@"All taps images set object %@", broadcastId);
                                                        [self.allTapsImages setObject:allPhotosInBatchDict forKey:broadcastId];
                                                        [allPhotosInBatchDict setObject: allPhotosInBatch forKey:[tap objectForKey:@"batchId"]];
                                                        cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ ago - Tap to open",
@@ -1208,7 +1308,7 @@
 }
 
 - (IBAction)goToCamera:(id)sender {
-    [self dismissViewControllerAnimated:YES completion:nil];
+    [self dismissViewControllerAnimated:NO completion:nil];
 }
 
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {

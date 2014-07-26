@@ -115,7 +115,7 @@ var getContactNameFromObjectId = function(senderObejectId, recipientObjId, callb
 
 var textVerification = function(phoneNumber,code){
     var client = require('twilio')(ACCOUNT_SID, AUTH_TOKEN);
-    var bodyString = "Welcome to Tap Your verification code is: " + code;
+    var bodyString = "Your Popcast verification code: " + code;
     client.sendSms({
         to:phoneNumber,
         from:'+12679152630',
@@ -271,6 +271,8 @@ Parse.Cloud.define("confirmFriendRequest", function(request, response) {
                             var contactsDict = friend.get("contactsDict");
                             var userPhoneNumber = user.get("phoneNumber");
                             var friendRequsterNameInContacts = contactsDict[userPhoneNumber];
+                            if (!friendRequsterNameInContacts) friendRequsterNameInContacts = user.get("username");
+                            
                             sendDefaultPush("tap" + friend.id, friendRequsterNameInContacts + " accepted your friend request!", "approvedFriendRequest");
                             // create interactions
 
