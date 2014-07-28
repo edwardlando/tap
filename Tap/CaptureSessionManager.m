@@ -118,6 +118,9 @@
                                                              }];
     }
     @catch (NSException *exception) {
+        
+//        [self init];
+        
         NSLog(@"Exception capturing screen %@", exception);
     }
 }

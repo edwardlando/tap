@@ -208,7 +208,7 @@
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                 <fontDescription key="fontDescription" name="HelveticaNeue-Medium" family="Helvetica Neue" pointSize="20"/>
-                                <textInputTraits key="textInputTraits"/>
+                                <textInputTraits key="textInputTraits" autocorrectionType="no"/>
                             </textField>
                             <button opaque="NO" alpha="0.97999999999999998" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="aQI-d9-4ro">
                                 <rect key="frame" x="0.5" y="272.5" width="320" height="79"/>
@@ -520,8 +520,8 @@
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumFontSize="5" id="vrc-ob-R7N" customClass="TPCaptionLabel">
-                                <rect key="frame" x="7" y="504" width="307" height="57"/>
+                            <label hidden="YES" opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumFontSize="5" id="vrc-ob-R7N" customClass="TPCaptionLabel">
+                                <rect key="frame" x="7" y="386" width="307" height="57"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="0.33333333333333331" alpha="0.14000000000000001" colorSpace="calibratedWhite"/>
                                 <fontDescription key="fontDescription" name="HelveticaNeue-CondensedBlack" family="Helvetica Neue" pointSize="36"/>
@@ -530,11 +530,11 @@
                                 <color key="shadowColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <size key="shadowOffset" width="0.0" height="1"/>
                             </label>
-                            <button opaque="NO" tag="524" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="Wvk-DV-JsF">
-                                <rect key="frame" x="7" y="504" width="307" height="57"/>
+                            <button opaque="NO" userInteractionEnabled="NO" tag="524" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="Wvk-DV-JsF">
+                                <rect key="frame" x="6" y="386" width="307" height="57"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <size key="titleShadowOffset" width="0.0" height="1"/>
-                                <state key="normal" title="Tap to add caption">
+                                <state key="normal" title="👆Swipe up to add caption">
                                     <color key="titleColor" cocoaTouchSystemColor="tableCellGroupedBackgroundColor"/>
                                     <color key="titleShadowColor" cocoaTouchSystemColor="darkTextColor"/>
                                 </state>
@@ -564,7 +564,7 @@
             </objects>
             <point key="canvasLocation" x="1469" y="156"/>
         </scene>
-        <!--Inbox View Controller - POPCAST-->
+        <!--Inbox View Controller - popcast-->
         <scene sceneID="kVH-CU-c5W">
             <objects>
                 <tableViewController id="XH0-bJ-Dxg" customClass="TPInboxViewController" sceneMemberID="viewController">
@@ -572,9 +572,30 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <view key="tableHeaderView" contentMode="scaleToFill" id="hVK-cu-ckI">
+                            <rect key="frame" x="0.0" y="64" width="320" height="47"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <subviews>
+                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="wnG-TS-ad7">
+                                    <rect key="frame" x="0.0" y="0.0" width="320" height="47"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <color key="backgroundColor" red="0.1093179745" green="0.70329607660000004" blue="0.31951414230000003" alpha="1" colorSpace="calibratedRGB"/>
+                                    <fontDescription key="fontDescription" name="Avenir-Black" family="Avenir" pointSize="15"/>
+                                    <state key="normal" title="TAP TO ADD FRIENDS" backgroundImage="blue">
+                                        <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                    </state>
+                                    <connections>
+                                        <action selector="addByUsername:" destination="uHL-VO-cEb" eventType="touchUpInside" id="haQ-GR-CVD"/>
+                                        <segue destination="uHL-VO-cEb" kind="push" id="NUl-Uz-glD"/>
+                                    </connections>
+                                </button>
+                            </subviews>
+                            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        </view>
                         <prototypes>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationWidth="0.0" reuseIdentifier="sentTap" textLabel="Bvr-s5-IgK" detailTextLabel="VBI-NA-0zG" rowHeight="68" style="IBUITableViewCellStyleSubtitle" id="hCb-bf-cIq" customClass="TPViewCell">
-                                <rect key="frame" x="0.0" y="86" width="320" height="68"/>
+                                <rect key="frame" x="0.0" y="133" width="320" height="68"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="hCb-bf-cIq" id="FWV-AP-iIH">
                                     <rect key="frame" x="0.0" y="0.0" width="320" height="67"/>
@@ -606,6 +627,18 @@
                                             <rect key="frame" x="258" y="6" width="55" height="55"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         </imageView>
+                                        <label hidden="YES" opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="555" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="999" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="5" adjustsLetterSpacingToFitWidth="YES" id="NDg-P2-YtW">
+                                            <rect key="frame" x="265" y="13" width="41" height="41"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <color key="backgroundColor" white="0.33333333329999998" alpha="0.35000000000000003" colorSpace="calibratedWhite"/>
+                                            <fontDescription key="fontDescription" name="HelveticaNeue-Medium" family="Helvetica Neue" pointSize="18"/>
+                                            <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <imageView userInteractionEnabled="NO" alpha="0.80000000000000004" tag="234" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="eye" id="bZT-68-Uim">
+                                            <rect key="frame" x="293" y="41" width="13" height="13"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        </imageView>
                                         <activityIndicatorView opaque="NO" tag="5" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="gray" id="cRs-z3-SYk">
                                             <rect key="frame" x="275" y="24" width="20" height="20"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -615,7 +648,7 @@
                                 <inset key="separatorInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                             </tableViewCell>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationWidth="0.0" reuseIdentifier="recievedTap" textLabel="DeO-Lq-Ti5" detailTextLabel="qJ2-XX-4Y9" rowHeight="68" style="IBUITableViewCellStyleSubtitle" id="yH8-Ae-Kxp" customClass="TPViewCell">
-                                <rect key="frame" x="0.0" y="154" width="320" height="68"/>
+                                <rect key="frame" x="0.0" y="201" width="320" height="68"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="yH8-Ae-Kxp" id="KpF-rj-oNn">
                                     <rect key="frame" x="0.0" y="0.0" width="320" height="67"/>
@@ -629,9 +662,9 @@
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Hamptons Everyone!" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="qJ2-XX-4Y9">
-                                            <rect key="frame" x="15" y="36" width="126" height="17"/>
+                                            <rect key="frame" x="15" y="36" width="135" height="17"/>
                                             <autoresizingMask key="autoresizingMask"/>
-                                            <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="14"/>
+                                            <fontDescription key="fontDescription" name="HelveticaNeue-Medium" family="Helvetica Neue" pointSize="14"/>
                                             <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                             <nil key="highlightedColor"/>
                                         </label>
@@ -662,7 +695,7 @@
                         </connections>
                     </tableView>
                     <toolbarItems/>
-                    <navigationItem key="navigationItem" title="POPCAST" id="WsJ-wj-uDx">
+                    <navigationItem key="navigationItem" title="popcast" id="WsJ-wj-uDx">
                         <barButtonItem key="leftBarButtonItem" image="cameraIcon3" id="Cjm-e8-eYp">
                             <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             <connections>
@@ -705,7 +738,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label hidden="YES" opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumFontSize="5" id="rmr-c5-SQU" customClass="TPCaptionLabel">
-                                <rect key="frame" x="7" y="504" width="307" height="57"/>
+                                <rect key="frame" x="7" y="375" width="307" height="57"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="0.33333333329999998" alpha="0.14000000000000001" colorSpace="calibratedWhite"/>
                                 <fontDescription key="fontDescription" name="HelveticaNeue-CondensedBlack" family="Helvetica Neue" pointSize="36"/>
@@ -727,7 +760,7 @@
             </objects>
             <point key="canvasLocation" x="2133" y="499"/>
         </scene>
-        <!--Settings View Controller - SETTINGS-->
+        <!--Settings View Controller - settings-->
         <scene sceneID="hYQ-lB-IhJ">
             <objects>
                 <tableViewController id="VtX-dh-37U" customClass="TPSettingsViewController" sceneMemberID="viewController">
@@ -872,7 +905,14 @@
                             <outlet property="delegate" destination="VtX-dh-37U" id="c0e-Ss-baO"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="SETTINGS" id="JFg-nX-5XA"/>
+                    <navigationItem key="navigationItem" title="settings" id="JFg-nX-5XA">
+                        <barButtonItem key="leftBarButtonItem" image="backArrowWhite2" id="nnZ-zX-GcB">
+                            <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            <connections>
+                                <action selector="goBack:" destination="VtX-dh-37U" id="RSn-C3-Ebc"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <outlet property="phonenumberLabel" destination="Pax-fZ-AuE" id="kCa-yT-xZa"/>
                         <outlet property="usernameLabel" destination="NCt-d1-Lm3" id="cX1-CT-Zxh"/>
@@ -883,7 +923,7 @@
             </objects>
             <point key="canvasLocation" x="3283" y="442"/>
         </scene>
-        <!--Add Friends View Controller - FRIENDS-->
+        <!--Add Friends View Controller - friends-->
         <scene sceneID="Ybt-9o-LBm">
             <objects>
                 <tableViewController storyboardIdentifier="contactsView" useStoryboardIdentifierAsRestorationIdentifier="YES" id="uHL-VO-cEb" customClass="TPAddFriendsViewController" sceneMemberID="viewController">
@@ -900,7 +940,7 @@
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     <color key="backgroundColor" red="0.1093179745" green="0.70329607660000004" blue="0.31951414230000003" alpha="1" colorSpace="calibratedRGB"/>
                                     <fontDescription key="fontDescription" name="Avenir-Black" family="Avenir" pointSize="15"/>
-                                    <state key="normal" title="TAP TO ADD FRIEND BY USERNAME" backgroundImage="pink">
+                                    <state key="normal" title="TAP TO ADD FRIEND BY USERNAME" backgroundImage="blue">
                                         <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                     </state>
@@ -956,8 +996,8 @@
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <color key="backgroundColor" red="1" green="1" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                             <fontDescription key="fontDescription" name="HelveticaNeue-Medium" family="Helvetica Neue" pointSize="14"/>
-                                            <state key="normal" title="+ Add">
-                                                <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                            <state key="normal" title="+ Add" backgroundImage="newPurple">
+                                                <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                 <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                             </state>
                                         </button>
@@ -1006,8 +1046,14 @@
                         </connections>
                     </tableView>
                     <toolbarItems/>
-                    <navigationItem key="navigationItem" title="FRIENDS" id="c3n-Go-nnK">
-                        <barButtonItem key="rightBarButtonItem" image="settingsIcon" id="Rq0-US-nVQ">
+                    <navigationItem key="navigationItem" title="friends" id="c3n-Go-nnK">
+                        <barButtonItem key="leftBarButtonItem" image="backArrowWhite2" id="clg-vy-gqB">
+                            <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            <connections>
+                                <action selector="backButton:" destination="uHL-VO-cEb" id="sqx-E6-Xca"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" image="settings2" id="Rq0-US-nVQ">
                             <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             <connections>
                                 <segue destination="VtX-dh-37U" kind="push" id="nmv-Ef-L4m"/>
@@ -1022,7 +1068,7 @@
             </objects>
             <point key="canvasLocation" x="3283" y="-298"/>
         </scene>
-        <!--Friend Requests View Controller - REQUESTS-->
+        <!--Friend Requests View Controller - requests-->
         <scene sceneID="eui-2D-7pC">
             <objects>
                 <tableViewController id="RSO-S3-LAp" customClass="TPFriendRequestsViewController" sceneMemberID="viewController">
@@ -1087,7 +1133,7 @@
                             <outlet property="delegate" destination="RSO-S3-LAp" id="sjd-9Q-pTR"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="REQUESTS" id="djx-1J-m5Q"/>
+                    <navigationItem key="navigationItem" title="requests" id="djx-1J-m5Q"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="zyr-Bj-DFA" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -1239,12 +1285,14 @@
     <resources>
         <image name="addFriends4" width="37" height="28"/>
         <image name="backArrowWhite2" width="25" height="25"/>
+        <image name="blue" width="256" height="215"/>
         <image name="cameraIcon3" width="37" height="28"/>
         <image name="cancel" width="20" height="20"/>
+        <image name="eye" width="18" height="10"/>
         <image name="hypemGreen" width="100" height="48"/>
         <image name="logo2" width="50" height="50"/>
-        <image name="pink" width="256" height="215"/>
-        <image name="settingsIcon" width="37" height="28"/>
+        <image name="newPurple" width="60" height="63"/>
+        <image name="settings2" width="37" height="28"/>
         <image name="tick" width="20" height="20"/>
         <image name="tut1" width="640" height="1136"/>
     </resources>
@@ -1254,8 +1302,9 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="PM3-J0-NI8"/>
         <segue reference="k8R-hU-buh"/>
+        <segue reference="PM3-J0-NI8"/>
         <segue reference="e2H-kB-jPJ"/>
+        <segue reference="NUl-Uz-glD"/>
     </inferredMetricsTieBreakers>
 </document>

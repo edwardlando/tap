@@ -15,6 +15,7 @@
 @property (strong, nonatomic) IBOutlet UILabel *usernameLabel;
 @property (strong, nonatomic) IBOutlet UILabel *phonenumberLabel;
 @property (strong, nonatomic) IBOutlet UILabel *versionLabel;
+- (IBAction)goBack:(id)sender;
 
 @end
 
@@ -28,6 +29,11 @@
         // Custom initialization
     }
     return self;
+}
+
+-(void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    self.navigationController.interactivePopGestureRecognizer.delegate = (id<UIGestureRecognizerDelegate>)self;
 }
 
 - (void)viewDidLoad
@@ -199,4 +205,7 @@
 }
 */
 
+- (IBAction)goBack:(id)sender {
+    [self.navigationController popViewControllerAnimated:YES];
+}
 @end

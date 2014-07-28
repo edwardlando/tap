@@ -176,11 +176,14 @@
 
 -(void)displayTutorial {
     NSLog(@"Display Tut");
-    
+    UIButton *captionButton = (UIButton *)[self.view viewWithTag:524];
     if(![[NSUserDefaults standardUserDefaults] boolForKey:@"hasSeenTutorial"]) {
+
+        [captionButton setHidden:YES];
         [self initTutorial];
     } else {
         NSLog(@"Already seen tut");
+        [captionButton setHidden:NO];
     }
 }
 
@@ -245,12 +248,17 @@
     }];
     if (currentUser && currentUser.isAuthenticated) {
 //        [currentUser refreshInBackgroundWithBlock:^(PFObject *object, NSError *error) {
-            if (![[[PFUser currentUser] objectForKey:@"phoneVerified"] boolValue]) {
-                UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Uh Oh!" message:@"Please verify your phone number!" delegate:nil cancelButtonTitle:@"OK!" otherButtonTitles: nil];
-                [alertView show];
-                [self performSegueWithIdentifier:@"verifyPhone" sender:self];
-            }
+
+        
+        
+        //            if (![[[PFUser currentUser] objectForKey:@"phoneVerified"] boolValue]) {
+//                UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Uh Oh!" message:@"Please verify your phone number!" delegate:nil cancelButtonTitle:@"OK!" otherButtonTitles: nil];
+//                [alertView show];
+//                [self performSegueWithIdentifier:@"verifyPhone" sender:self];
+//            }
 //        }];
+        
+        
         
         NSLog(@"Current user: %@", currentUser.username);
     }
@@ -345,6 +353,7 @@
     txtF.placeholder = @"Type caption here...";
     txtF.text = self.captionLabel.text;
 //    [txtF setAutocapitalizationType:UITextAutocapitalizationTypeAllCharacters];
+    [txtF setAutocapitalizationType:UITextAutocapitalizationTypeSentences];
     [txtF setClearButtonMode:UITextFieldViewModeAlways];
     [message setTag:100];
     [message show];
@@ -446,10 +455,10 @@
                                                  name:@"appEnteredBackground"
                                                object:nil];
     
-//    [[NSNotificationCenter defaultCenter] addObserver:self
-//                                             selector:@selector(viewDidLoad)
-//                                                 name:@"appEnteredForeground"
-//                                               object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(setupCameraScreen)
+                                                 name:@"appEnteredForeground"
+                                               object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(handleSavedImageNotification:)
@@ -832,13 +841,17 @@
         if(buttonIndex == 1){
             UITextField *caption = [alertView textFieldAtIndex:0];
             self.captionLabel.text = caption.text;
+            [self.captionLabel setHidden:NO];
 //            [self.captionLabel sizeToFit];
 //            self.captionLabel.clipsToBounds = YES;
             UIButton *captionButton = (UIButton *)[self.view viewWithTag:524];
             if ([[[caption.text componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] componentsJoinedByString:@""] length] == 0) {
 //                [self.captionLabel setHidden:YES];§
-                [captionButton setTitle:@"Tap to add caption" forState:UIControlStateNormal];
+                [self.captionLabel setHidden:YES];
+                [captionButton setTitle:@"👆Swipe up to add caption" forState:UIControlStateNormal];
+                captionButton.userInteractionEnabled = NO;
             } else {
+                captionButton.userInteractionEnabled = YES;
                 [captionButton setTitle:@"" forState:UIControlStateNormal];
             }
         }
@@ -847,9 +860,11 @@
 
 -(void)initCaptionLabelAndButton {
     UIButton *captionButton = (UIButton *)[self.view viewWithTag:524];
-    [captionButton setTitle:@"Tap to add caption" forState:UIControlStateNormal];
+    [captionButton setTitle:@"👆Swipe up to add caption" forState:UIControlStateNormal];
     self.captionLabel.text = @"";
+    [self.captionLabel setHidden:YES];
 //    [self.captionLabel sizeToFit];
+    
 //    self.captionLabel.clipsToBounds = YES;
 }
 

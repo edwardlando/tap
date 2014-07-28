@@ -96,7 +96,7 @@
                     
                     if (![self.friendsPhoneNumbersArray containsObject:[object objectForKey:@"phoneNumber"]]) {
                         [self.friendsPhoneNumbersArray addObject:[object objectForKey:@"phoneNumber"]];
-//                        NSLog(@"added this friend's phone nubmer %@", [object objectForKey:@"phoneNumber"]);
+                        NSLog(@"added this friend's phone nubmer %@", [object objectForKey:@"phoneNumber"]);
                     }
                 
                     if (![self.numbersToUsernamesDict objectForKey:[object objectForKey:@"username"]]) {
@@ -200,6 +200,10 @@
 //    [pageControl setContentVerticalAlignment:UIControlContentVerticalAlignmentCenter];
     pageControl.currentPageIndicatorTintColor = [UIColor blackColor];
     pageControl.backgroundColor = [UIColor whiteColor];
+    
+//    UIImage * backButtonImage = [UIImage imageNamed: @"backArrowWhite2"];
+////    backButtonImage = [backButtonImage stretchableImageWithLeftCapWidth: 15.0 topCapHeight: 30.0];
+//    [[UIBarButtonItem appearance] setBackButtonBackgroundImage: backButtonImage forState: UIControlStateNormal barMetrics: UIBarMetricsDefault];
     
     // Tap Parse Production
     [Parse setApplicationId:@"oa9f1pYhUoLldBojIPFVwPDpcsaMjuhfkSi1bb8a"

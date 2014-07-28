@@ -162,7 +162,7 @@
     
 //    NSLog(@"Message to show %@", messageToShow);
 
-    if ([messageToShow objectForKey:@"caption"] != nil) {
+    if ([messageToShow objectForKey:@"caption"] != nil && ![[messageToShow objectForKey:@"caption"] isEqualToString:@""]) {
         NSLog(@"In Single. There is caption and it is %@", [messageToShow objectForKey:@"caption"]);
         self.captionLabel.text = [messageToShow objectForKey:@"caption"];
         [self.captionLabel setHidden:NO];

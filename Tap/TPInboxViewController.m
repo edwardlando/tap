@@ -14,8 +14,8 @@
 #import "TPAppDelegate.h"
 #import "TPViewCell.h"
 #import "TPCameraViewController.h"
-#import "QuartzCore/QuartzCore.h"
 #import "CustomBadge.h"
+#import <QuartzCore/QuartzCore.h>
 
 @interface TPInboxViewController () <UIAlertViewDelegate, UIGestureRecognizerDelegate>
 - (IBAction)goToCamera:(id)sender;
@@ -182,6 +182,9 @@
 //    self.selectedInteraction =[[PFObject alloc] initWithClassName:@"Interaction"];
 //    NSLog(@"selected interaction %@", self.selectedInteraction);
 //    [self.navigationController.navigationBar setTintColor:[UIColor whiteColor]];
+    
+    UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"This is your inbox" message:@"" delegate:nil cancelButtonTitle:nil otherButtonTitles:@"FUCK YEAH!", nil];
+    [alert show];
 
 }
 
@@ -192,7 +195,7 @@
     @try {
         [self.navigationController.navigationBar setTitleTextAttributes: @{
                                                                            NSForegroundColorAttributeName: [UIColor colorWithPatternImage:[UIImage imageNamed:@"white"]],
-                                                                           NSFontAttributeName: [UIFont fontWithName:@"Avenir-Black" size:20.0f],
+                                                                           NSFontAttributeName: [UIFont fontWithName:@"Avenir" size:23.0f],
                                                                            NSShadowAttributeName: shadow
                                                                            }];
 
@@ -204,11 +207,14 @@
 
 - (void)tableView:(UITableView *)tableView willDisplayHeaderView:(UIView *)view forSection:(NSInteger)section
 {
+    
+    view.tintColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"darkGray34"]];
+    
     // Background color
     if (section == 0) {
-        view.tintColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"hypemGreen"]];
+//        view.tintColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"hypemGreen"]];
     } else {
-        view.tintColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"blue"]];
+//        view.tintColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"blue"]];
     }
 //    //    view.tintColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"blue"]];
 //    view.tintColor = [UIColor whiteColor];
@@ -241,7 +247,7 @@
                                                   forBarMetrics:UIBarMetricsDefault];
 //    self.navigationController.navigationBar.shadowImage = [UIImage imageNamed:@"lightGray"];
     self.navigationController.navigationBar.translucent = NO;
-    [self.navigationController.navigationBar setBackgroundImage:[UIImage imageNamed: @"black"] forBarMetrics:UIBarMetricsDefault];
+    [self.navigationController.navigationBar setBackgroundImage:[UIImage imageNamed: @"newPurple"] forBarMetrics:UIBarMetricsDefault];
 
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
     [self setNeedsStatusBarAppearanceUpdate];
@@ -590,6 +596,7 @@
 //    if (![self.loadedTapsByIndexPaths containsObject:indexPath])
     UIImageView *thumb = (UIImageView *)[cell viewWithTag:516];
     thumb.layer.cornerRadius = 5;
+    thumb.layer.masksToBounds = YES;
     [thumb setHidden:YES];
     
     cell.backgroundColor = [UIColor whiteColor];
@@ -713,8 +720,14 @@
         NSString *detailTextMessage;
         
         if ([object objectForKey:@"latestStatus"]) {
-            detailTextMessage = [NSString stringWithFormat:@"%@ ago - %@",
-                                 [self dateDiff:[dateFormat stringFromDate:created]], [object objectForKey:@"latestStatus"]];
+            NSString *status = [object objectForKey:@"latestStatus"];
+            if (status.length > 19) {
+                status = [[object objectForKey:@"latestStatus"] substringToIndex:19];
+                status = [NSString stringWithFormat:@"%@...", status];
+            }
+
+            detailTextMessage = [NSString stringWithFormat:@"%@ - %@ ago",status,
+                                 [self dateDiff:[dateFormat stringFromDate:created]]];
         } else {
             detailTextMessage = [NSString stringWithFormat:@"%@ ago - Tap to load",
                                          [self dateDiff:[dateFormat stringFromDate:created]]];
@@ -722,8 +735,8 @@
         cell.detailTextLabel.text = detailTextMessage;
         NSString *senderId = [cell.sendingUser objectId];
         NSString *friendPhoneNumber = [[object objectForKey:@"owner"] objectForKey:@"phoneNumber"];
-        NSString *friendNameInMyContacts = [[self.appDelegate.contactsDict objectForKey:friendPhoneNumber] uppercaseString];
-        NSString *username = [[[object objectForKey:@"owner"] objectForKey:@"username"] uppercaseString];
+        NSString *friendNameInMyContacts = [self.appDelegate.contactsDict objectForKey:friendPhoneNumber] ;
+        NSString *username = [[object objectForKey:@"owner"] objectForKey:@"username"];
         cell.textLabel.text = (friendNameInMyContacts) ? friendNameInMyContacts : username;
         
         if ([self.additionalInformationForSenderId objectForKey:senderId]/* && [cell.hasNewTaps boolValue]*/) {
@@ -741,36 +754,46 @@
 
 -(void)initCellWithMyPopcast:(TPViewCell *)cell withMessageObjects:(PFObject *)message andPopcast:(PFObject *)popcast {
     
-
-    //    NSLog(@"loadedTapsByIndexPaths %@", self.loadedTapsByIndexPaths);
     NSLog(@"initCellWithMyPopcast");
     NSLog(@"loadedTapsByBatchId %@", self.loadedTapsByBatchId);
     
-    cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:FONTSIZE];
-    
+    cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:FONTSIZE];
     
     long viewsCount = [[popcast objectForKey:@"read"] count];
     
-
     NSDate *created = [message updatedAt];
     NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
     [dateFormat setDateFormat:@"EEE, dd MMM yy HH:mm:ss VVVV"];
     
-    
-//    NSLog(@"Message %@", message);
     if ([popcast objectForKey:@"firstCaption"]) {
-        NSLog(@"There is first caption %@", [popcast objectForKey:@"firstCaption"]);
-        cell.textLabel.text = [popcast objectForKey:@"firstCaption"];
+        NSString *status =[popcast objectForKey:@"firstCaption"];
+        if (status.length > 25) {
+            status = [[popcast objectForKey:@"firstCaption"] substringToIndex:25];
+            status = [NSString stringWithFormat:@"%@...", status];
+        }
+        NSLog(@"There is first caption %@", status);
+        cell.textLabel.text = status;
     } else {
             cell.textLabel.text = @"Sent";
     }
     
+    UILabel *viewsLabel = (UILabel *)[cell viewWithTag:555];
+    viewsLabel.layer.cornerRadius = 20.0f;
+    viewsLabel.layer.masksToBounds = YES;
+    
     if (viewsCount > 0) {
-        cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ ago - %ld Views",[self dateDiff:[dateFormat stringFromDate:created]], viewsCount];
+//        cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ ago - %ld Views",[self dateDiff:[dateFormat stringFromDate:created]], viewsCount];
+
+        [viewsLabel setHidden:NO];
+        [[cell viewWithTag:234]setHidden:NO];
+        viewsLabel.text = [NSString stringWithFormat:@"%ld",viewsCount];
+        
     } else {
-        cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ ago - Tap to open",[self dateDiff:[dateFormat stringFromDate:created]]];
+        [viewsLabel setHidden:YES];
+        [[cell viewWithTag:234]setHidden:YES];
     }
 
+    cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ ago - Tap to view",[self dateDiff:[dateFormat stringFromDate:created]]];
     
     if ([self.loadedTapsByBatchId containsObject:[message objectForKey:@"batchId" ]]) {
         NSLog(@"Already loaded this batch!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
@@ -785,6 +808,7 @@
     
     UIImageView *thumb = (UIImageView *)[cell viewWithTag:516];
     thumb.layer.cornerRadius = 5;
+    thumb.layer.masksToBounds = YES;
     
     UIActivityIndicatorView *ind = (UIActivityIndicatorView *)[cell viewWithTag:5];
     
@@ -834,22 +858,37 @@
     NSIndexPath *indexPath = [self.tableView indexPathForCell:cell];
     PFObject *broadcast = [self.objects objectAtIndex:indexPath.row];
     
-    if ([broadcast objectForKey:@"latestStatus"]) {
-        detailTextMessage = [NSString stringWithFormat:@"%@ ago - %@",
-                             [self dateDiff:[dateFormat stringFromDate:created]], [broadcast objectForKey:@"latestStatus"]];
+    if ([message objectForKey:@"caption"]) {
+        NSString *status = [message objectForKey:@"caption"];
+        if (status.length > 22) {
+            status = [[message objectForKey:@"caption"] substringToIndex:22];
+            status = [NSString stringWithFormat:@"%@...", status];
+        }
+        
+        detailTextMessage = [NSString stringWithFormat:@"%@ - %@ ago",status,
+                             [self dateDiff:[dateFormat stringFromDate:created]]];
     } else {
         detailTextMessage = [NSString stringWithFormat:@"%@ ago - Tap to load",
-                                     [self dateDiff:[dateFormat stringFromDate:created]]];
+                             [self dateDiff:[dateFormat stringFromDate:created]]];
     }
+
+    
     cell.detailTextLabel.text = detailTextMessage;
     UIImageView *thumb = (UIImageView *)[cell viewWithTag:516];
     thumb.layer.cornerRadius = 5;
+    thumb.layer.masksToBounds = YES;
     
     UIActivityIndicatorView *ind = (UIActivityIndicatorView *)[cell viewWithTag:5];
     
+    
+
+    
     PFFile *image = [message objectForKey:@"img"];
     NSURL *tapImageUrl = [[NSURL alloc] initWithString:image.url];
+    
+    
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:tapImageUrl];
+    
     
     [NSURLConnection sendAsynchronousRequest:request
                                        queue:[NSOperationQueue mainQueue]
@@ -892,10 +931,10 @@
     self.flipcastToEdit = flipCast;
     
     UIAlertView *message = [[UIAlertView alloc] initWithTitle:@"Edit Cast"
-                                                      message:@"Confirm Deletion"
+                                                      message:@"Choose action"
                                                      delegate:self
                                             cancelButtonTitle:@"Cancel"
-                                            otherButtonTitles:@"Delete", nil];
+                                            otherButtonTitles:@"Edit title", @"Delete", nil];
     [message setTag:1];
     [message show];
     
@@ -911,9 +950,50 @@
         {
             NSLog(@"Delete %@", self.flipcastToEdit);
             [self deleteFlipCast:self.flipcastToEdit];
+        } else if ([title isEqualToString:@"Edit title"]) {
+            [self editCastTitle:self.flipcastToEdit];
         }
+    } else if (alertView.tag == 200) {
+        // check not empty
+        NSString *title =[alertView textFieldAtIndex:0].text;
+        [self saveNewCastTitle:title forCast:self.flipcastToEdit];
     }
 }
+
+-(void)editCastTitle:(PFObject *)cast {
+    UIAlertView *message = [[UIAlertView alloc] initWithTitle:@"Change title"
+                                                      message:@""
+                                                     delegate:self
+                                            cancelButtonTitle:@"Cancel"
+                                            otherButtonTitles:@"Save", nil];
+    
+    [message setAlertViewStyle:UIAlertViewStylePlainTextInput];
+    UITextField *txtF = [message textFieldAtIndex:0];
+    txtF.placeholder = @"Type title here...";
+    txtF.text = [cast objectForKey:@"firstCaption"];
+    //    [txtF setAutocapitalizationType:UITextAutocapitalizationTypeAllCharacters];
+    [txtF setClearButtonMode:UITextFieldViewModeAlways];
+    [message setTag:200];
+    [message show];
+}
+
+-(void)saveNewCastTitle:(NSString *)title forCast:(PFObject *)cast {
+    NSLog(@"This is the new title %@ for this cast %@", title, cast);
+    if (title) {
+        [cast setObject:title forKey:@"firstCaption"];
+        [cast saveEventually:^(BOOL succeeded, NSError *error) {
+            if (succeeded) {
+                NSLog(@"Succesfully changed title");
+                [self.tableView reloadData];
+            }
+        }];
+    }
+    
+    
+    // show hud
+}
+
+
 
 -(void)deleteFlipCast:(PFObject *)flipcast {
     NSString *batchId = [flipcast objectForKey:@"batchId"];
@@ -1296,13 +1376,14 @@
                                                        [thumb setAlpha:0.9];
                                                        long viewsCount = [[flipcast objectForKey:@"read"] count];
                                                        
-                                                       if (viewsCount > 0) {
-                                                           
-                                                           cell.detailTextLabel.text = (viewsCount == 1) ? [NSString stringWithFormat:@"Tap to Open - %ld view", viewsCount] : [NSString stringWithFormat:@"Tap to Open - %ld views", viewsCount];
-                                                           
-                                                       } else {
-                                                           cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ ago - Tap to open",[self dateDiff:[dateFormat stringFromDate:created]]];
-                                                       }
+//                                                       cell.detailTextLabel.text = @"Tap to view";
+//                                                       if (viewsCount > 0) {
+//                                                           
+//                                                           cell.detailTextLabel.text = (viewsCount == 1) ? [NSString stringWithFormat:@"Tap to View - %ld view", viewsCount] : [NSString stringWithFormat:@"Tap to Open - %ld views", viewsCount];
+//                                                           
+//                                                       } else {
+                                                           cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ ago - Tap to view",[self dateDiff:[dateFormat stringFromDate:created]]];
+//                                                       }
 
 //                                                       thumb.layer.cornerRadius = 5;
                                                        //                                                        [self.allTapsImages setObject:allPhotosInBatchDict forKey:batchId];
@@ -1391,7 +1472,7 @@
         
         cell.sendingUser = [object objectForKey:@"owner"];
         
-        cell.textLabel.text = ([friendNameInMyContacts uppercaseString]) ? [friendNameInMyContacts uppercaseString] : [username uppercaseString] ;
+        cell.textLabel.text = (friendNameInMyContacts) ? friendNameInMyContacts : username  ;
         
 
         
@@ -1429,7 +1510,7 @@
 
         
         thumb.layer.cornerRadius = 5;
-        
+        thumb.layer.masksToBounds = YES;
         //         self.allTapsArray = [[NSMutableArray alloc] init];
         PFQuery *tapsQuery = [[PFQuery alloc] initWithClassName:@"Message"];
         [tapsQuery whereKey:@"batchId" containedIn:[object objectForKey:@"batchIds"]];
@@ -1520,7 +1601,7 @@
                                                        NSLog(@"All taps images set object %@", broadcastId);
                                                        [self.allTapsImages setObject:allPhotosInBatchDict forKey:broadcastId];
                                                        [allPhotosInBatchDict setObject: allPhotosInBatch forKey:[tap objectForKey:@"batchId"]];
-                                                       cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ ago - Tap to open",
+                                                       cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ ago - Tap to view",
                                                                                     [self dateDiff:[dateFormat stringFromDate:created]]];
                                                        [ind setHidden:YES];
                                                        cell.userInteractionEnabled = YES;

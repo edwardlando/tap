@@ -176,7 +176,7 @@
     shadow.shadowColor = [UIColor whiteColor];
     [self.navigationController.navigationBar setTitleTextAttributes: @{
                                                                        NSForegroundColorAttributeName: [UIColor colorWithPatternImage:[UIImage imageNamed:@"white"]],
-                                                                       NSFontAttributeName: [UIFont fontWithName:@"Avenir-Black" size:20.0f],
+                                                                       NSFontAttributeName: [UIFont fontWithName:@"Avenir" size:23.0f],
                                                                        NSShadowAttributeName: shadow
                                                                        }];
 }
@@ -186,7 +186,7 @@
                                                   forBarMetrics:UIBarMetricsDefault];
     //    self.navigationController.navigationBar.shadowImage = [UIImage imageNamed:@"lightGray"];
     self.navigationController.navigationBar.translucent = NO;
-    [self.navigationController.navigationBar setBackgroundImage:[UIImage imageNamed: @"black"] forBarMetrics:UIBarMetricsDefault];
+    [self.navigationController.navigationBar setBackgroundImage:[UIImage imageNamed: @"newPurple"] forBarMetrics:UIBarMetricsDefault];
 }
 
 
@@ -340,9 +340,14 @@
     return query;
 }
 
+-(void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    self.navigationController.interactivePopGestureRecognizer.delegate = (id<UIGestureRecognizerDelegate>)self;
+}
+
 - (IBAction)backButton:(id)sender {
     //    [self.navigationController popViewControllerAnimated:YES];
-    [self dismissViewControllerAnimated:YES completion:nil];
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 - (IBAction)refreshPage:(id)sender {
