@@ -52,7 +52,7 @@
                                     <segue destination="BH7-Ec-kIV" kind="push" id="44v-or-0CP"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="K3p-KU-7ph">
+                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="K3p-KU-7ph">
                                 <rect key="frame" x="0.0" y="477" width="320" height="93"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="28"/>
@@ -457,12 +457,25 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                             </view>
-                            <imageView contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="fcU-79-8tM">
-                                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                            <button opaque="NO" tag="10" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="QdQ-KG-0eN">
+                                <rect key="frame" x="12" y="13" width="47" height="47"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="15"/>
+                                <state key="normal">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <segue destination="Uca-e8-Mri" kind="modal" animates="NO" id="k8R-hU-buh"/>
+                                </connections>
+                            </button>
+                            <imageView hidden="YES" clipsSubviews="YES" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="fcU-79-8tM">
+                                <rect key="frame" x="12" y="13" width="47" height="47"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
                             <button opaque="NO" tag="7" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="wi2-zh-yRx">
-                                <rect key="frame" x="0.0" y="485" width="81" height="83"/>
+                                <rect key="frame" x="0.0" y="2" width="81" height="83"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="15"/>
                                 <state key="normal">
@@ -473,37 +486,30 @@
                                     <segue destination="Uca-e8-Mri" kind="modal" animates="NO" id="8Fy-Ee-6NR"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" tag="10" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="QdQ-KG-0eN">
-                                <rect key="frame" x="21" y="501" width="47" height="47"/>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="000" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Lja-cq-arR">
+                                <rect key="frame" x="12" y="13" width="47" height="47"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <color key="backgroundColor" red="0.12941176469999999" green="0.75686274509999996" blue="0.97647058819999999" alpha="0.88" colorSpace="calibratedRGB"/>
-                                <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="15"/>
-                                <state key="normal">
-                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <segue destination="Uca-e8-Mri" kind="modal" animates="NO" id="k8R-hU-buh"/>
-                                </connections>
-                            </button>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Lja-cq-arR">
-                                <rect key="frame" x="8" y="7" width="73" height="73"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="46"/>
-                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="23"/>
+                                <color key="textColor" cocoaTouchSystemColor="tableCellGroupedBackgroundColor"/>
                                 <nil key="highlightedColor"/>
+                                <color key="shadowColor" white="0.33333333333333331" alpha="0.62" colorSpace="calibratedWhite"/>
+                                <size key="shadowOffset" width="0.0" height="1"/>
                             </label>
                             <label hidden="YES" opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="99" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Sending..." textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="7mM-Yv-nhV">
-                                <rect key="frame" x="95" y="28" width="215" height="32"/>
+                                <rect key="frame" x="71" y="20" width="215" height="32"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" name="HelveticaNeue-Medium" family="Helvetica Neue" pointSize="19"/>
+                                <fontDescription key="fontDescription" name="HelveticaNeue-Medium" family="Helvetica Neue" pointSize="18"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                                 <color key="shadowColor" red="0.14262089419999999" green="0.0" blue="0.0" alpha="0.63" colorSpace="calibratedRGB"/>
-                                <size key="shadowOffset" width="0.0" height="0.0"/>
+                                <size key="shadowOffset" width="0.0" height="1"/>
                             </label>
+                            <activityIndicatorView hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="whiteLarge" id="ve6-GQ-EqA">
+                                <rect key="frame" x="17" y="67" width="37" height="37"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </activityIndicatorView>
                             <label hidden="YES" opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="929" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="(Don't leave screen!)" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Z1H-O2-xhg">
-                                <rect key="frame" x="118" y="52" width="168" height="21"/>
+                                <rect key="frame" x="94" y="50" width="168" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="13"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -514,6 +520,28 @@
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumFontSize="5" id="vrc-ob-R7N" customClass="TPCaptionLabel">
+                                <rect key="frame" x="7" y="504" width="307" height="57"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" white="0.33333333333333331" alpha="0.14000000000000001" colorSpace="calibratedWhite"/>
+                                <fontDescription key="fontDescription" name="HelveticaNeue-CondensedBlack" family="Helvetica Neue" pointSize="36"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <nil key="highlightedColor"/>
+                                <color key="shadowColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <size key="shadowOffset" width="0.0" height="1"/>
+                            </label>
+                            <button opaque="NO" tag="524" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="Wvk-DV-JsF">
+                                <rect key="frame" x="7" y="504" width="307" height="57"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <size key="titleShadowOffset" width="0.0" height="1"/>
+                                <state key="normal" title="Tap to add caption">
+                                    <color key="titleColor" cocoaTouchSystemColor="tableCellGroupedBackgroundColor"/>
+                                    <color key="titleShadowColor" cocoaTouchSystemColor="darkTextColor"/>
+                                </state>
+                                <connections>
+                                    <action selector="addCaptionBtn:" destination="mMY-s0-lSu" eventType="touchUpInside" id="SeG-wf-Ila"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
@@ -522,7 +550,9 @@
                     </navigationItem>
                     <connections>
                         <outlet property="cameraView" destination="QUu-xs-5q7" id="C1Q-Wm-2ar"/>
+                        <outlet property="captionLabel" destination="vrc-ob-R7N" id="8bW-OG-cGX"/>
                         <outlet property="imageView" destination="fcU-79-8tM" id="ULg-60-MwU"/>
+                        <outlet property="sendingActivityIndicator" destination="ve6-GQ-EqA" id="ftz-9M-XEf"/>
                         <outlet property="sendingIndicator" destination="7mM-Yv-nhV" id="sNe-gN-xT0"/>
                         <outlet property="tapsCounter" destination="Lja-cq-arR" id="09W-eF-Yvl"/>
                         <outlet property="tutImageView" destination="bt8-Et-c9F" id="f9E-Mj-zjb"/>
@@ -534,7 +564,7 @@
             </objects>
             <point key="canvasLocation" x="1469" y="156"/>
         </scene>
-        <!--Inbox View Controller - popcast-->
+        <!--Inbox View Controller - POPCAST-->
         <scene sceneID="kVH-CU-c5W">
             <objects>
                 <tableViewController id="XH0-bJ-Dxg" customClass="TPInboxViewController" sceneMemberID="viewController">
@@ -551,16 +581,16 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Loading..." lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Bvr-s5-IgK">
-                                            <rect key="frame" x="15" y="16" width="83" height="22"/>
+                                            <rect key="frame" x="15" y="14" width="83" height="22"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <fontDescription key="fontDescription" name="HelveticaNeue-Medium" family="Helvetica Neue" pointSize="18"/>
                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Loading..." lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="VBI-NA-0zG">
-                                            <rect key="frame" x="15" y="38" width="49" height="13"/>
+                                            <rect key="frame" x="15" y="36" width="61" height="17"/>
                                             <autoresizingMask key="autoresizingMask"/>
-                                            <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="11"/>
+                                            <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="14"/>
                                             <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                             <nil key="highlightedColor"/>
                                         </label>
@@ -591,17 +621,17 @@
                                     <rect key="frame" x="0.0" y="0.0" width="320" height="67"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="loading..." lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="DeO-Lq-Ti5">
-                                            <rect key="frame" x="15" y="16" width="77" height="22"/>
+                                        <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Loading..." lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="DeO-Lq-Ti5">
+                                            <rect key="frame" x="15" y="14" width="83" height="22"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <fontDescription key="fontDescription" name="HelveticaNeue-Medium" family="Helvetica Neue" pointSize="18"/>
                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Loading..." lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="qJ2-XX-4Y9">
-                                            <rect key="frame" x="15" y="38" width="49" height="13"/>
+                                        <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Hamptons Everyone!" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="qJ2-XX-4Y9">
+                                            <rect key="frame" x="15" y="36" width="126" height="17"/>
                                             <autoresizingMask key="autoresizingMask"/>
-                                            <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="11"/>
+                                            <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="14"/>
                                             <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                             <nil key="highlightedColor"/>
                                         </label>
@@ -632,7 +662,7 @@
                         </connections>
                     </tableView>
                     <toolbarItems/>
-                    <navigationItem key="navigationItem" title="popcast" id="WsJ-wj-uDx">
+                    <navigationItem key="navigationItem" title="POPCAST" id="WsJ-wj-uDx">
                         <barButtonItem key="leftBarButtonItem" image="cameraIcon3" id="Cjm-e8-eYp">
                             <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             <connections>
@@ -653,7 +683,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="aeg-Bb-Y7z" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3703" y="-334"/>
+            <point key="canvasLocation" x="2711" y="-298"/>
         </scene>
         <!--Single Tap View Controller-->
         <scene sceneID="SJu-tS-B23">
@@ -674,19 +704,30 @@
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <label hidden="YES" opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumFontSize="5" id="rmr-c5-SQU" customClass="TPCaptionLabel">
+                                <rect key="frame" x="7" y="504" width="307" height="57"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" white="0.33333333329999998" alpha="0.14000000000000001" colorSpace="calibratedWhite"/>
+                                <fontDescription key="fontDescription" name="HelveticaNeue-CondensedBlack" family="Helvetica Neue" pointSize="36"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <nil key="highlightedColor"/>
+                                <color key="shadowColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <size key="shadowOffset" width="0.0" height="1"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
                     <connections>
+                        <outlet property="captionLabel" destination="rmr-c5-SQU" id="P4S-yW-lyR"/>
                         <outlet property="imageView" destination="iVT-E1-EgZ" id="DEB-ry-85r"/>
                         <outlet property="tapsLabel" destination="rj6-V9-phx" id="Dl7-sp-V5w"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="D5R-Bw-hIB" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3605" y="379"/>
+            <point key="canvasLocation" x="2133" y="499"/>
         </scene>
-        <!--Settings View Controller - settings-->
+        <!--Settings View Controller - SETTINGS-->
         <scene sceneID="hYQ-lB-IhJ">
             <objects>
                 <tableViewController id="VtX-dh-37U" customClass="TPSettingsViewController" sceneMemberID="viewController">
@@ -831,7 +872,7 @@
                             <outlet property="delegate" destination="VtX-dh-37U" id="c0e-Ss-baO"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="settings" id="JFg-nX-5XA"/>
+                    <navigationItem key="navigationItem" title="SETTINGS" id="JFg-nX-5XA"/>
                     <connections>
                         <outlet property="phonenumberLabel" destination="Pax-fZ-AuE" id="kCa-yT-xZa"/>
                         <outlet property="usernameLabel" destination="NCt-d1-Lm3" id="cX1-CT-Zxh"/>
@@ -840,9 +881,9 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="mRt-nw-WPt" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="5438" y="-222"/>
+            <point key="canvasLocation" x="3283" y="442"/>
         </scene>
-        <!--Add Friends View Controller - friends-->
+        <!--Add Friends View Controller - FRIENDS-->
         <scene sceneID="Ybt-9o-LBm">
             <objects>
                 <tableViewController storyboardIdentifier="contactsView" useStoryboardIdentifierAsRestorationIdentifier="YES" id="uHL-VO-cEb" customClass="TPAddFriendsViewController" sceneMemberID="viewController">
@@ -859,7 +900,7 @@
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     <color key="backgroundColor" red="0.1093179745" green="0.70329607660000004" blue="0.31951414230000003" alpha="1" colorSpace="calibratedRGB"/>
                                     <fontDescription key="fontDescription" name="Avenir-Black" family="Avenir" pointSize="15"/>
-                                    <state key="normal" title="TAP TO ADD FRIEND BY USERNAME">
+                                    <state key="normal" title="TAP TO ADD FRIEND BY USERNAME" backgroundImage="pink">
                                         <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                     </state>
@@ -882,12 +923,11 @@
                                             <rect key="frame" x="15" y="0.0" width="270" height="51"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <fontDescription key="fontDescription" name="HelveticaNeue-Medium" family="Helvetica Neue" pointSize="16"/>
-                                            <color key="textColor" red="0.96862745100000003" green="0.96862745100000003" blue="0.96862745100000003" alpha="1" colorSpace="calibratedRGB"/>
+                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                     </subviews>
                                 </tableViewCellContentView>
-                                <color key="backgroundColor" red="0.12941176469999999" green="0.75686274509999996" blue="0.97647058819999999" alpha="1" colorSpace="calibratedRGB"/>
                                 <inset key="separatorInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                             </tableViewCell>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="userCell" textLabel="Ntj-AW-6us" detailTextLabel="jr4-pT-Tsu" rowHeight="65" style="IBUITableViewCellStyleSubtitle" id="h66-2D-7oc">
@@ -914,10 +954,10 @@
                                         <button opaque="NO" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="8rb-hi-Kql">
                                             <rect key="frame" x="241" y="17" width="71" height="30"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                            <color key="backgroundColor" red="1" green="0.0" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                            <color key="backgroundColor" red="1" green="1" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                             <fontDescription key="fontDescription" name="HelveticaNeue-Medium" family="Helvetica Neue" pointSize="14"/>
                                             <state key="normal" title="+ Add">
-                                                <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                                 <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                             </state>
                                         </button>
@@ -966,7 +1006,7 @@
                         </connections>
                     </tableView>
                     <toolbarItems/>
-                    <navigationItem key="navigationItem" title="friends" id="c3n-Go-nnK">
+                    <navigationItem key="navigationItem" title="FRIENDS" id="c3n-Go-nnK">
                         <barButtonItem key="rightBarButtonItem" image="settingsIcon" id="Rq0-US-nVQ">
                             <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             <connections>
@@ -980,9 +1020,9 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="B7v-6k-zUF" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4291" y="-334"/>
+            <point key="canvasLocation" x="3283" y="-298"/>
         </scene>
-        <!--Friend Requests View Controller - requests-->
+        <!--Friend Requests View Controller - REQUESTS-->
         <scene sceneID="eui-2D-7pC">
             <objects>
                 <tableViewController id="RSO-S3-LAp" customClass="TPFriendRequestsViewController" sceneMemberID="viewController">
@@ -1047,11 +1087,11 @@
                             <outlet property="delegate" destination="RSO-S3-LAp" id="sjd-9Q-pTR"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="requests" id="djx-1J-m5Q"/>
+                    <navigationItem key="navigationItem" title="REQUESTS" id="djx-1J-m5Q"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="zyr-Bj-DFA" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4941" y="-947"/>
+            <point key="canvasLocation" x="3261" y="-995"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="xsT-Eb-phm">
@@ -1154,7 +1194,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="sAN-YN-KHh" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3163" y="-186"/>
+            <point key="canvasLocation" x="2299" y="-298"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="HJ8-aT-2iu">
@@ -1203,6 +1243,7 @@
         <image name="cancel" width="20" height="20"/>
         <image name="hypemGreen" width="100" height="48"/>
         <image name="logo2" width="50" height="50"/>
+        <image name="pink" width="256" height="215"/>
         <image name="settingsIcon" width="37" height="28"/>
         <image name="tick" width="20" height="20"/>
         <image name="tut1" width="640" height="1136"/>

@@ -9,6 +9,11 @@
 /* Begin PBXBuildFile section */
 		73C4CE85A8A7458199DE34FE /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AB0FAA79DE484B0F8349D725 /* libPods.a */; };
 		B619B6FC197A380900B84DF9 /* TPAddFriendsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B619B6FB197A380900B84DF9 /* TPAddFriendsViewController.m */; };
+		B6285FBB198572510048D8D7 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B6285FBA198572510048D8D7 /* CoreData.framework */; };
+		B6285FBF1985740C0048D8D7 /* TPFriend.m in Sources */ = {isa = PBXBuildFile; fileRef = B6285FBE1985740C0048D8D7 /* TPFriend.m */; };
+		B6285FC21985741D0048D8D7 /* TPFriendObject.m in Sources */ = {isa = PBXBuildFile; fileRef = B6285FC11985741D0048D8D7 /* TPFriendObject.m */; };
+		B6285FC6198585770048D8D7 /* coredata.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = B6285FC3198585770048D8D7 /* coredata.xcdatamodeld */; };
+		B6285FC91985A13D0048D8D7 /* TPCaptionLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = B6285FC81985A13C0048D8D7 /* TPCaptionLabel.m */; };
 		B65458061980964D0006E314 /* TPTutorialViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B65458051980964D0006E314 /* TPTutorialViewController.m */; };
 		B654580C198098EC0006E314 /* TPTutorialContentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B654580B198098EC0006E314 /* TPTutorialContentViewController.m */; };
 		B65458101980A3DC0006E314 /* TPTutorialHelperViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B654580F1980A3DC0006E314 /* TPTutorialHelperViewController.m */; };
@@ -83,6 +88,15 @@
 		AB0FAA79DE484B0F8349D725 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B619B6FA197A380900B84DF9 /* TPAddFriendsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPAddFriendsViewController.h; sourceTree = "<group>"; };
 		B619B6FB197A380900B84DF9 /* TPAddFriendsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TPAddFriendsViewController.m; sourceTree = "<group>"; };
+		B6285FBA198572510048D8D7 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		B6285FBD1985740C0048D8D7 /* TPFriend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPFriend.h; sourceTree = "<group>"; };
+		B6285FBE1985740C0048D8D7 /* TPFriend.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TPFriend.m; sourceTree = "<group>"; };
+		B6285FC01985741D0048D8D7 /* TPFriendObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPFriendObject.h; sourceTree = "<group>"; };
+		B6285FC11985741D0048D8D7 /* TPFriendObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TPFriendObject.m; sourceTree = "<group>"; };
+		B6285FC4198585770048D8D7 /* coredata 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "coredata 2.xcdatamodel"; sourceTree = "<group>"; };
+		B6285FC5198585770048D8D7 /* coredata.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = coredata.xcdatamodel; sourceTree = "<group>"; };
+		B6285FC71985A13C0048D8D7 /* TPCaptionLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPCaptionLabel.h; sourceTree = "<group>"; };
+		B6285FC81985A13C0048D8D7 /* TPCaptionLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TPCaptionLabel.m; sourceTree = "<group>"; };
 		B65458041980964D0006E314 /* TPTutorialViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPTutorialViewController.h; sourceTree = "<group>"; };
 		B65458051980964D0006E314 /* TPTutorialViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TPTutorialViewController.m; sourceTree = "<group>"; };
 		B654580A198098EC0006E314 /* TPTutorialContentViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TPTutorialContentViewController.h; path = ../TPTutorialContentViewController.h; sourceTree = "<group>"; };
@@ -180,6 +194,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B6285FBB198572510048D8D7 /* CoreData.framework in Frameworks */,
 				B6CB8E911967C4FF002996E8 /* SystemConfiguration.framework in Frameworks */,
 				B6CB8E8F1967C4F8002996E8 /* StoreKit.framework in Frameworks */,
 				B6CB8E8D1967C4F2002996E8 /* Social.framework in Frameworks */,
@@ -222,6 +237,18 @@
 			name = "Add Friends";
 			sourceTree = "<group>";
 		};
+		B6285FBC198573B30048D8D7 /* Core Data */ = {
+			isa = PBXGroup;
+			children = (
+				B6285FC3198585770048D8D7 /* coredata.xcdatamodeld */,
+				B6285FBD1985740C0048D8D7 /* TPFriend.h */,
+				B6285FBE1985740C0048D8D7 /* TPFriend.m */,
+				B6285FC01985741D0048D8D7 /* TPFriendObject.h */,
+				B6285FC11985741D0048D8D7 /* TPFriendObject.m */,
+			);
+			name = "Core Data";
+			sourceTree = "<group>";
+		};
 		B654580D198099170006E314 /* Tutorial */ = {
 			isa = PBXGroup;
 			children = (
@@ -238,8 +265,11 @@
 		B67B133C197CB1C3003F411E /* Custom Classes */ = {
 			isa = PBXGroup;
 			children = (
+				BCC9C2B7197C7E600069F043 /* SWTCell */,
 				B67B1339197CB1BD003F411E /* CustomBadge.h */,
 				B67B133A197CB1BD003F411E /* CustomBadge.m */,
+				B6285FC71985A13C0048D8D7 /* TPCaptionLabel.h */,
+				B6285FC81985A13C0048D8D7 /* TPCaptionLabel.m */,
 			);
 			name = "Custom Classes";
 			sourceTree = "<group>";
@@ -281,6 +311,7 @@
 		B6CB8E441967C41C002996E8 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B6285FBA198572510048D8D7 /* CoreData.framework */,
 				B6FD071519823BA000FEC776 /* FacebookSDK.framework */,
 				B6CB8E901967C4FE002996E8 /* SystemConfiguration.framework */,
 				B6CB8E8E1967C4F8002996E8 /* StoreKit.framework */,
@@ -306,13 +337,11 @@
 		B6CB8E4B1967C41C002996E8 /* Tap */ = {
 			isa = PBXGroup;
 			children = (
-				BCC9C2B7197C7E600069F043 /* SWTCell */,
+				B6285FBC198573B30048D8D7 /* Core Data */,
 				B6CB8E541967C41C002996E8 /* TPAppDelegate.h */,
 				B6CB8E551967C41C002996E8 /* TPAppDelegate.m */,
 				B6CB8E571967C41C002996E8 /* Main.storyboard */,
 				B654580D198099170006E314 /* Tutorial */,
-				B6CB8EBA1967D59E002996E8 /* TPProcessImage.h */,
-				B6CB8EBB1967D59E002996E8 /* TPProcessImage.m */,
 				B6CB8EB71967D20D002996E8 /* Onboarding */,
 				B6CB8EC71969C21D002996E8 /* Friend Requests */,
 				B619B6FD197A385800B84DF9 /* Add Friends */,
@@ -407,6 +436,8 @@
 		B6CB8EB21967CC84002996E8 /* Camera */ = {
 			isa = PBXGroup;
 			children = (
+				B6CB8EBA1967D59E002996E8 /* TPProcessImage.h */,
+				B6CB8EBB1967D59E002996E8 /* TPProcessImage.m */,
 				B6CB8EB41967CF69002996E8 /* CaptureSessionManager.h */,
 				B6CB8EB51967CF69002996E8 /* CaptureSessionManager.m */,
 				B6CB8EA11967CB50002996E8 /* TPCameraViewController.h */,
@@ -646,6 +677,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B65458061980964D0006E314 /* TPTutorialViewController.m in Sources */,
+				B6285FBF1985740C0048D8D7 /* TPFriend.m in Sources */,
 				B6CB8E941967CAE4002996E8 /* TPSignUpViewController.m in Sources */,
 				B6CB8EC61969C16E002996E8 /* TPFriendRequestsViewController.m in Sources */,
 				B6CB8E971967CAFB002996E8 /* TPPhoneNumberViewController.m in Sources */,
@@ -655,7 +687,9 @@
 				BCC9C2C7197C7E600069F043 /* SWTableViewCell.m in Sources */,
 				B654580C198098EC0006E314 /* TPTutorialContentViewController.m in Sources */,
 				BCC9C2C9197C7E600069F043 /* SWUtilityButtonView.m in Sources */,
+				B6285FC6198585770048D8D7 /* coredata.xcdatamodeld in Sources */,
 				BCC9C2C4197C7E600069F043 /* NSMutableArray+SWUtilityButtons.m in Sources */,
+				B6285FC91985A13D0048D8D7 /* TPCaptionLabel.m in Sources */,
 				BCC9C2C6197C7E600069F043 /* SWLongPressGestureRecognizer.m in Sources */,
 				B6CB8E561967C41C002996E8 /* TPAppDelegate.m in Sources */,
 				B6CB8EB61967CF69002996E8 /* CaptureSessionManager.m in Sources */,
@@ -663,6 +697,7 @@
 				B6CB8EA91967CB8D002996E8 /* TPMyGroupViewController.m in Sources */,
 				B67B133B197CB1BD003F411E /* CustomBadge.m in Sources */,
 				B6CB8EA31967CB50002996E8 /* TPCameraViewController.m in Sources */,
+				B6285FC21985741D0048D8D7 /* TPFriendObject.m in Sources */,
 				BCC9C2C5197C7E600069F043 /* SWCellScrollView.m in Sources */,
 				B6CB8E9D1967CB2A002996E8 /* TPLandingViewController.m in Sources */,
 				B65458101980A3DC0006E314 /* TPTutorialHelperViewController.m in Sources */,
@@ -911,6 +946,20 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		B6285FC3198585770048D8D7 /* coredata.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				B6285FC4198585770048D8D7 /* coredata 2.xcdatamodel */,
+				B6285FC5198585770048D8D7 /* coredata.xcdatamodel */,
+			);
+			currentVersion = B6285FC4198585770048D8D7 /* coredata 2.xcdatamodel */;
+			path = coredata.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = B6CB8E3A1967C41C002996E8 /* Project object */;
 }

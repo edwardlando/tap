@@ -28,14 +28,14 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    [self setupCamera];
+    [self createUserBroadcast];
     // Do any additional setup after loading the view.
     
 }
 
 -(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    [self createUserBroadcast];
+    [self setupCamera];
     [self.verifyField becomeFirstResponder];
 }
 -(void)setupCamera{
@@ -89,11 +89,19 @@
 }
 
 -(void)createUserBroadcast {
+    
+    if ([[[PFUser currentUser] objectForKey:@"broadcastCreated"] boolValue]) return;
+    
     PFObject *cast = [PFObject objectWithClassName:@"Broadcast"];
     cast[@"owner"] = [PFUser currentUser];
     cast[@"updated"] = [NSNumber numberWithBool:NO];
     cast[@"batchIds"] = [[NSMutableArray alloc] init];
-    [cast saveInBackground];
+    [cast saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+        if (succeeded) {
+            [[PFUser currentUser] setObject:@(YES) forKey:@"broadcastCreated"];
+            [[PFUser currentUser] saveInBackground];
+        }
+    }];
 }
 
 

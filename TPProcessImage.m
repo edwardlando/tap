@@ -15,7 +15,7 @@
 @implementation TPProcessImage
 
 
-+(void)sendTapTo:(NSMutableArray *)recipients andImage:(NSData *)imageData inBatch:(NSString *)batchId withImageId: (int) taps completed:(void (^)(BOOL success))completed{
++(void)sendTapTo:(NSMutableArray *)recipients andImage:(NSData *)imageData inBatch:(NSString *)batchId withImageId: (int) taps withCaption:(NSString *)caption completed:(void (^)(BOOL success))completed{
         NSLog(@"trying to save");
     if (![PFUser currentUser].isAuthenticated) {
         NSLog(@"User not auth");
@@ -38,8 +38,17 @@
             PFObject *msg = [PFObject objectWithClassName:@"Message"];
             msg[@"img"] = file;
             msg[@"sender"] = [PFUser currentUser];
+            msg[@"senderId"] = [[PFUser currentUser] objectId];
             //        [recipients addObject:[PFUser currentUser]];
             msg[@"recipients"] = recipients;
+            
+            if (caption) {
+                NSLog(@"There is caption in TPProcess image");
+                msg[@"caption"] = caption;
+            } else {
+                NSLog(@"There is no caption %@", caption);
+            }
+            
             msg[@"read"] = [[NSMutableDictionary alloc] init];
             msg[@"readArray"] = [[NSMutableArray alloc] init];
             msg[@"batchId"] = batchId;
@@ -67,15 +76,21 @@
 }
 
 
-+(void)updateBroadcast:(NSString *)batchId {
++(void)updateBroadcast:(NSString *)batchId withFirstCaption:(NSString *) caption {
     
-    NSLog(@"updateBroadcast");
+    NSLog(@"updateBroadcast with batchId %@ and caption %@", batchId, caption);
     
     PFObject *flipcast = [PFObject objectWithClassName:@"Flipcast"];
     flipcast[@"owner"] = [PFUser currentUser];
     flipcast[@"batchId"] = batchId;
     flipcast[@"privacy"] = @"public";
     flipcast[@"read"] = [[NSMutableArray alloc] init];
+    
+    if (caption != nil) {
+        NSLog(@"Caption is not nil, there fore save it as firstCaption %@", caption);
+        flipcast[@"firstCaption"] = caption;
+    }
+    
     [flipcast saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         NSLog(@"Created Flipcasts");
     }];
@@ -86,18 +101,25 @@
         if (!error) {
             if (!object) {
                 NSLog(@"no broadcast found");
-                [self createUserBroadcast:batchId];
+                [self createUserBroadcast:batchId withCaption:caption];
                 return;
             } else {
                 NSLog(@"Found broadcast");
                 if ([object objectForKey:@"batchIds"]) {
                     NSLog(@"Already had batchIds array");
                     [[object objectForKey:@"batchIds"] addObject:batchId];
+
                 } else {
                     NSLog(@"Didn't have batchIds array");
                     [object setObject:@[batchId] forKey:@"batchIds"];
                 }
-
+                
+                if (caption != nil) {
+                    NSLog(@"Caption is not nil, there fore save it %@", caption);
+//                    object[@"latestStatus"] = caption;
+                    [object setObject:caption forKey:@"latestStatus"];
+                }
+                
                 [object saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
                     if (succeeded) {
                         NSLog(@"Broadcast updated with batchId %@", batchId);
@@ -113,17 +135,26 @@
     }];
 }
 
-+(void)createUserBroadcast:(NSString *)batchId {
++(void)createUserBroadcast:(NSString *)batchId withCaption:(NSString *)caption {
+    if ([[[PFUser currentUser] objectForKey:@"broadcastCreated"] boolValue]) return;
+    
     PFObject *cast = [PFObject objectWithClassName:@"Broadcast"];
     cast[@"owner"] = [PFUser currentUser];
     cast[@"updated"] = [NSNumber numberWithBool:NO];
     if (batchId) {
         cast[@"batchIds"] = @[batchId];
+        
+    }
+    if (caption != nil) {
+        NSLog(@"Creating user broadcast, caption is not nil and it is %@", caption);
+        cast[@"latestStatus"] = caption;
     }
     
     [cast saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         if (succeeded) {
             NSLog(@"created user broadcast");
+            [[PFUser currentUser] setObject:@(YES) forKey:@"broadcastCreated"];
+            [[PFUser currentUser] saveInBackground];
         } else {
             NSLog(@"create user broadcast error: %@", error);
         }

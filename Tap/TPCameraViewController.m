@@ -14,6 +14,7 @@
 #import <AddressBook/AddressBook.h>
 #import <AddressBook/ABPerson.h>
 #import <AddressBook/ABAddressBook.h>
+#import "TPCaptionLabel.h"
 
 @interface TPCameraViewController () {
  
@@ -22,12 +23,13 @@
     BOOL frontCam;
     int messagesSaved;
     long batchId;
+    NSString *firstCaption;
     BOOL interactionCreated;
     BOOL disappearOnSegue;
     BOOL shouldCreateInteraction;
     BOOL tutIsOn;
     int tutStep;
-    
+    BOOL duringAnimation;
 }
 
 @property (strong, nonatomic) IBOutlet UILabel *tapsCounter;
@@ -36,7 +38,10 @@
 @property (strong, nonatomic) NSMutableArray *recipients;
 @property (strong, nonatomic) NSArray *tutorialSteps;
 @property (strong, nonatomic) IBOutlet UIImageView *tutImageView;
-
+@property (strong, nonatomic) IBOutlet UIActivityIndicatorView *sendingActivityIndicator;
+@property (strong, nonatomic) NSString *picCaption;
+@property (strong, nonatomic) IBOutlet TPCaptionLabel *captionLabel;
+@property (strong, nonatomic) UIImage *lastImageTaken;
 @end
 
 @implementation TPCameraViewController
@@ -61,9 +66,20 @@
 -(void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     [self checkUserSituation];
+    NSLog(@"Checking user situation");
+    [self initCaptionLabel];
     [self displayTutorial];
 }
-                               
+
+-(void)initCaptionLabel {
+    NSLog(@"Init caption label");
+    self.captionLabel.layer.cornerRadius = 5;
+    self.captionLabel.adjustsFontSizeToFitWidth = YES;
+    
+    //    [self.captionLabel sizeToFit];
+//    self.captionLabel.clipsToBounds = YES;
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -107,7 +123,10 @@
         // turn button to red
         [self makeMainMenuPink];
     } else {
-        [inboxButton setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"black"]]];
+//        [inboxButton setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"blue"]]];
+//        [inboxButton setBackgroundColor:[UIColor clearColor]];
+
+        [inboxButton setBackgroundColor:[[UIColor blackColor] colorWithAlphaComponent:1.0]];
     }
     
     [[self navigationController] setNavigationBarHidden:YES animated:NO];
@@ -135,6 +154,7 @@
 -(void) viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
 //    [self checkUserSituation];
+    [self initCaptionLabelAndButton];
     [TPAppDelegate sendMixpanelEvent:@"Opened camera"];
     
     [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationFade];
@@ -264,7 +284,7 @@
     }
     frontCam = NO;
     [self resetBatchId];
-
+    [self resetFirstCaption];
     [self setupCamera];
     
     takingPicture = true;
@@ -272,6 +292,10 @@
 
 -(void)resetBatchId {
     batchId = [[NSDate date] timeIntervalSince1970];
+}
+
+-(void)resetFirstCaption {
+    firstCaption = nil;
 }
 
 
@@ -283,10 +307,12 @@
 -(void)setupTap{
 
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(touch:)];
+
     [self.view addGestureRecognizer:tap];
     tap.delegate = self;
     
     UISwipeGestureRecognizer *rightSwipeRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swapCamera)];
+
     [rightSwipeRecognizer setDirection:(UISwipeGestureRecognizerDirectionRight)];
 
     [self.view addGestureRecognizer:rightSwipeRecognizer];
@@ -298,6 +324,30 @@
     [self.view addGestureRecognizer:leftSwipeRecognizer];
     leftSwipeRecognizer.delegate = self;
     
+    UISwipeGestureRecognizer *upSwipeRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(addCaption)];
+    [upSwipeRecognizer setDirection:(UISwipeGestureRecognizerDirectionUp)];
+    
+    [self.view addGestureRecognizer:upSwipeRecognizer];
+    upSwipeRecognizer.delegate = self;
+    
+}
+
+-(void)addCaption {
+    NSLog(@"Add caption");
+    UIAlertView *message = [[UIAlertView alloc] initWithTitle:@"Add Caption"
+                                                      message:@""
+                                                     delegate:self
+                                            cancelButtonTitle:@"Cancel"
+                                            otherButtonTitles:@"Save", nil];
+    
+    [message setAlertViewStyle:UIAlertViewStylePlainTextInput];
+    UITextField *txtF = [message textFieldAtIndex:0];
+    txtF.placeholder = @"Type caption here...";
+    txtF.text = self.captionLabel.text;
+//    [txtF setAutocapitalizationType:UITextAutocapitalizationTypeAllCharacters];
+    [txtF setClearButtonMode:UITextFieldViewModeAlways];
+    [message setTag:100];
+    [message show];
 }
 
 -(void) handleNoFriends {
@@ -318,11 +368,13 @@
 
     NSLog(@"Tap");
 
-    if ([self.appDelegate.taps intValue] >= 150) {
-        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Slow Down!" message:@"Hold it right there, young grasshopper. You cannot send more than 150 Pops a cast. Or casts a pop. Either way, slow down! 👋" delegate:nil cancelButtonTitle:@"OK!" otherButtonTitles: nil];
+    if ([self.appDelegate.taps intValue] >= 50) {
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Slow Down!" message:@"Hold it right there, young grasshopper. You cannot send more than 50 Pops a cast. Or casts a pop. Either way, slow down! 👋" delegate:nil cancelButtonTitle:@"OK!" otherButtonTitles: nil];
         [alertView show];
         return;
     }
+    
+    
     
     if ([self.appDelegate.isBlocked boolValue]) {
         UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Uh Oh" message:@"It seems that you are blocked from sending Popcasts. If you believe this is a mistake, please contact us." delegate:nil cancelButtonTitle:@"OK!" otherButtonTitles: nil];
@@ -342,10 +394,6 @@
 
     NSLog(@"Incremented app del taps %d", [self.appDelegate.taps intValue]);
 //    [self sendingCounterStyle];
-    if ([self.appDelegate.taps intValue] == 0) {
-        [self createInteraction];
-    }
-
 }
 
 
@@ -353,13 +401,15 @@
 -(void) makeMainMenuPink {
     NSLog(@"making menu pink");
     UIButton *inboxButton = (UIButton *)[self.view viewWithTag:10];
-    [inboxButton setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"blue"]]];
+    [inboxButton setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"pink"]]];
 }
 
 
 -(void)takePicture{
     NSLog(@"Take Picture");
     [self.sendingIndicator setHidden:NO];
+    [self.sendingActivityIndicator setHidden:NO];
+    [self.sendingActivityIndicator startAnimating];
 //    [[self.view viewWithTag:929] setHidden:NO];
     [[self captureManager]captureStillImage];
 }
@@ -434,8 +484,9 @@
 
 -(void)handleSavedImageNotification:(NSNotification *)notification {
 //    messagesSaved++;
-    
     NSLog(@"handleSavedImageNotification called");
+
+
     
     self.appDelegate.messagesSaved = @([self.appDelegate.messagesSaved intValue] + 1);
     
@@ -444,34 +495,59 @@
     self.sendingIndicator.text = [NSString stringWithFormat:@"Sending...%d/%d",[self.appDelegate.messagesSaved intValue], [self.appDelegate.taps intValue]] ;
 
     
+    
     if ([self.appDelegate.messagesSaved intValue] == [self.appDelegate.taps intValue]) {
         NSLog(@"That was the last one");
         self.appDelegate.sending = @(NO);
-        
+        [self animateCounterHide];
         // Need to reset metrics here?
         self.sendingIndicator.text = @"Sending...";
-        [self initCounterStyle];
+
         
         NSLog(@"Object %@", /*[sender objectForKey:@"object"]*/ notification.object);
         [self.sendingIndicator setHidden:YES];
+        [self.sendingActivityIndicator setHidden:YES];
+        [self.sendingActivityIndicator stopAnimating];
+        
         [[self.view viewWithTag:929] setHidden:YES];
     }
 }
 
 -(void)initCounterStyle {
-    self.tapsCounter.layer.borderColor = [UIColor clearColor].CGColor;
-    self.tapsCounter.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.3];
+    NSLog(@"Counter init");
+    [self.tapsCounter setAlpha:0.0];
+    [self.tapsCounter setHidden:YES];
+    /// make bg of inboxButton button right here
+    self.imageView.layer.cornerRadius = 5;
+    [self.imageView setHidden:NO];
+    UIButton *inboxButton = (UIButton *)[self.view viewWithTag:10];
+//    [inboxButton setBackgroundColor:[UIColor colorWithPatternImage:self.lastImageTaken]];
+    
+    self.imageView.image = self.lastImageTaken;
+    
+//    inboxButton.contentMode = UIViewContentModeScaleAspectFill;
+//    self.tapsCounter.font = [UIFont fontWithName:@"HelveticaNeue-Bold"  size:102.0f];
+//    [self.tapsCounter setHidden:YES];
+//    self.tapsCounter.layer.borderColor = [UIColor clearColor].CGColor;
+//    self.tapsCounter.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.8];
+//    self.tapsCounter.backgroundColor = [UIColor clearColor];
+//    self.tapsCounter.layer.borderColor = [UIColor whiteColor].CGColor;
+//    self.tapsCounter.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"blue"]];
 }
 
 -(void)sendingCounterStyle {
-//    self.tapsCounter.layer.borderColor = [UIColor colorWithRed:90 green:0 blue:0 alpha:1.0].CGColor;
-    self.tapsCounter.layer.borderColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"purpleColor"]].CGColor;
-//    self.tapsCounter.backgroundColor = [UIColor colorWithRed:90 green:0 blue:0 alpha:1.0];
-    self.tapsCounter.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"purpleColor"]];
+    
+//    [self.tapsCounter setHidden:NO];
+    
+
+//    self.tapsCounter.textColor  =[[UIColor colorWithPatternImage:[UIImage imageNamed:@"blue"]] colorWithAlphaComponent:1.0f];
+//    self.tapsCounter.layer.borderColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"purpleColor"]].CGColor;
+//    
+//    self.tapsCounter.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"purpleColor"]];
 }
 
 -(void)createInteraction {
-    
+    NSLog(@"createInteraction called");
     if (!interactionCreated) {
         @try {
             interactionCreated = YES;
@@ -479,7 +555,9 @@
             NSString *batchIdString = [NSString stringWithFormat:@"%ld", batchId];
 //            [TPProcessImage updateInteractions:self.recipients withBatchId:batchIdString];
 
-            [TPProcessImage updateBroadcast:batchIdString];
+            NSLog(@"This is the first caption %@", firstCaption);
+            
+            [TPProcessImage updateBroadcast:batchIdString withFirstCaption:firstCaption];
         }
         @catch (NSException *exception) {
             NSLog(@"Exception %@", exception);
@@ -502,6 +580,8 @@
 
 -(void)saveImage{
     NSLog(@"save image");
+
+    
 //    _imageView.image = [captureManager stillImage];
     _selectedImage = [captureManager stillImage];
 //    NSLog(@"Selected Image %@", [captureManager stillImage]);
@@ -517,10 +597,14 @@
     
     UIImage* newImage = UIGraphicsGetImageFromCurrentImageContext();
     
+    self.lastImageTaken = newImage;
     UIGraphicsEndImageContext();
     
     NSData *dataForJPEGFile = UIImageJPEGRepresentation(newImage, 0.8);
     
+    
+
+
 //    UIImage *optimizedImage = [UIImage imageWithData:dataForJPEGFile];
     NSString *batchIdString = [NSString stringWithFormat:@"%ld", batchId];
 
@@ -534,18 +618,77 @@
 //    [self.sendingIndicator startAnimating];
 //    [self.sendingIndicator setHidden:NO];
     
+    
+
+    
+
+    self.appDelegate.sending = @(YES);
+    
+    NSString *caption = nil;
+    if ([[[self.captionLabel.text componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] componentsJoinedByString:@""] length] != 0) {
+        caption = self.captionLabel.text;
+        NSLog(@"There is caption and it is %@", caption);
+        
+        if (firstCaption != nil) {
+            NSLog(@"There's already a first caption");
+        } else {
+            NSLog(@"There's no caption and therefore we put this %@", caption);
+            firstCaption = caption;
+        }
+    }
+    
+    if ([self.appDelegate.taps intValue] == 0) {
+        // paste here
+        [self createInteraction];
+    }
+
     self.appDelegate.taps = @([self.appDelegate.taps intValue] + 1);
     [self sendingCounterStyle];
+    
+    [self animateCounterShow];
+    
     self.tapsCounter.text = [NSString stringWithFormat:@"%d", [self.appDelegate.taps intValue]];
-    self.appDelegate.sending = @(YES);
-    [TPProcessImage sendTapTo:self.recipients andImage:dataForJPEGFile inBatch:batchIdString withImageId: [self.appDelegate.taps intValue] completed:^(BOOL success) {
+    
+    [TPProcessImage sendTapTo:self.recipients andImage:dataForJPEGFile inBatch:batchIdString withImageId: [self.appDelegate.taps intValue] withCaption:caption completed:^(BOOL success) {
         //        NSLog(@"HOly shit it saved?");
     }];
     
     
+}
+
+-(void)animateCounterShow {
+    NSLog(@"Counter show");
     
+    [self initCounterStyle];
+//    [self.view.layer removeAllAnimations];
+    duringAnimation = YES;
+//    [UIView beginAnimations: @"anim" context: nil];
+//    [UIView setAnimationBeginsFromCurrentState: YES];
+//    [UIView setAnimationDuration: 0.1f];
+    [self.tapsCounter setAlpha:1.0];
+
+//    self.tapsCounter.font = [UIFont fontWithName:@"HelveticaNeue-Bold"  size:200.0f];
+    [self.tapsCounter setHidden:NO];
+//    [UIView commitAnimations];
+    
+//    dispatch_time_t delay = dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_SEC * 0.2);
+//    dispatch_after(delay, dispatch_get_main_queue(), ^(void){
+//        [self animateCounterHide];
+//    });
 
     
+}
+
+-(void)animateCounterHide {
+    NSLog(@"Counter hide");
+//    [UIView beginAnimations: @"anim2" context: nil];
+//    [UIView setAnimationBeginsFromCurrentState: YES];
+//    [UIView setAnimationDuration: 0.3f];
+    [self.tapsCounter setAlpha:0.0];
+    [self.imageView setHidden:YES];
+    //    self.tapsCounter.font = [UIFont fontWithName:@"HelveticaNeue-Bold"  size:200.0f];
+    [self.tapsCounter setHidden:YES];
+//    [UIView commitAnimations];
 }
 
 -(void) resetBatch {
@@ -581,6 +724,7 @@
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     NSLog(@"segue performed");
     [self resetBatch];
+    [self resetFirstCaption];
     if ([segue.identifier isEqual:@"showAllContacts"]) {
 //        TPAllContactsViewController *allConView = (TPAllContactsViewController*)segue.destinationViewController;
 //        allConView.contactsPhoneNumbersArray
@@ -681,11 +825,35 @@
     NSLog(@"Alert view delegate");
     if(alertView.tag == 500){
         if(buttonIndex == 1){
-            NSString *appStoreLink = @"https://itunes.apple.com/us/app/notice-anonymous-campus/id829934488?mt=8";
+            NSString *appStoreLink = @"http://gopopcast.com/update";
             [[UIApplication sharedApplication] openURL:[NSURL URLWithString:appStoreLink]];
+        }
+    } else if (alertView.tag == 100) {
+        if(buttonIndex == 1){
+            UITextField *caption = [alertView textFieldAtIndex:0];
+            self.captionLabel.text = caption.text;
+//            [self.captionLabel sizeToFit];
+//            self.captionLabel.clipsToBounds = YES;
+            UIButton *captionButton = (UIButton *)[self.view viewWithTag:524];
+            if ([[[caption.text componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] componentsJoinedByString:@""] length] == 0) {
+//                [self.captionLabel setHidden:YES];§
+                [captionButton setTitle:@"Tap to add caption" forState:UIControlStateNormal];
+            } else {
+                [captionButton setTitle:@"" forState:UIControlStateNormal];
+            }
         }
     }
 }
 
+-(void)initCaptionLabelAndButton {
+    UIButton *captionButton = (UIButton *)[self.view viewWithTag:524];
+    [captionButton setTitle:@"Tap to add caption" forState:UIControlStateNormal];
+    self.captionLabel.text = @"";
+//    [self.captionLabel sizeToFit];
+//    self.captionLabel.clipsToBounds = YES;
+}
 
+- (IBAction)addCaptionBtn:(id)sender {
+    [self addCaption];
+}
 @end

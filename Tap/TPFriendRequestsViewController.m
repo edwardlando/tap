@@ -212,8 +212,12 @@
                                                             NSString *message = friendRequesterNameInMyContacts ?[NSString stringWithFormat:@"You are now friends with %@", friendRequesterNameInMyContacts] : [NSString stringWithFormat:@"You are now friends with %@", friendRequesterUsername];
                                                             
                                                             UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Accepted Friend Request" message:message delegate:nil cancelButtonTitle:nil otherButtonTitles:@"Ok", nil];
-                                                            [self.appDelegate.friendsArray addObject:user];
-                                                            [self.appDelegate.friendsPhoneNumbersArray addObject:friendRequesterPhoneNumber];
+
+                                                            self.appDelegate.friendsArray = nil;
+                                                            self.appDelegate.friendsPhoneNumbersArray = nil;
+
+                                                            //                                                            [self.appDelegate.friendsArray addObject:user];
+//                                                            [self.appDelegate.friendsPhoneNumbersArray addObject:friendRequesterPhoneNumber];
                                                             [alert show];
                                                             [self viewDidLoad];
                                                         }

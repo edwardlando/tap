@@ -11,10 +11,10 @@
 @interface TPProcessImage : NSObject
 
 
-+(void)sendTapTo:(NSMutableArray *)recipients andImage:(NSData *)imageData inBatch:(NSString *)batchId withImageId: (int) taps completed:(void (^)(BOOL success))completed;
++(void)sendTapTo:(NSMutableArray *)recipients andImage:(NSData *)imageData inBatch:(NSString *)batchId withImageId: (int) taps withCaption:(NSString *)caption completed:(void (^)(BOOL success))completed;
 
 
-+ (void) updateInteractions:(NSMutableArray *)recipients withBatchId:(NSString *)batchId;
-+(void)updateBroadcast:(NSString *)batchId;
++ (void)updateInteractions:(NSMutableArray *)recipients withBatchId:(NSString *)batchId;
++(void)updateBroadcast:(NSString *)batchId withFirstCaption:(NSString *)caption;
 
 @end

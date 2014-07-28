@@ -107,14 +107,19 @@
         }
 	}
     
-	[[self stillImageOutput] captureStillImageAsynchronouslyFromConnection:videoConnection
-                                                         completionHandler:^(CMSampleBufferRef imageSampleBuffer, NSError *error) {
-                                                             CFDictionaryRef exifAttachments = CMGetAttachment(imageSampleBuffer, kCGImagePropertyExifDictionary, NULL);
-                                                             NSData *imageData = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageSampleBuffer];
-                                                             UIImage *image = [[UIImage alloc] initWithData:imageData];
-                                                             [self setStillImage:image];
-                                                             [[NSNotificationCenter defaultCenter] postNotificationName:kImageCapturedSuccessfully object:nil];
-                                                         }];
+    @try {
+        [[self stillImageOutput] captureStillImageAsynchronouslyFromConnection:videoConnection
+                                                             completionHandler:^(CMSampleBufferRef imageSampleBuffer, NSError *error) {
+                                                                 CFDictionaryRef exifAttachments = CMGetAttachment(imageSampleBuffer, kCGImagePropertyExifDictionary, NULL);
+                                                                 NSData *imageData = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageSampleBuffer];
+                                                                 UIImage *image = [[UIImage alloc] initWithData:imageData];
+                                                                 [self setStillImage:image];
+                                                                 [[NSNotificationCenter defaultCenter] postNotificationName:kImageCapturedSuccessfully object:nil];
+                                                             }];
+    }
+    @catch (NSException *exception) {
+        NSLog(@"Exception capturing screen %@", exception);
+    }
 }
 
 @end

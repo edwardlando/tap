@@ -10,6 +10,7 @@
 #import "TPCameraViewController.h"
 #import "TPAppDelegate.h"
 #import "QuartzCore/QuartzCore.h"
+#import "TPCaptionLabel.h"
 
 @interface TPSingleTapViewController () {
     int taps;
@@ -24,6 +25,7 @@
 @property (strong, nonatomic) NSMutableArray *flipCastsToSave;
 @property (strong, nonatomic) TPAppDelegate *appDelegate;
 @property (strong, nonatomic) NSArray *sortedKeysArray;
+@property (strong, nonatomic) IBOutlet TPCaptionLabel *captionLabel;
 
 @end
 
@@ -152,13 +154,22 @@
         [self noMoreTaps];
     }
 
-
     
     NSLog(@"Message to show imageId %@", [messageToShow objectForKey:@"imageId"]);
     
     NSData *data = [messageToShow objectForKey:@"imageData"];
     UIImage *singleTapImage = [[UIImage alloc] initWithData:data];
     
+//    NSLog(@"Message to show %@", messageToShow);
+
+    if ([messageToShow objectForKey:@"caption"] != nil) {
+        NSLog(@"In Single. There is caption and it is %@", [messageToShow objectForKey:@"caption"]);
+        self.captionLabel.text = [messageToShow objectForKey:@"caption"];
+        [self.captionLabel setHidden:NO];
+    } else {
+        self.captionLabel.text = @"";
+        [self.captionLabel setHidden:YES];
+    }
 //    UIImage *singleTapImage = [[self.allBatchImages objectAtIndex:taps - 1] objectForKey:@"image"];
     
     if (![self.isMyFlipcast boolValue]) {
@@ -250,9 +261,12 @@
         }];
     }
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"singleTapViewDismissed"
-                                                        object:self.indexPath
-                                                      userInfo:nil];
+    if (![self.isMyFlipcast boolValue]) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"singleTapViewDismissed"
+                                                            object:self.indexPath
+                                                          userInfo:nil];
+    }
+
     
     [self dismissViewControllerAnimated:NO completion:nil];
 }

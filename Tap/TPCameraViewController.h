@@ -22,5 +22,6 @@
 @property (strong, nonatomic) IBOutlet UIImageView *imageView;
 @property (strong, nonatomic) NSNumber *isReply;
 @property (strong, nonatomic) PFUser *directRecipient;
+- (IBAction)addCaptionBtn:(id)sender;
 
 @end

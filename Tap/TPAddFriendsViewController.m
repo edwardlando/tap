@@ -176,7 +176,7 @@
     shadow.shadowColor = [UIColor whiteColor];
     [self.navigationController.navigationBar setTitleTextAttributes: @{
                                                                        NSForegroundColorAttributeName: [UIColor colorWithPatternImage:[UIImage imageNamed:@"white"]],
-                                                                       NSFontAttributeName: [UIFont fontWithName:@"Avenir" size:23.0f],
+                                                                       NSFontAttributeName: [UIFont fontWithName:@"Avenir-Black" size:20.0f],
                                                                        NSShadowAttributeName: shadow
                                                                        }];
 }
