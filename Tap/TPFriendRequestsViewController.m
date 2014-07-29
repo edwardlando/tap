@@ -100,7 +100,7 @@
         NSString *friendRequesterNameInMyContacts = [self.appDelegate.contactsDict objectForKey:friendRequesterPhoneNumber];
         NSString *friendRequesterUsername = [object objectForKey:@"requestingUserUsername"];
     
-    NSLog(@"Friend reqester name %@", friendRequesterNameInMyContacts);
+    if (DEBUG) NSLog(@"Friend reqester name %@", friendRequesterNameInMyContacts);
     
         if (!friendRequesterNameInMyContacts || [friendRequesterNameInMyContacts isEqual:@""]) {
             cell.textLabel.text = friendRequesterUsername;
@@ -127,7 +127,7 @@
 
 
 -(void)rejectFriendRequest:(id) sender {
-    NSLog(@"Reject friend request");
+    if (DEBUG) NSLog(@"Reject friend request");
     UIView *senderButton = (UIView*) sender;
     NSIndexPath *indexPath = [self.tableView indexPathForCell: (UITableViewCell *)[[[senderButton superview]superview] superview]];
     
@@ -144,11 +144,11 @@
     PFQuery *query = [PFQuery queryWithClassName:@"FriendRequest"];
     [query whereKey:@"targetUser" equalTo:[PFUser currentUser] ];
     
-    NSLog(@"Friends phone numbers array %@", self.appDelegate.friendsPhoneNumbersArray);
+    if (DEBUG) NSLog(@"Friends phone numbers array %@", self.appDelegate.friendsPhoneNumbersArray);
     [query whereKey:@"requestingUserPhoneNumber" notContainedIn:self.appDelegate.friendsPhoneNumbersArray];
     [query whereKey:@"status" equalTo:@"pending"];
     [query countObjectsInBackgroundWithBlock:^(int number, NSError *error) {
-        NSLog(@"counted friend requests %d", number);
+        if (DEBUG) NSLog(@"counted friend requests %d", number);
         self.appDelegate.pendingFriendRequests = @(number);
     }];
 }
@@ -175,7 +175,7 @@
     
     NSString *friendRequesterUsername = [friendRequest objectForKey:@"requestingUserUsername"];
     
-    NSLog(@"Adding %@ as a friend", friendRequesterUsername);
+    if (DEBUG) NSLog(@"Adding %@ as a friend", friendRequesterUsername);
     if (![[self.user objectForKey:@"friendsArray"] containsObject:user]) {
         
         PFUser *currentUser = [PFUser currentUser];
@@ -197,16 +197,16 @@
         [TPAppDelegate sendMixpanelEvent:@"Approved friend request"];
         [friendRequest saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
             if (succeeded) {
-                NSLog(@"Friend request saved in background");
+                if (DEBUG) NSLog(@"Friend request saved in background");
                 
                 [currentUser saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
                     if (succeeded) {
-                        NSLog(@"Approved Friend Request");
+                        if (DEBUG) NSLog(@"Approved Friend Request");
                         [PFCloud callFunctionInBackground:@"confirmFriendRequest"
                                            withParameters:@{@"reqUserId":[user objectId]}
                                                     block:^(id object, NSError *error) {
                                                         if (error) {
-                                                            NSLog(@"Error: %@", error);
+                                                            if (DEBUG) NSLog(@"Error: %@", error);
                                                         } else {
 
                                                             NSString *message = friendRequesterNameInMyContacts ?[NSString stringWithFormat:@"You are now friends with %@", friendRequesterNameInMyContacts] : [NSString stringWithFormat:@"You are now friends with %@", friendRequesterUsername];
@@ -224,7 +224,7 @@
                                                         //
                                                     }];
                     } else {
-                        NSLog(@"Error: %@", error);
+                        if (DEBUG) NSLog(@"Error: %@", error);
                         [senderButton setHidden:NO];
                     }
                     [self countFriendRequests];
@@ -234,7 +234,7 @@
 
 
             } else {
-                NSLog(@"Error: %@", error);
+                if (DEBUG) NSLog(@"Error: %@", error);
             }
         }];
     }

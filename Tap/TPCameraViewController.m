@@ -66,13 +66,13 @@
 -(void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     [self checkUserSituation];
-    NSLog(@"Checking user situation");
+    if (DEBUG) NSLog(@"Checking user situation");
     [self initCaptionLabel];
     [self displayTutorial];
 }
 
 -(void)initCaptionLabel {
-    NSLog(@"Init caption label");
+    if (DEBUG) NSLog(@"Init caption label");
     self.captionLabel.layer.cornerRadius = 5;
     self.captionLabel.adjustsFontSizeToFitWidth = YES;
     
@@ -89,13 +89,13 @@
     
 //    messagesSaved = 0;
     if (![self.appDelegate.sending boolValue]) {
-        NSLog(@"It's not sending");
+        if (DEBUG) NSLog(@"It's not sending");
         self.appDelegate.messagesSaved = @(0);
         self.appDelegate.taps = @(0);
     }
     
     
-    NSLog(@"Camera did load");
+    if (DEBUG) NSLog(@"Camera did load");
     [self setupCameraScreen];
 //    [self setupCameraScreen];
 //    taps = 0;
@@ -137,10 +137,9 @@
     NSString *replyMsg = [NSString stringWithFormat:@"You are replying directly to %@", nameInContacts];
     
     if (self.isReply) {
-//        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Direct Reply" message:replyMsg delegate:nil cancelButtonTitle:nil otherButtonTitles:@"FUCK YEAH!", nil];
-//        [alert show];
+
     }
-    [self fetchPhoneContacts];
+
 
     inboxButton.layer.cornerRadius = 5;
     
@@ -153,7 +152,7 @@
 
 -(void) viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-//    [self checkUserSituation];
+
     [self initCaptionLabelAndButton];
     [TPAppDelegate sendMixpanelEvent:@"Opened camera"];
     
@@ -161,28 +160,28 @@
     
 //    taps = 0;
     if (![self.appDelegate.sending boolValue]) {
-        NSLog(@"It's not sending");
+        if (DEBUG) NSLog(@"It's not sending");
         self.appDelegate.messagesSaved = @(0);
         self.appDelegate.taps = @(0);
         self.tapsCounter.text = [NSString stringWithFormat:@"%d", [self.appDelegate.taps intValue]];
     }
 
     self.recipients = [[NSMutableArray alloc] init];
-    NSLog(@"View Will Appear");
+    if (DEBUG) NSLog(@"View Will Appear");
     [self setupCameraScreen];
     [self setupTap];
     
 }
 
 -(void)displayTutorial {
-    NSLog(@"Display Tut");
+    if (DEBUG) NSLog(@"Display Tut");
     UIButton *captionButton = (UIButton *)[self.view viewWithTag:524];
     if(![[NSUserDefaults standardUserDefaults] boolForKey:@"hasSeenTutorial"]) {
 
         [captionButton setHidden:YES];
         [self initTutorial];
     } else {
-        NSLog(@"Already seen tut");
+        if (DEBUG) NSLog(@"Already seen tut");
         [captionButton setHidden:NO];
     }
 }
@@ -197,9 +196,11 @@
 }
 
 -(void)tutNextStep {
-    NSLog(@"Tut next step");
+    if (DEBUG) NSLog(@"Tut next step");
     tutStep++;
-    if (tutStep == [self.tutorialSteps count]) {
+    if (tutStep == [self.tutorialSteps count] - 1) {
+        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"hasSeenTutorial"];
+    } else if (tutStep == [self.tutorialSteps count]) {
         [self shouldFinishTutorial];
         return;
     }
@@ -212,7 +213,7 @@
 
     }
     @catch (NSException *exception) {
-        NSLog(@"Tut error %@", exception);
+        if (DEBUG) NSLog(@"Tut error %@", exception);
         [self shouldFinishTutorial];
     }
 
@@ -220,18 +221,17 @@
 
 -(void)shouldFinishTutorial {
     [self.tutImageView setHidden:YES];
-    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"hasSeenTutorial"];
     [self didFinishTutorial];
 }
 
 -(void)didFinishTutorial {
-    NSLog(@"Finished tutorial");
+    if (DEBUG) NSLog(@"Finished tutorial");
 }
 
 -(void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-    [self shouldFinishTutorial];
-    NSLog(@"View Will Disappear");
+    if (DEBUG) NSLog(@"View Will Disappear");
+    [self.tutImageView setHidden:YES];
 //    if ([self.appDelegate.taps intValue] > 0) {
 //        [self createInteraction];
 //    }
@@ -242,28 +242,28 @@
 
 -(void)checkUserSituation {
     PFUser *currentUser = [PFUser currentUser];
-    [currentUser refreshInBackgroundWithBlock:^(PFObject *object, NSError *error) {
-        //
-        NSLog(@"Refreshed user");
-    }];
+
     if (currentUser && currentUser.isAuthenticated) {
 //        [currentUser refreshInBackgroundWithBlock:^(PFObject *object, NSError *error) {
 
         
         
-        //            if (![[[PFUser currentUser] objectForKey:@"phoneVerified"] boolValue]) {
-//                UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Uh Oh!" message:@"Please verify your phone number!" delegate:nil cancelButtonTitle:@"OK!" otherButtonTitles: nil];
-//                [alertView show];
-//                [self performSegueWithIdentifier:@"verifyPhone" sender:self];
-//            }
-//        }];
+        [self fetchPhoneContacts];
+
+    
+        [currentUser refreshInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+            if (DEBUG) NSLog(@"Refreshed user");
+            if (![[object objectForKey:@"phoneVerified"] boolValue]) {
+                UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Phone number verification" message:@"Please verify your phone number!" delegate:nil cancelButtonTitle:@"OK!" otherButtonTitles: nil];
+                [alertView show];
+                [self performSegueWithIdentifier:@"verifyPhone" sender:self];
+            }
+        }];
         
-        
-        
-        NSLog(@"Current user: %@", currentUser.username);
+        if (DEBUG) NSLog(@"Current user: %@", currentUser.username);
     }
     else {
-        NSLog(@"No user %@", currentUser);
+        if (DEBUG) NSLog(@"No user %@", currentUser);
         [self performSegueWithIdentifier:@"showLanding" sender:self];
         
 //        if (![[currentUser objectForKey:@"phoneVerified"] boolValue]) {
@@ -282,7 +282,7 @@
 
 -(void)setupCameraScreen {
     
-    NSLog(@"Set up camera screen");
+    if (DEBUG) NSLog(@"Set up camera screen");
 //    [self registerForNotifications];
     interactionCreated = NO;
 //    taps = 0;
@@ -341,7 +341,7 @@
 }
 
 -(void)addCaption {
-    NSLog(@"Add caption");
+    if (DEBUG) NSLog(@"Add caption");
     UIAlertView *message = [[UIAlertView alloc] initWithTitle:@"Add Caption"
                                                       message:@""
                                                      delegate:self
@@ -360,7 +360,7 @@
 }
 
 -(void) handleNoFriends {
-    NSLog(@"No Group");
+    if (DEBUG) NSLog(@"No Group");
     UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Add Friends" message:@"It seems that you have no friends, start by adding a couple!" delegate:nil cancelButtonTitle:@"OK!" otherButtonTitles: nil];
     [alertView show];
     [self performSegueWithIdentifier:@"showAllContacts" sender:self];
@@ -369,17 +369,19 @@
 -(void)touch:(UITapGestureRecognizer *)recognizer
 {
 //    if ([self.appDelegate.friendsArray count] <= 0) {
-//        NSLog(@"Handle no friends");
+//        if (DEBUG) NSLog(@"Handle no friends");
 ////        [self handleNoGroup];
 //        [self handleNoFriends];
 //        return;
 //    }
 
-    NSLog(@"Tap");
+    if (DEBUG) NSLog(@"Tap");
 
     if ([self.appDelegate.taps intValue] >= 50) {
         UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Slow Down!" message:@"Hold it right there, young grasshopper. You cannot send more than 50 Pops a cast. Or casts a pop. Either way, slow down! 👋" delegate:nil cancelButtonTitle:@"OK!" otherButtonTitles: nil];
         [alertView show];
+        UIButton *captionButton = (UIButton *)[self.view viewWithTag:524];
+        [captionButton setHidden:YES];
         return;
     }
     
@@ -394,28 +396,28 @@
     [self takePicture];
     
     if (tutIsOn && tutStep != 4) {
-        NSLog(@"Tut is on so next step %d out of %ld", tutStep, [self.tutorialSteps count]);
+        if (DEBUG) NSLog(@"Tut is on so next step %d out of %ld", tutStep, [self.tutorialSteps count]);
         [self tutNextStep];
     }
 
     
 //    taps++;
 
-    NSLog(@"Incremented app del taps %d", [self.appDelegate.taps intValue]);
+    if (DEBUG) NSLog(@"Incremented app del taps %d", [self.appDelegate.taps intValue]);
 //    [self sendingCounterStyle];
 }
 
 
 
 -(void) makeMainMenuPink {
-    NSLog(@"making menu pink");
+    if (DEBUG) NSLog(@"making menu pink");
     UIButton *inboxButton = (UIButton *)[self.view viewWithTag:10];
     [inboxButton setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"pink"]]];
 }
 
 
 -(void)takePicture{
-    NSLog(@"Take Picture");
+    if (DEBUG) NSLog(@"Take Picture");
     [self.sendingIndicator setHidden:NO];
     [self.sendingActivityIndicator setHidden:NO];
     [self.sendingActivityIndicator startAnimating];
@@ -428,7 +430,7 @@
     
     [self unsubscribeFromNotifications];
 
-    NSLog(@"Registered for notifications");
+    if (DEBUG) NSLog(@"Registered for notifications");
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(handleNeedsUpdateNotification:)
@@ -473,7 +475,7 @@
 }
 
 -(void) unsubscribeFromNotifications {
-    NSLog(@"Unsubscribed from notifications");
+    if (DEBUG) NSLog(@"Unsubscribed from notifications");
     [[NSNotificationCenter defaultCenter] removeObserver:@"needsUpdate"];
     [[NSNotificationCenter defaultCenter] removeObserver:kImageCapturedSuccessfully];
     [[NSNotificationCenter defaultCenter] removeObserver:@"onboardingFinished"];
@@ -493,27 +495,27 @@
 
 -(void)handleSavedImageNotification:(NSNotification *)notification {
 //    messagesSaved++;
-    NSLog(@"handleSavedImageNotification called");
+    if (DEBUG) NSLog(@"handleSavedImageNotification called");
 
 
     
     self.appDelegate.messagesSaved = @([self.appDelegate.messagesSaved intValue] + 1);
     
-    NSLog(@"handleSavedImageNotification, incremented messagesSaved %d", [self.appDelegate.messagesSaved intValue]);
-    NSLog(@"num of messages saved %d / num if taps %d / object %@", [self.appDelegate.messagesSaved intValue], [self.appDelegate.taps intValue], notification.object);
+    if (DEBUG) NSLog(@"handleSavedImageNotification, incremented messagesSaved %d", [self.appDelegate.messagesSaved intValue]);
+    if (DEBUG) NSLog(@"num of messages saved %d / num if taps %d / object %@", [self.appDelegate.messagesSaved intValue], [self.appDelegate.taps intValue], notification.object);
     self.sendingIndicator.text = [NSString stringWithFormat:@"Sending...%d/%d",[self.appDelegate.messagesSaved intValue], [self.appDelegate.taps intValue]] ;
 
     
     
     if ([self.appDelegate.messagesSaved intValue] == [self.appDelegate.taps intValue]) {
-        NSLog(@"That was the last one");
+        if (DEBUG) NSLog(@"That was the last one");
         self.appDelegate.sending = @(NO);
         [self animateCounterHide];
         // Need to reset metrics here?
         self.sendingIndicator.text = @"Sending...";
 
         
-        NSLog(@"Object %@", /*[sender objectForKey:@"object"]*/ notification.object);
+        if (DEBUG) NSLog(@"Object %@", /*[sender objectForKey:@"object"]*/ notification.object);
         [self.sendingIndicator setHidden:YES];
         [self.sendingActivityIndicator setHidden:YES];
         [self.sendingActivityIndicator stopAnimating];
@@ -523,7 +525,7 @@
 }
 
 -(void)initCounterStyle {
-    NSLog(@"Counter init");
+    if (DEBUG) NSLog(@"Counter init");
     [self.tapsCounter setAlpha:0.0];
     [self.tapsCounter setHidden:YES];
     /// make bg of inboxButton button right here
@@ -556,20 +558,20 @@
 }
 
 -(void)createInteraction {
-    NSLog(@"createInteraction called");
+    if (DEBUG) NSLog(@"createInteraction called");
     if (!interactionCreated) {
         @try {
             interactionCreated = YES;
-            NSLog(@"Creating / updating the Interaction object");
+            if (DEBUG) NSLog(@"Creating / updating the Interaction object");
             NSString *batchIdString = [NSString stringWithFormat:@"%ld", batchId];
 //            [TPProcessImage updateInteractions:self.recipients withBatchId:batchIdString];
 
-            NSLog(@"This is the first caption %@", firstCaption);
+            if (DEBUG) NSLog(@"This is the first caption %@", firstCaption);
             
             [TPProcessImage updateBroadcast:batchIdString withFirstCaption:firstCaption];
         }
         @catch (NSException *exception) {
-            NSLog(@"Exception %@", exception);
+            if (DEBUG) NSLog(@"Exception %@", exception);
         }
 
     }
@@ -577,7 +579,7 @@
 
 -(void)swapCamera {
     if (tutIsOn && tutStep == 4) {
-        NSLog(@"Tut is on so next step %d out of %ld", tutStep, [self.tutorialSteps count]);
+        if (DEBUG) NSLog(@"Tut is on so next step %d out of %ld", tutStep, [self.tutorialSteps count]);
         [self tutNextStep];
     }
 
@@ -588,12 +590,12 @@
 
 
 -(void)saveImage{
-    NSLog(@"save image");
+    if (DEBUG) NSLog(@"save image");
 
     
 //    _imageView.image = [captureManager stillImage];
     _selectedImage = [captureManager stillImage];
-//    NSLog(@"Selected Image %@", [captureManager stillImage]);
+//    if (DEBUG) NSLog(@"Selected Image %@", [captureManager stillImage]);
 
 //    [[[self captureManager]captureSession]stopRunning];
     CGFloat newHeight = _selectedImage.size.height / 2.5f;
@@ -623,7 +625,7 @@
         self.recipients = [[NSMutableArray alloc] init];//self.appDelegate.myGroup;
     }
 
-//    NSLog(@"sending to %@", recipients);
+//    if (DEBUG) NSLog(@"sending to %@", recipients);
 //    [self.sendingIndicator startAnimating];
 //    [self.sendingIndicator setHidden:NO];
     
@@ -636,12 +638,12 @@
     NSString *caption = nil;
     if ([[[self.captionLabel.text componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] componentsJoinedByString:@""] length] != 0) {
         caption = self.captionLabel.text;
-        NSLog(@"There is caption and it is %@", caption);
+        if (DEBUG) NSLog(@"There is caption and it is %@", caption);
         
         if (firstCaption != nil) {
-            NSLog(@"There's already a first caption");
+            if (DEBUG) NSLog(@"There's already a first caption");
         } else {
-            NSLog(@"There's no caption and therefore we put this %@", caption);
+            if (DEBUG) NSLog(@"There's no caption and therefore we put this %@", caption);
             firstCaption = caption;
         }
     }
@@ -659,14 +661,14 @@
     self.tapsCounter.text = [NSString stringWithFormat:@"%d", [self.appDelegate.taps intValue]];
     
     [TPProcessImage sendTapTo:self.recipients andImage:dataForJPEGFile inBatch:batchIdString withImageId: [self.appDelegate.taps intValue] withCaption:caption completed:^(BOOL success) {
-        //        NSLog(@"HOly shit it saved?");
+        //        if (DEBUG) NSLog(@"HOly shit it saved?");
     }];
     
     
 }
 
 -(void)animateCounterShow {
-    NSLog(@"Counter show");
+    if (DEBUG) NSLog(@"Counter show");
     
     [self initCounterStyle];
 //    [self.view.layer removeAllAnimations];
@@ -689,7 +691,7 @@
 }
 
 -(void)animateCounterHide {
-    NSLog(@"Counter hide");
+    if (DEBUG) NSLog(@"Counter hide");
 //    [UIView beginAnimations: @"anim2" context: nil];
 //    [UIView setAnimationBeginsFromCurrentState: YES];
 //    [UIView setAnimationDuration: 0.3f];
@@ -731,14 +733,14 @@
 }
 
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    NSLog(@"segue performed");
+    if (DEBUG) NSLog(@"segue performed");
     [self resetBatch];
     [self resetFirstCaption];
     if ([segue.identifier isEqual:@"showAllContacts"]) {
 //        TPAllContactsViewController *allConView = (TPAllContactsViewController*)segue.destinationViewController;
 //        allConView.contactsPhoneNumbersArray
     } else if ([segue.identifier isEqual:@"showLanding"]) {
-        NSLog(@"PERFORMING SHOW LANDING SEGUE");
+        if (DEBUG) NSLog(@"PERFORMING SHOW LANDING SEGUE");
     }
 }
 
@@ -831,7 +833,7 @@
 }
 
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
-    NSLog(@"Alert view delegate");
+    if (DEBUG) NSLog(@"Alert view delegate");
     if(alertView.tag == 500){
         if(buttonIndex == 1){
             NSString *appStoreLink = @"http://gopopcast.com/update";

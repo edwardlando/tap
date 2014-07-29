@@ -62,7 +62,14 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-
+    UIView *paddingView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 30)];
+    UIView *paddingView2 = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 30)];
+    self.passwordField.leftView = paddingView;
+    self.usernameField.leftView = paddingView2;
+    
+    self.passwordField.leftViewMode = UITextFieldViewModeAlways;
+    self.usernameField.leftViewMode = UITextFieldViewModeAlways;
+    
     [self.usernameField becomeFirstResponder];
     // Do any additional setup after loading the view.
 }

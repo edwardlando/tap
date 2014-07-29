@@ -69,18 +69,18 @@
 //        tapsLabel.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"pink"]];
     }
 
-//    NSLog(@"self.objects.count %d", taps);
+//    if (DEBUG) NSLog(@"self.objects.count %d", taps);
     if (taps == 0) {
         [self noMoreTaps];
     } else {
         [self setupTap];
         
-//        NSLog(@"objects %@", self.objects);
+//        if (DEBUG) NSLog(@"objects %@", self.objects);
         @try {
             [self showTap];
         }
         @catch (NSException *exception) {
-            NSLog(@"Can't view tap exception: %@", exception);
+            if (DEBUG) NSLog(@"Can't view tap exception: %@", exception);
             [self noMoreTaps];
         }
 
@@ -91,7 +91,7 @@
     NSMutableArray *allTaps = [[NSMutableArray alloc] init];
     NSArray *allBatchIds = [self.allInteractionTaps allKeys];
     
-    NSLog(@"sortedKeysArray %@", self.sortedKeysArray);
+    if (DEBUG) NSLog(@"sortedKeysArray %@", self.sortedKeysArray);
     for (id key in self.sortedKeysArray) {
     NSSortDescriptor *imageIdDescriptor = [[NSSortDescriptor alloc] initWithKey:@"imageId" ascending:NO];
         NSArray *sortDescriptors = @[imageIdDescriptor];
@@ -104,7 +104,7 @@
 
 -(void) showTap {
     self.tapsLabel.text = [NSString stringWithFormat:@"%d", taps];
-    NSLog(@"Current Batch %d | numberOfTapsInBatch Length %d | currentTap %d | taps %d | last batch? %d", currentBatch, numberOfTapsInBatch, currentTap, taps, lastBatch);
+    if (DEBUG) NSLog(@"Current Batch %d | numberOfTapsInBatch Length %d | currentTap %d | taps %d | last batch? %d", currentBatch, numberOfTapsInBatch, currentTap, taps, lastBatch);
     
     if (!lastBatch) {
         if (currentTap == numberOfTapsInBatch) {
@@ -150,20 +150,20 @@
         messageToShow = [sortedBatchPhotos objectAtIndex:currentTap];
     }
     @catch (NSException *exception) {
-        NSLog(@"Coulnd't fetch tap exception %@", exception);
+        if (DEBUG) NSLog(@"Coulnd't fetch tap exception %@", exception);
         [self noMoreTaps];
     }
 
     
-    NSLog(@"Message to show imageId %@", [messageToShow objectForKey:@"imageId"]);
+    if (DEBUG) NSLog(@"Message to show imageId %@", [messageToShow objectForKey:@"imageId"]);
     
     NSData *data = [messageToShow objectForKey:@"imageData"];
     UIImage *singleTapImage = [[UIImage alloc] initWithData:data];
     
-//    NSLog(@"Message to show %@", messageToShow);
+//    if (DEBUG) NSLog(@"Message to show %@", messageToShow);
 
     if ([messageToShow objectForKey:@"caption"] != nil && ![[messageToShow objectForKey:@"caption"] isEqualToString:@""]) {
-        NSLog(@"In Single. There is caption and it is %@", [messageToShow objectForKey:@"caption"]);
+        if (DEBUG) NSLog(@"In Single. There is caption and it is %@", [messageToShow objectForKey:@"caption"]);
         self.captionLabel.text = [messageToShow objectForKey:@"caption"];
         [self.captionLabel setHidden:NO];
     } else {
@@ -226,16 +226,16 @@
 //    [self presentViewController:camera animated:NO completion:^{
 //        //
 //    }];
-    NSLog(@"No More Taps");
+    if (DEBUG) NSLog(@"No More Taps");
     if (![self.isMyFlipcast boolValue]) {
         
         if ([self.flipCastsToSave count] > 0) {
             [PFObject saveAllInBackground:self.flipCastsToSave block:^(BOOL succeeded, NSError *error) {
                 if (succeeded) {
                     self.flipCastsToSave = nil;
-                    NSLog(@"just saved flipcasts as read background like a boss");
+                    if (DEBUG) NSLog(@"just saved flipcasts as read background like a boss");
                 } else {
-                    NSLog(@"Error: %@", error);
+                    if (DEBUG) NSLog(@"Error: %@", error);
                 }
                 
             }];
@@ -246,9 +246,9 @@
             [PFObject saveAllInBackground:self.tapsToSave block:^(BOOL succeeded, NSError *error) {
                 if (succeeded) {
                     self.tapsToSave = nil;
-                    NSLog(@"just saved taps background like a boss");
+                    if (DEBUG) NSLog(@"just saved taps background like a boss");
                 } else {
-                    NSLog(@"Error: %@", error);
+                    if (DEBUG) NSLog(@"Error: %@", error);
                 }
 
             }];
@@ -257,7 +257,7 @@
         PFInstallation *currentInstallation = [PFInstallation currentInstallation];
         currentInstallation.badge = (currentInstallation.badge - 1 >= 0) ? currentInstallation.badge - 1 : 0;
         [currentInstallation saveEventually:^(BOOL succeeded, NSError *error) {
-            NSLog(@"decremented installation badge to %ld", (long)currentInstallation.badge);
+            if (DEBUG) NSLog(@"decremented installation badge to %ld", (long)currentInstallation.badge);
         }];
     }
     
@@ -275,14 +275,14 @@
     [[message objectForKey:@"read"] setObject:[NSNumber numberWithBool:YES] forKey:[[PFUser currentUser] objectId]] ;
     [[message objectForKey:@"readArray"] addObject:[[PFUser currentUser] objectId]];
     [self.appDelegate.allReadTaps addObject:[message objectId]];
-    NSLog(@"message read %@", [message objectId]);
+    if (DEBUG) NSLog(@"message read %@", [message objectId]);
     [self.tapsToSave addObject:message];
 }
 
 -(void)markFlipcastAsRead:(NSString *)flipcast {
-    NSLog(@"Marking flipcast as read");
-    NSLog(@"batchId %@", flipcast);
-    NSLog(@"owner %@", self.sendingUser);
+    if (DEBUG) NSLog(@"Marking flipcast as read");
+    if (DEBUG) NSLog(@"batchId %@", flipcast);
+    if (DEBUG) NSLog(@"owner %@", self.sendingUser);
     
     PFQuery *flipCastQuery = [PFQuery queryWithClassName:@"Flipcast"];
 
@@ -293,11 +293,11 @@
     [flipCastQuery getFirstObjectInBackgroundWithBlock:^(PFObject *object, NSError *error) {
         if (!error) {
             [[object objectForKey:@"read"] addObject:[[PFUser currentUser] objectForKey:@"phoneNumber"]];
-            NSLog(@"flipcast read %@", flipcast);
+            if (DEBUG) NSLog(@"flipcast read %@", flipcast);
             [self.flipCastsToSave addObject:object];
 
         } else {
-            NSLog(@"Error finding flipcast with batchId %@: %@", flipcast, error);
+            if (DEBUG) NSLog(@"Error finding flipcast with batchId %@: %@", flipcast, error);
         }
     }];
 }

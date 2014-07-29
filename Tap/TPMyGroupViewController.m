@@ -46,7 +46,7 @@
     [super viewDidLoad];
 
     if ([self.appDelegate.friendsArray count] == 0) {
-        NSLog(@"No friends in app delegate");
+        if (DEBUG) NSLog(@"No friends in app delegate");
     }
     [self.appDelegate loadFriends];
     if ([self.appDelegate.pendingFriendRequests intValue] > 0) {
@@ -91,10 +91,10 @@
 
 -(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    NSLog(@"View Will Appear");
+    if (DEBUG) NSLog(@"View Will Appear");
     
     [[PFUser currentUser] refreshInBackgroundWithBlock:^(PFObject *object, NSError *error) {
-        NSLog(@"Refreshing user");
+        if (DEBUG) NSLog(@"Refreshing user");
         [self.tableView reloadData];
     }];
 }
@@ -103,9 +103,8 @@
     NSInteger totalFriends = [self.appDelegate.friendsPhoneNumbersArray count];
     
     if (totalFriends == 0) {
-        NSLog(@"No one in group");
-//        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"You Have No Friends" message:@"Start by adding or inviting some cool people" delegate:nil cancelButtonTitle:nil otherButtonTitles:@"FUCK YEAH!", nil];
-//        [alert show];
+        if (DEBUG) NSLog(@"No one in group");
+
     }
 
 }
@@ -170,7 +169,7 @@
         
         return inMyGroup;
     } else {
-//        NSLog(@"section 2: %d", totalFriends - inMyGroup );
+//        if (DEBUG) NSLog(@"section 2: %d", totalFriends - inMyGroup );
         return [self.appDelegate.friendsArray count];
     }
 
@@ -193,7 +192,7 @@
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"friendInGroupCell" forIndexPath:indexPath];
         PFUser *friendInGroup = [self.appDelegate.myGroup objectAtIndex:indexPath.row];
       
-        NSLog(@"friend in group %@", [friendInGroup objectForKey:@"username"]);
+        if (DEBUG) NSLog(@"friend in group %@", [friendInGroup objectForKey:@"username"]);
         
         NSString *friendPhoneNumber = [friendInGroup objectForKey:@"phoneNumber"];
         NSString *friendUsername = [friendInGroup objectForKey:@"username"];
@@ -218,17 +217,17 @@
         PFUser *friend = [self.appDelegate.friendsArray objectAtIndex:indexPath.row];
         if ([self.appDelegate.myGroup containsObject:friend]) {
 //            return nil;
-            NSLog(@"This guy is in group %@", friend);
+            if (DEBUG) NSLog(@"This guy is in group %@", friend);
         }
         NSString *friendPhoneNumber = [friend objectForKey:@"phoneNumber"];
-        NSLog(@"Friend %@", friend);
-        NSLog(@"Phone Number %@", friendPhoneNumber);
+        if (DEBUG) NSLog(@"Friend %@", friend);
+        if (DEBUG) NSLog(@"Phone Number %@", friendPhoneNumber);
         NSString *friendName = [self.appDelegate.contactsDict objectForKey:friendPhoneNumber];
-        NSLog(@"Friend name %@", friendName);
+        if (DEBUG) NSLog(@"Friend name %@", friendName);
 //        NSString *friendName =
 //        PFUser *friend = [[[PFUser currentUser] objectForKey:@"friendArray"] objectAtIndex:indexPath.row];
 //        [friend fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
-//            NSLog(@"friends %@", object);
+//            if (DEBUG) NSLog(@"friends %@", object);
         
 //            NSString *friendPhoneNumber = [object objectForKey:@"phoneNumber"];
 //            NSString *friendNameInMyContacts = [self.appDelegate.contactsDict objectForKey:friendPhoneNumber];
@@ -291,7 +290,7 @@
     [[[PFUser currentUser] objectForKey:@"myGroupArray"] addObject:friendToAdd];
     [self.appDelegate.myGroup addObject:friendToAdd];
     [[PFUser currentUser] saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-        NSLog(@"Added to group");
+        if (DEBUG) NSLog(@"Added to group");
         [ind stopAnimating];
         [ind setHidden:YES];
         [self.tableView reloadData];
@@ -299,7 +298,7 @@
 }
 
 -(void) removeFromGroup:(id) sender {
-    NSLog(@"Remove from group method");
+    if (DEBUG) NSLog(@"Remove from group method");
     UIView *senderButton = (UIView*) sender;
     
     NSIndexPath *indexPath = [self.tableView indexPathForCell: (UITableViewCell *)[[[senderButton superview]superview] superview]];
@@ -320,7 +319,7 @@
 //    }
 
     [[PFUser currentUser] saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-        NSLog(@"Removed from group");
+        if (DEBUG) NSLog(@"Removed from group");
 
         [ind stopAnimating];
         [ind setHidden:YES];
@@ -332,7 +331,7 @@
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     if (indexPath.section == 0) {
-        NSLog(@"Going to friend requests");
+        if (DEBUG) NSLog(@"Going to friend requests");
         [self goToFriendRequests];
     }
 }
@@ -350,7 +349,7 @@
     if ([segue.identifier isEqualToString:@"showFriendRequests"]) {
         TPFriendRequestsViewController *vc = (TPFriendRequestsViewController *)segue.destinationViewController;
         vc.user = sender;
-        NSLog(@"this is sender %@", sender);
+        if (DEBUG) NSLog(@"this is sender %@", sender);
     }
 }
 

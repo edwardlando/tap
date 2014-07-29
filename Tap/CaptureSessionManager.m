@@ -30,16 +30,16 @@
     
     for (AVCaptureDevice *device in devices) {
         
-//        NSLog(@"Device name: %@", [device localizedName]);
+//        if (DEBUG) NSLog(@"Device name: %@", [device localizedName]);
         
         if ([device hasMediaType:AVMediaTypeVideo]) {
             
             if ([device position] == AVCaptureDevicePositionBack) {
-//                NSLog(@"Device position : back");
+//                if (DEBUG) NSLog(@"Device position : back");
                 backCamera = device;
             }
             else {
-//                NSLog(@"Device position : front");
+//                if (DEBUG) NSLog(@"Device position : front");
                 frontCamera = device;
             }
         }
@@ -54,7 +54,7 @@
             if ([[self captureSession] canAddInput:self.frontFacingCameraDeviceInput]) {
                 [[self captureSession] addInput:self.frontFacingCameraDeviceInput];
             } else {
-                NSLog(@"Couldn't add front facing video input");
+                if (DEBUG) NSLog(@"Couldn't add front facing video input");
             }
         }
     } else {
@@ -64,7 +64,7 @@
             if ([[self captureSession] canAddInput:self.backFacingCameraDeviceInput]) {
                 [[self captureSession] addInput:self.backFacingCameraDeviceInput];
             } else {
-                NSLog(@"Couldn't add back facing video input");
+                if (DEBUG) NSLog(@"Couldn't add back facing video input");
             }
         }
     }
@@ -121,7 +121,7 @@
         
 //        [self init];
         
-        NSLog(@"Exception capturing screen %@", exception);
+        if (DEBUG) NSLog(@"Exception capturing screen %@", exception);
     }
 }
 

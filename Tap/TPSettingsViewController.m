@@ -54,10 +54,10 @@
         NSURL *url = [NSURL URLWithString:@"http://www.gopopcast.com/privacy"];
         
         if (![[UIApplication sharedApplication] openURL:url]) {
-            NSLog(@"%@%@",@"Failed to open url:",[url description]);
+            if (DEBUG) NSLog(@"%@%@",@"Failed to open url:",[url description]);
         }
         
-        NSLog(@"This is privacy");
+        if (DEBUG) NSLog(@"This is privacy");
     } else if (cell.tag == 15) {
         [TPAppDelegate sendMixpanelEvent:@"Tapped send feedback"];
         
@@ -69,7 +69,7 @@
         [PFUser logOut];
         
         
-        NSLog(@"This is logout");
+        if (DEBUG) NSLog(@"This is logout");
 //        [self.navigationController popToRootViewControllerAnimated:YES];
         [self dismissViewControllerAnimated:YES completion:^{
             [[NSNotificationCenter defaultCenter] postNotificationName:@"userLoggedOut" object:nil];
@@ -109,16 +109,16 @@
     switch (result)
     {
         case MFMailComposeResultCancelled:
-            NSLog(@"Mail cancelled");
+            if (DEBUG) NSLog(@"Mail cancelled");
             break;
         case MFMailComposeResultSaved:
-            NSLog(@"Mail saved");
+            if (DEBUG) NSLog(@"Mail saved");
             break;
         case MFMailComposeResultSent:
-             NSLog(@"Mail sent");
+             if (DEBUG) NSLog(@"Mail sent");
             break;
         case MFMailComposeResultFailed:
-            NSLog(@"Mail sent failure: %@", [error localizedDescription]);
+            if (DEBUG) NSLog(@"Mail sent failure: %@", [error localizedDescription]);
             break;
         default:
             break;

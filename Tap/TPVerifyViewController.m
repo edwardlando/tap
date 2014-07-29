@@ -36,6 +36,13 @@
 -(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     [self setupCamera];
+
+    UIView *paddingView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 30)];
+    self.verifyField.leftView = paddingView;
+
+    
+    self.verifyField.leftViewMode = UITextFieldViewModeAlways;
+    
     [self.verifyField becomeFirstResponder];
 }
 -(void)setupCamera{
@@ -81,7 +88,7 @@
                         //[PFCloud callFunctionInBackground:@"setupInstallation" withParameters:@{@"instId":Instid} target:nil selector:nil];
         }
         else{
-            NSLog(@"Error from verif code %@", error);
+            if (DEBUG) NSLog(@"Error from verif code %@", error);
             UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Error" message:@"Incorrect verification code." delegate:nil cancelButtonTitle:nil otherButtonTitles:@"Try again.", nil];
             [alert show];
         }
@@ -110,6 +117,8 @@
     [self verifyPhone];
 }
 - (IBAction)goBack:(id)sender {
+    [self.user setObject:@"" forKey:@"phone"];
+    [self.user setObject:@"" forKey:@"phoneNumber"];
     [self.navigationController popViewControllerAnimated:YES];
 }
 @end

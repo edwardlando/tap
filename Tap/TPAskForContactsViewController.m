@@ -70,8 +70,7 @@
 }
 
 -(void) fetchPhoneContacts {
-    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-    hud.labelText = @"Preparing...";
+
     
     CFErrorRef error;
     ABAddressBookRef addressBook = ABAddressBookCreateWithOptions(NULL, &error);
@@ -131,14 +130,14 @@
                 
                 if (![self.appDelegate.contactsPhoneNumbersArray containsObject:phone]) {
                     
-                    NSLog(@"contacts Phone Number Array doesnt contain %@", phone);
+                    if (DEBUG) NSLog(@"contacts Phone Number Array doesnt contain %@", phone);
                     
                     NSString *strippedPhone = [phone stringByReplacingOccurrencesOfString:@"[^0-9]" withString:@"" options:NSRegularExpressionSearch range:NSMakeRange(0, [phone length])];
                     if ([strippedPhone isEqual:@""]) continue;
                     if([strippedPhone characterAtIndex:0] != '1'){
                         NSString *temp = @"1";
                         strippedPhone = [temp stringByAppendingString:strippedPhone];
-                        //                        NSLog(@"strippedPhone %@", strippedPhone);
+                        //                        if (DEBUG) NSLog(@"strippedPhone %@", strippedPhone);
                     }
                     
                     [self.appDelegate.contactsPhoneNumbersArray addObject:strippedPhone];
@@ -180,7 +179,7 @@
         [[PFUser currentUser]saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
             if (succeeded) {
                 
-                NSLog(@"Saved contacts dict which is %@", self.appDelegate.contactsDict);
+                if (DEBUG) NSLog(@"Saved contacts dict which is %@", self.appDelegate.contactsDict);
             }
         }];
 //        }
@@ -191,7 +190,7 @@
         [[NSNotificationCenter defaultCenter] postNotificationName:@"onboardingFinished"
                                                             object:nil
                                                           userInfo:nil];
-        [hud hide:YES];
+//        [hud hide:YES];
         [self dismissViewControllerAnimated:YES completion:nil];
     }
 }
@@ -201,7 +200,8 @@
 
 
 - (IBAction)askForContacts:(id)sender {
-
+    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    hud.labelText = @"Preparing...";
     
      [self fetchPhoneContacts];
     

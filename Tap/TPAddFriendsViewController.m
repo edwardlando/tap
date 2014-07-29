@@ -74,7 +74,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    //    NSLog(@"self.appdel %@", self.appDelegate.contactsPhoneNumbersArray);
+    //    if (DEBUG) NSLog(@"self.appdel %@", self.appDelegate.contactsPhoneNumbersArray);
     self.tableView.sectionIndexBackgroundColor = [UIColor clearColor];
     self.tableView.sectionIndexTrackingBackgroundColor = [UIColor lightGrayColor];
     self.tableView.sectionIndexColor = [UIColor darkGrayColor];
@@ -82,14 +82,14 @@
     [self.navigationController.navigationBar setTintColor:[UIColor whiteColor]];
     
     if ([self.appDelegate.friendsArray count] == 0) {
-        NSLog(@"No friends in app delegate");
+        if (DEBUG) NSLog(@"No friends in app delegate");
     }
 
     @try {
         [self.appDelegate loadFriends];
     }
     @catch (NSException *exception) {
-        NSLog(@"load friends exception add friends screen %@", exception);
+        if (DEBUG) NSLog(@"load friends exception add friends screen %@", exception);
     }
 
     
@@ -163,9 +163,8 @@
     NSInteger totalFriends = [self.appDelegate.friendsArray count];
     
     if (totalFriends == 0) {
-        NSLog(@"No friends");
-        //        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"You Have No Friends" message:@"Start by adding or inviting some cool people" delegate:nil cancelButtonTitle:nil otherButtonTitles:@"FUCK YEAH!", nil];
-        //        [alert show];
+        if (DEBUG) NSLog(@"No friends");
+
     }
     
 }
@@ -201,7 +200,7 @@
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     if (indexPath.section == 0) {
-        NSLog(@"Going to friend requests");
+        if (DEBUG) NSLog(@"Going to friend requests");
         [self goToFriendRequests];
     }
 }
@@ -216,20 +215,20 @@
     if (section == 0) {
 
         if (pendingFriendReqs) {
-        NSLog(@"section title %@ want to return %d", [self.sections objectAtIndex:section], 1);
+        if (DEBUG) NSLog(@"section title %@ want to return %d", [self.sections objectAtIndex:section], 1);
 //            return 1;
             return 1;
         } else {
-        NSLog(@"section title %@ want to return %d", [self.sections objectAtIndex:section], 0);
+        if (DEBUG) NSLog(@"section title %@ want to return %d", [self.sections objectAtIndex:section], 0);
             return 0;
         }
     } else if (section == 1) {
-//        NSLog(@"section title %@ want to return %ld", [self.sections objectAtIndex:section], [self.objects count]);
+//        if (DEBUG) NSLog(@"section title %@ want to return %ld", [self.sections objectAtIndex:section], [self.objects count]);
 //        return 0;
         return [self.objects count];
     }
     else if (section == 2){
-//        NSLog(@"section title %@ want to return %ld", [self.sections objectAtIndex:section], [[self.appDelegate.contactsDict allKeys] count]);
+//        if (DEBUG) NSLog(@"section title %@ want to return %ld", [self.sections objectAtIndex:section], [[self.appDelegate.contactsDict allKeys] count]);
         return [self.appDelegate.alphabeticalPhonebook count];
     }
 
@@ -240,17 +239,17 @@
 
 -(void)objectsDidLoad:(NSError *)error {
     [super objectsDidLoad:error];
-    NSLog(@"Objects did load");
+    if (DEBUG) NSLog(@"Objects did load");
 }
 
 
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
 
-//    NSLog(@"cell for row");
+//    if (DEBUG) NSLog(@"cell for row");
     
     if (indexPath.section == 0) {
-//        NSLog(@"section is 0");
+//        if (DEBUG) NSLog(@"section is 0");
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"friendRequests" forIndexPath:indexPath];
         cell.textLabel.text = [NSString stringWithFormat:@"Friend Requests (%d)", [self.appDelegate.pendingFriendRequests intValue]];
         
@@ -258,7 +257,7 @@
         
     } else if (indexPath.section == 1) {
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"userCell" forIndexPath:indexPath];
-//        NSLog(@"section is 1");
+//        if (DEBUG) NSLog(@"section is 1");
         cell.detailTextLabel.textColor = [UIColor grayColor];
         //    NSInteger index = indexPath.row;
         
@@ -287,15 +286,13 @@
         
         return cell;
     } else {
-//        NSLog(@"section is 2");
+//        if (DEBUG) NSLog(@"section is 2");
         
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"inviteContactCell" forIndexPath:indexPath];
         UIButton *inviteFriendButton = (UIButton *) [cell viewWithTag:3];
         [inviteFriendButton addTarget:self action:@selector(inviteFriend:) forControlEvents:UIControlEventTouchUpInside];
         
         inviteFriendButton.layer.cornerRadius = 5;
-        NSArray *keys = [self.appDelegate.contactsDict allKeys];
-        
         NSDictionary *contact = [self.appDelegate.alphabeticalPhonebook objectAtIndex:indexPath.row];
         
         NSString *number = [contact objectForKey:@"number"];
@@ -318,7 +315,7 @@
         return nil;
     }
     
-    NSLog(@"Queryring for table");
+    if (DEBUG) NSLog(@"Queryring for table");
     PFQuery *query = [PFUser query];
 
     NSArray *friendsPhoneNumbers = self.appDelegate.friendsPhoneNumbersArray;
@@ -326,7 +323,7 @@
     [query whereKey:@"phoneNumber" containedIn:self.appDelegate.contactsPhoneNumbersArray];
     NSArray *forbiddenNumbers = [friendsPhoneNumbers arrayByAddingObjectsFromArray: self.appDelegate.friendRequestsSent];
 
-    NSLog(@"These are friend requests sent: %@",[[PFUser currentUser]objectForKey:@"friendRequestsSent"]);
+    if (DEBUG) NSLog(@"These are friend requests sent: %@",[[PFUser currentUser]objectForKey:@"friendRequestsSent"]);
     NSArray *friendRequestsSent = [[PFUser currentUser] objectForKey:@"friendRequestsSent"];
     
     [query whereKey:@"objectId" notContainedIn:friendRequestsSent];
@@ -400,7 +397,7 @@
 
             
         } else {
-            NSLog(@"Error finding user by username");
+            if (DEBUG) NSLog(@"Error finding user by username");
             UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Oops!" message:@"We couldn't find any user by that username! Please make sure you've got the right one." delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK", nil];
             [alert show];
         }
@@ -424,7 +421,7 @@
         
         [friendRequest saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
             if (succeeded) {
-                NSLog(@"Saved friend request in background");
+                if (DEBUG) NSLog(@"Saved friend request in background");
                 //                [PFCloud callFunctionInBackground:@"sendFriendRequest" withParameters:@{@"targetUserId":[user objectId]} block:^(id object, NSError *error) {
                 if (ind) {
                     [ind stopAnimating];
@@ -441,7 +438,7 @@
                 [[[PFUser currentUser] objectForKey:@"friendRequestsSent"] addObject:[user objectId]];
                 
                 [[PFUser currentUser] saveEventually:^(BOOL succeeded, NSError *error) {
-                    NSLog(@"Added %@ to friend requests sent ", [user objectId]);
+                    if (DEBUG) NSLog(@"Added %@ to friend requests sent ", [user objectId]);
                     [self loadObjects];
                     [self.tableView reloadData];
                 }];
@@ -449,7 +446,7 @@
                 //                }];
                 
             } else {
-                NSLog(@"Error: %@", error);
+                if (DEBUG) NSLog(@"Error: %@", error);
             }
             
             //            [self.appDelegate.friendRequestsSent addObject:[user objectForKey:@"phoneNumber"]];
@@ -475,11 +472,11 @@
     PFQuery *query = [PFQuery queryWithClassName:@"FriendRequest"];
     [query whereKey:@"targetUser" equalTo:[PFUser currentUser] ];
     
-    NSLog(@"Friends phone numbers array %@", self.appDelegate.friendsPhoneNumbersArray);
+    if (DEBUG) NSLog(@"Friends phone numbers array %@", self.appDelegate.friendsPhoneNumbersArray);
     [query whereKey:@"requestingUserPhoneNumber" notContainedIn:self.appDelegate.friendsPhoneNumbersArray];
     [query whereKey:@"status" equalTo:@"pending"];
     [query countObjectsInBackgroundWithBlock:^(int number, NSError *error) {
-        NSLog(@"counted friend requests %d", number);
+        if (DEBUG) NSLog(@"counted friend requests %d", number);
         self.appDelegate.pendingFriendRequests = @(number);
     }];
 }
@@ -571,7 +568,7 @@
 
 
 -(void)inviteFriend:(id)sender {
-    NSLog(@"invite friend");
+    if (DEBUG) NSLog(@"invite friend");
     [TPAppDelegate sendMixpanelEvent:@"Invited a friend"];
     UIView *senderButton = (UIView*) sender;
     NSIndexPath *indexPath = [self.tableView indexPathForCell: (UITableViewCell *)[[[senderButton superview]superview] superview]];
@@ -579,8 +576,7 @@
     
     NSString *number = [contact objectForKey:@"number"];
     
-//    UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Invite" message:[NSString stringWithFormat:@"This will open a text message with this number %@", number] delegate:nil cancelButtonTitle:nil otherButtonTitles:@"FUCK YEAH!", nil];
-//    [alert show];
+
     
     [self showSMS:self.appDelegate.inviteMessageText andRecipients:number];
 }
@@ -607,7 +603,7 @@
 
 
 -(void)sendFriendRequest:(id)sender {
-    NSLog(@"send friend request");
+    if (DEBUG) NSLog(@"send friend request");
     [TPAppDelegate sendMixpanelEvent:@"Sent friend request"];
     UIView *senderButton = (UIView*) sender;
     NSIndexPath *indexPath = [self.tableView indexPathForCell: (UITableViewCell *)[[[senderButton superview]superview] superview]];
@@ -636,7 +632,7 @@
         }
             
         case MessageComposeResultSent:
-            NSLog(@"sent invite");
+            if (DEBUG) NSLog(@"sent invite");
             break;
             
         default:

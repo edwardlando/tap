@@ -56,7 +56,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    NSLog(@"Signup view did load");
+    if (DEBUG) NSLog(@"Signup view did load");
     [self setupCamera];
     self.passwordField.secureTextEntry = YES;
     
@@ -64,10 +64,11 @@
     [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationNone];
     
     
-    UIView *paddingView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 5, 30)];
-    UIView *paddingView2 = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 5, 30)];
+    UIView *paddingView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 30)];
+    UIView *paddingView2 = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 30)];
     self.passwordField.leftView = paddingView;
     self.usernameField.leftView = paddingView2;
+    
     self.passwordField.leftViewMode = UITextFieldViewModeAlways;
     self.usernameField.leftViewMode = UITextFieldViewModeAlways;
     
@@ -75,7 +76,7 @@
     
     
     if ([PFUser currentUser]) {
-        NSLog(@"User existing %@", [PFUser currentUser]);
+        if (DEBUG) NSLog(@"User existing %@", [PFUser currentUser]);
         self.user = [PFUser currentUser];
         [self performSegueWithIdentifier:@"showPhone" sender:self];
     }
@@ -85,7 +86,7 @@
 
 -(void) viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    NSLog(@"Sign Up View will appear");
+    if (DEBUG) NSLog(@"Sign Up View will appear");
 }
 
 - (BOOL)prefersStatusBarHidden {
@@ -103,7 +104,11 @@
     if ([username length] == 0) {
         UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Choose Username" message:@"Make sure you enter a username" delegate:nil cancelButtonTitle:@"OK!" otherButtonTitles: nil];
         [alertView show];
-    } else if ([password length] < 6) {
+    } else if ([username length] < 3) {
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Username Length" message:@"Username must be more than 3 characters" delegate:nil cancelButtonTitle:@"OK!" otherButtonTitles: nil];
+        [alertView show];
+    }
+    else if ([password length] < 6) {
         UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Password Length" message:@"Password must be more than 6 characters" delegate:nil cancelButtonTitle:@"OK!" otherButtonTitles: nil];
         [alertView show];
     }
@@ -112,10 +117,11 @@
         //    hud.mode = MBProgressHUDModeAnnularDeterminate;
         hud.labelText = @"Signing Up...";
 
-        NSLog(@"password and username not empty");
+        if (DEBUG) NSLog(@"password and username not empty %@ %@", username, password);
         // Do I need to initialize the PFUser?
         self.user.username = username;
         self.user.password = password;
+        
         [self.user setObject:[[NSMutableArray alloc] init] forKey:@"friendRequestsArray"];
         [self.user setObject:[[NSMutableArray alloc] init] forKey:@"friendsArray"];
         [self.user setObject:[[NSMutableArray alloc] init] forKey:@"friendRequestsSent"];
@@ -135,7 +141,7 @@
                 [alertView show];
             }
             else {
-                NSLog(@"Showing phone input screen");
+                if (DEBUG) NSLog(@"Showing phone input screen");
                 PFInstallation *currentInstallation = [PFInstallation currentInstallation];
                 [currentInstallation setObject:[PFUser currentUser] forKey:@"user"];
                 [currentInstallation saveInBackground];
@@ -151,11 +157,11 @@
     // Make sure your segue name in storyboard is the same as this line
     if ([[segue identifier] isEqualToString:@"showPhone"])
     {
-        NSLog(@"PERFORMED SEGUE SHOW PHONE");
+        if (DEBUG) NSLog(@"PERFORMED SEGUE SHOW PHONE");
         TPPhoneNumberViewController *vc = (TPPhoneNumberViewController *)[segue destinationViewController];
-        NSLog(@"user %@", self.user);
+        if (DEBUG) NSLog(@"user %@", self.user);
         vc.user = self.user;
-        NSLog(@"vc.user %@", vc.user);
+        if (DEBUG) NSLog(@"vc.user %@", vc.user);
     }
 }
 

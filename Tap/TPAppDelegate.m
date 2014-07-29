@@ -7,6 +7,7 @@
 //
 
 #define MIXPANEL_TOKEN @"98677c640dfade631369fad2cc78bb66"
+//#define DEBUG @(NO)
 
 #import "TPAppDelegate.h"
 #import <Parse/Parse.h>
@@ -23,15 +24,15 @@
 
 -(NSMutableArray *)friendsArray {
     if (!_friendsArray) {
-        NSLog(@"No _friendsArray array");
+        if (DEBUG) NSLog(@"No _friendsArray array");
         _friendsArray = [[NSMutableArray alloc] init];
         NSArray *allFriends = [self getAllFriendsFromCoreData];
-//        NSLog(@"These are the friends from coredata %@", allFriends);
+//        if (DEBUG) NSLog(@"These are the friends from coredata %@", allFriends);
         for (TPFriend *friend in allFriends) {
             PFUser *newFriendObject = [PFUser objectWithoutDataWithObjectId:friend.parseUserId];
             newFriendObject[@"username"] = friend.username;
             newFriendObject[@"phoneNumber"] = friend.phoneNumber;
-//            NSLog(@"Adding this guy to friendsArray %@", newFriendObject);
+//            if (DEBUG) NSLog(@"Adding this guy to friendsArray %@", newFriendObject);
             [_friendsArray addObject:newFriendObject];
         }
     }
@@ -41,9 +42,9 @@
 -(NSMutableArray *)friendsPhoneNumbersArray {
     if (!_friendsPhoneNumbersArray) {
         _friendsPhoneNumbersArray = [[NSMutableArray alloc] init];
-        NSLog(@"No _friendsPhoneNumbersArray array");
+        if (DEBUG) NSLog(@"No _friendsPhoneNumbersArray array");
         NSArray *allFriends = [self getAllFriendsFromCoreData];
-//        NSLog(@"These are the friends from coredata friendsPhoneNumbersArray %@", allFriends);
+//        if (DEBUG) NSLog(@"These are the friends from coredata friendsPhoneNumbersArray %@", allFriends);
         for (TPFriend *friend in allFriends) {
             NSString *phoneNumber = friend.phoneNumber;
             [_friendsPhoneNumbersArray addObject:phoneNumber];
@@ -54,13 +55,13 @@
 
 - (void)loadFriends{
     if([PFUser currentUser].isAuthenticated){
-        NSLog(@"Loading friends");
+        if (DEBUG) NSLog(@"Loading friends");
         NSArray *friendsArray = [[PFUser currentUser] objectForKey:@"friendsArray"];
         self.numbersToUsernamesDict = [[NSMutableDictionary alloc] init];
         self.friendsObjectsDict = [[NSMutableDictionary alloc] init];
         
         if ([friendsArray count] > 0) {
-            NSLog(@"Friends array count > 0");
+            if (DEBUG) NSLog(@"Friends array count > 0");
             for (PFUser *friend in friendsArray) {
                 [friend fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
                     
@@ -81,22 +82,22 @@
                     
                     if (![self.friendsArray containsObject:newFriendObject] && ![self.friendsArray containsObject:friend] && !contained) {
                         
-                        NSLog(@"Adding friend to friendsArray appDelegate %@", [friend objectId]);
+                        if (DEBUG) NSLog(@"Adding friend to friendsArray appDelegate %@", [friend objectId]);
                         [self.friendsArray addObject:newFriendObject];
                         
-                        NSLog(@"This is friendsArray now %ld", [self.friendsArray count]);
+                        if (DEBUG) NSLog(@"This is friendsArray now %ld", [self.friendsArray count]);
                         
                         
                         
                         if (![self checkIfFriendIsInDatabase:[self convertToTPFriendObject:friend]]) {
-                            NSLog(@"Adding friend to coredata %@", [friend objectId]);
+                            if (DEBUG) NSLog(@"Adding friend to coredata %@", [friend objectId]);
                             [self addFriendWithData:[self convertToTPFriendObject:friend]];
                         }
                     }
                     
                     if (![self.friendsPhoneNumbersArray containsObject:[object objectForKey:@"phoneNumber"]]) {
                         [self.friendsPhoneNumbersArray addObject:[object objectForKey:@"phoneNumber"]];
-                        NSLog(@"added this friend's phone nubmer %@", [object objectForKey:@"phoneNumber"]);
+                        if (DEBUG) NSLog(@"added this friend's phone nubmer %@", [object objectForKey:@"phoneNumber"]);
                     }
                 
                     if (![self.numbersToUsernamesDict objectForKey:[object objectForKey:@"username"]]) {
@@ -110,7 +111,7 @@
 
 - (NSArray *)getAllFriendsFromCoreData
 {
-    NSLog(@"Getting all friends from core data");
+    if (DEBUG) NSLog(@"Getting all friends from core data");
     NSManagedObjectContext *context = self.managedObjectContext;
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
     NSEntityDescription *entity = [NSEntityDescription entityForName:@"Friend"
@@ -120,27 +121,26 @@
     NSError *error;
     NSArray *fetchResults = [context executeFetchRequest:fetchRequest error:&error];
     
-    NSLog(@"This is how many friends in core data %ld", [fetchResults count]);
+    if (DEBUG) NSLog(@"This is how many friends in core data %ld", [fetchResults count]);
     return fetchResults;
 }
 
 
 
 -(void)checkIfActive {
-    PFQuery *query = [PFQuery queryWithClassName:@"Settings"];
-    [query whereKey:@"Number" equalTo:@"2"];
-    [query whereKey:@"Type" equalTo:@"active"];
-    [query getFirstObjectInBackgroundWithBlock:^(PFObject *object, NSError *error) {
-        NSLog(@"object %d", [[object objectForKey:@"boolValue"] boolValue]);
-        if (!error) {
-            if ([[object objectForKey:@"boolValue"]boolValue]) {
-                NSLog(@"App is active");
-            } else {
-                exit(0);
-            }
-            
-        }
-    }];
+//    PFQuery *query = [PFQuery queryWithClassName:@"Settings"];
+//    [query whereKey:@"Number" equalTo:@"2"];
+//    [query whereKey:@"Type" equalTo:@"active"];
+//    [query getFirstObjectInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+//        if (DEBUG) NSLog(@"object %d", [[object objectForKey:@"boolValue"] boolValue]);
+//        if (!error) {
+//            if ([[object objectForKey:@"boolValue"]boolValue]) {
+//                if (DEBUG) NSLog(@"App is active");
+//            } else {
+//                if (DEBUG) NSLog(@"App not active");
+//            }
+//        }
+//    }];
 }
 
 -(void)checkForUpdates {
@@ -158,10 +158,10 @@
                                                                         object:content
                                                                       userInfo:nil];
                 } else {
-                    NSLog(@"Version is up to date");
+                    if (DEBUG) NSLog(@"Version is up to date");
                 }
             } else {
-                NSLog(@"Error finding version settings: %@", error);
+                if (DEBUG) NSLog(@"Error finding version settings: %@", error);
             }
         }];
         
@@ -181,7 +181,7 @@
                 }
 
             } else {
-                NSLog(@"Error finding invite message settings: %@", error);
+                if (DEBUG) NSLog(@"Error finding invite message settings: %@", error);
             }
         }];
         
@@ -193,6 +193,8 @@
 {
     // Override point for customization after application launch.
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
+    
+    [[UIApplication sharedApplication] registerForRemoteNotificationTypes: UIRemoteNotificationTypeAlert | UIRemoteNotificationTypeSound];
     
     UIPageControl *pageControl = [UIPageControl appearance];
     pageControl.pageIndicatorTintColor = [UIColor lightGrayColor];
@@ -225,12 +227,12 @@
                                                          @"User": [[PFUser currentUser] objectForKey:@"username"],
                                                          @"Phone": [[PFUser currentUser] objectForKey:@"phoneNumber"]
                                                          }];
-            NSLog(@"Sent mixpanel");
+            if (DEBUG) NSLog(@"Sent mixpanel");
             
 
         }
         @catch (NSException *exception) {
-            NSLog(@"Mixpanel exception %@", exception);
+            if (DEBUG) NSLog(@"Mixpanel exception %@", exception);
         }
     } else {
         [mixpanel track:@"Launched app" properties:@{
@@ -255,7 +257,7 @@
     
     if ([PFUser currentUser]) {
         [[PFUser currentUser] refreshInBackgroundWithBlock:^(PFObject *object, NSError *error) {
-            NSLog(@"Refreshed user");
+            if (DEBUG) NSLog(@"Refreshed user");
             if ([[object objectForKey:@"blocked"]boolValue]) {
                 self.isBlocked = @(YES);
             } else {
@@ -268,19 +270,17 @@
         [self loadFriends];
     }
     @catch (NSException *exception) {
-        NSLog(@"load friends exception %@", exception);
+        if (DEBUG) NSLog(@"load friends exception %@", exception);
     }
 
     
-    NSLog(@"friends array %@", self.friendsPhoneNumbersArray);
-
+    if (DEBUG) NSLog(@"friends array %@", self.friendsPhoneNumbersArray);
 
     // Register for push notifications
     [application registerForRemoteNotificationTypes:
      UIRemoteNotificationTypeBadge |
      UIRemoteNotificationTypeAlert |
      UIRemoteNotificationTypeSound];
-    
     
     return YES;
 }
@@ -295,19 +295,19 @@
                                                    @"User": [[PFUser currentUser] objectForKey:@"username"],
                                                    @"Phone": [[PFUser currentUser] objectForKey:@"phoneNumber"]
                                                    }];
-                NSLog(@"Sent mixpanel");
+                if (DEBUG) NSLog(@"Sent mixpanel");
 
             }
             @catch (NSException *exception) {
-                NSLog(@"Mixpanel excpetion %@", exception);
+                if (DEBUG) NSLog(@"Mixpanel excpetion %@", exception);
             }
         }
     }
 }
 
 void uncaughtExceptionHandler(NSException *exception) {
-    NSLog(@"CRASH: %@", exception);
-    NSLog(@"Stack Trace: %@", [exception callStackSymbols]);
+    if (DEBUG) NSLog(@"CRASH: %@", exception);
+    if (DEBUG) NSLog(@"Stack Trace: %@", [exception callStackSymbols]);
     // Internal error reporting
 }
 
@@ -327,20 +327,18 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
 
 
 -(void)handlePush:(UIApplication *)application andUserInfo:(NSDictionary *)userInfo {
-    NSLog(@"handle push");
-    NSLog(@"userInfo %@", userInfo);
+    if (DEBUG) NSLog(@"handle push");
+    if (DEBUG) NSLog(@"userInfo %@", userInfo);
     
     if ([[userInfo objectForKey:@"type"] isEqualToString:@"newtap"]) {
         [[NSNotificationCenter defaultCenter] postNotificationName:@"newTaps"
                                                             object:nil
                                                           userInfo:nil];
-        NSLog(@"sent new taps notifications");
+        if (DEBUG) NSLog(@"sent new taps notifications");
     }
     
-    
-    
     if ([[userInfo objectForKey:@"aps"] objectForKey:@"badge"]) {
-        NSLog(@"incrementing badge");
+        if (DEBUG) NSLog(@"incrementing badge");
 //        NSInteger badgeNumber = [[[userInfo objectForKey:@"aps"] objectForKey:@"badge"] integerValue];
         PFInstallation *currentInstallation = [PFInstallation currentInstallation];
         NSInteger badgeNumber = currentInstallation.badge;
@@ -386,10 +384,7 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
 {
     
     [self checkIfActive];
-    
-    if ([PFUser currentUser].isAuthenticated){
-            [self loadFriends];
-    }
+
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
 }
 
@@ -407,7 +402,7 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
         if ([managedObjectContext hasChanges] && ![managedObjectContext save:&error]) {
             // Replace this implementation with code to handle the error appropriately.
             // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-            NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+            if (DEBUG) NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
             abort();
         }
     }
@@ -479,7 +474,7 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
          Lightweight migration will only work for a limited set of schema changes; consult "Core Data Model Versioning and Data Migration Programming Guide" for details.
          
          */
-        NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+        if (DEBUG) NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
         abort();
     }
     
@@ -536,7 +531,7 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
         
         NSError *error;
         if (![context save:&error]) {
-            NSLog(@"error adding friend");
+            if (DEBUG) NSLog(@"error adding friend");
             return NO;
         }
         

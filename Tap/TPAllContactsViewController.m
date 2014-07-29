@@ -70,9 +70,9 @@
 {
     [super viewDidLoad];
     
-    NSLog(@"This is still being run");
+    if (DEBUG) NSLog(@"This is still being run");
     
-//    NSLog(@"self.appdel %@", self.appDelegate.contactsPhoneNumbersArray);
+//    if (DEBUG) NSLog(@"self.appdel %@", self.appDelegate.contactsPhoneNumbersArray);
     self.tableView.sectionIndexBackgroundColor = [UIColor clearColor];
     self.tableView.sectionIndexTrackingBackgroundColor = [UIColor lightGrayColor];
     self.tableView.sectionIndexColor = [UIColor darkGrayColor];
@@ -80,7 +80,7 @@
 
 
     if ([self.appDelegate.friendsArray count] == 0) {
-        NSLog(@"No friends in app delegate");
+        if (DEBUG) NSLog(@"No friends in app delegate");
     }
     [self.appDelegate loadFriends];
     if ([self.appDelegate.pendingFriendRequests intValue] > 0) {
@@ -128,9 +128,8 @@
     NSInteger totalFriends = [self.appDelegate.friendsArray count];
     
     if (totalFriends == 0) {
-        NSLog(@"No one in group");
-        //        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"You Have No Friends" message:@"Start by adding or inviting some cool people" delegate:nil cancelButtonTitle:nil otherButtonTitles:@"FUCK YEAH!", nil];
-        //        [alert show];
+        if (DEBUG) NSLog(@"No one in group");
+
     }
     
 }
@@ -173,7 +172,7 @@
         
         return inMyGroup;
     } else {
-        //        NSLog(@"section 2: %d", totalFriends - inMyGroup );
+        //        if (DEBUG) NSLog(@"section 2: %d", totalFriends - inMyGroup );
         return [self.objects count];
     }
     
@@ -224,7 +223,7 @@
     }
     
     PFQuery *query = [PFUser query];
-    NSLog(@"self.friends numbers %@", self.appDelegate.friendsPhoneNumbersArray);
+    if (DEBUG) NSLog(@"self.friends numbers %@", self.appDelegate.friendsPhoneNumbersArray);
     NSArray *friendsPhoneNumbers = self.appDelegate.friendsPhoneNumbersArray;
     
     [query whereKey:@"phoneNumber" containedIn:self.appDelegate.contactsPhoneNumbersArray];
@@ -346,7 +345,7 @@
         friendRequest[@"status"] = @"pending";
         [friendRequest saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
             if (succeeded) {
-                NSLog(@"Saved friend request in background");
+                if (DEBUG) NSLog(@"Saved friend request in background");
 //                [PFCloud callFunctionInBackground:@"sendFriendRequest" withParameters:@{@"targetUserId":[user objectId]} block:^(id object, NSError *error) {
 
                         [ind stopAnimating];
@@ -359,13 +358,13 @@
                         [[[PFUser currentUser] objectForKey:@"friendRequestsSent"] addObject:[user objectId]];
 
                         [[PFUser currentUser] saveEventually:^(BOOL succeeded, NSError *error) {
-                            NSLog(@"Added %@ to friend requests sent ", [user objectId]);
+                            if (DEBUG) NSLog(@"Added %@ to friend requests sent ", [user objectId]);
                         }];
 
 //                }];
                 
             } else {
-                NSLog(@"Error: %@", error);
+                if (DEBUG) NSLog(@"Error: %@", error);
             }
             
         }];

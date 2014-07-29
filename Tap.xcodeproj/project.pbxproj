@@ -87,7 +87,7 @@
 /* Begin PBXFileReference section */
 		AB0FAA79DE484B0F8349D725 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B619B6FA197A380900B84DF9 /* TPAddFriendsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPAddFriendsViewController.h; sourceTree = "<group>"; };
-		B619B6FB197A380900B84DF9 /* TPAddFriendsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TPAddFriendsViewController.m; sourceTree = "<group>"; };
+		B619B6FB197A380900B84DF9 /* TPAddFriendsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = TPAddFriendsViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B6285FBA198572510048D8D7 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		B6285FBD1985740C0048D8D7 /* TPFriend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPFriend.h; sourceTree = "<group>"; };
 		B6285FBE1985740C0048D8D7 /* TPFriend.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TPFriend.m; sourceTree = "<group>"; };
@@ -157,7 +157,7 @@
 		B6CB8EAA1967CBA4002996E8 /* TPAllContactsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPAllContactsViewController.h; sourceTree = "<group>"; };
 		B6CB8EAB1967CBA4002996E8 /* TPAllContactsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TPAllContactsViewController.m; sourceTree = "<group>"; };
 		B6CB8EB41967CF69002996E8 /* CaptureSessionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CaptureSessionManager.h; sourceTree = "<group>"; };
-		B6CB8EB51967CF69002996E8 /* CaptureSessionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CaptureSessionManager.m; sourceTree = "<group>"; };
+		B6CB8EB51967CF69002996E8 /* CaptureSessionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CaptureSessionManager.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B6CB8EBA1967D59E002996E8 /* TPProcessImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TPProcessImage.h; path = ../TPProcessImage.h; sourceTree = "<group>"; };
 		B6CB8EBB1967D59E002996E8 /* TPProcessImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TPProcessImage.m; path = ../TPProcessImage.m; sourceTree = "<group>"; };
 		B6CB8EBD1967E09A002996E8 /* TPSingleTapViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TPSingleTapViewController.h; path = ../TPSingleTapViewController.h; sourceTree = "<group>"; };
@@ -842,6 +842,10 @@
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Tap/Tap-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=0",
+					"COCOAPODS=1",
+				);
 				INFOPLIST_FILE = "Tap/Tap-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				ONLY_ACTIVE_ARCH = YES;

@@ -48,7 +48,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    NSLog(@"Phone Number View Did Load");
+    if (DEBUG) NSLog(@"Phone Number View Did Load");
     UIView *paddingView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 5, 30)];
     self.phoneField.leftView = paddingView;
 
@@ -60,6 +60,12 @@
 
 -(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    UIView *paddingView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 30)];
+    self.phoneField.leftView = paddingView;
+    
+    
+    self.phoneField.leftViewMode = UITextFieldViewModeAlways;
+    
     [self.phoneField becomeFirstResponder];
     [self setupCamera];
 }
@@ -69,7 +75,7 @@
 }
 
 - (void)savePhone{
-    NSLog(@"Saving phone");
+    if (DEBUG) NSLog(@"Saving phone");
     NSString *phone = [self.phoneField.text stringByTrimmingCharactersInSet:
                           [NSCharacterSet whitespaceAndNewlineCharacterSet]];
    
@@ -78,11 +84,10 @@
         [alertView show];
     }
     else {
-        NSLog(@"Phone not length 0");
+        if (DEBUG) NSLog(@"Phone not length 0");
         MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
         hud.labelText = @"Verifying...";
         
-
 //        if ([phone characterAtIndex:0] == '+' && [phone characterAtIndex:1] == '1') {
 //            phone = [phone stringByReplacingOccurrencesOfString:@"+1" withString:@"1"];
 //            phone = [phone stringByReplacingOccurrencesOfString:@"+1 " withString:@"1"];
@@ -93,16 +98,25 @@
         }
         
         
-        [self.user setObject:phone forKey:@"phone"];
-        [self.user setObject:phone forKey:@"phoneNumber"];
-        NSLog(@"%@", self.user);
+
+        
+        if (DEBUG) NSLog(@"this is the user %@", self.user);
         
         
         [PFCloud callFunctionInBackground:@"sendVerificationCode" withParameters:@{@"phoneNumber":phone} block:^(id object, NSError *error) {
             [hud hide:YES];
             if (error) {
-                NSLog(@"Error sending verification code");
+                if (DEBUG) NSLog(@"Error sending verification code %@", error);
+                    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Something went wrong" message:@"Please try again. Make sure your internet connection is strong and that you didn't sign up with this number before." delegate:nil cancelButtonTitle:@"OK!" otherButtonTitles: nil];
+                    [alertView show];
+
+                
+                // phone number taken
+                
+                
             } else {
+                [self.user setObject:phone forKey:@"phone"];
+                [self.user setObject:phone forKey:@"phoneNumber"];
                 [self performSegueWithIdentifier:@"showVerify" sender:self];
             }
             //
@@ -116,9 +130,9 @@
     if ([[segue identifier] isEqualToString:@"showVerify"])
     {
         TPVerifyViewController *vc = (TPVerifyViewController *)[segue destinationViewController];
-        NSLog(@"user %@", self.user);
+        if (DEBUG) NSLog(@"user %@", self.user);
         vc.user = self.user;
-        NSLog(@"vc.user %@", vc.user);
+        if (DEBUG) NSLog(@"vc.user %@", vc.user);
         
         
     }
@@ -127,7 +141,7 @@
 
 
 - (IBAction)continue:(id)sender {
-    NSLog(@"Continue");
+    if (DEBUG) NSLog(@"Continue");
     [self savePhone];
 }
 

@@ -16,11 +16,31 @@ Array.prototype.arrayContains = function(obj) {
 }
 
 
-// Parse.Cloud.beforeSave(Parse.User, function(request, response) {
-//     console.log("user before save");
-//     createUserBroadcast(request.object);
-//     response.success();
-// });
+Parse.Cloud.beforeSave(Parse.User, function(request, response) {
+    console.log("user after save");
+    if (request.object.isNew()) {
+        Parse.Cloud.useMasterKey();
+        var user = request.object;
+
+        var forbiddenUsernames = ["popcast", "Popcast"];
+        
+        if (forbiddenUsernames.arrayContains(user.get("username"))) {
+            response.error("forbidden");
+        }
+
+        var popcastUser = new Parse.User();
+        popcastUser.id = "NKkFfA4Ec3";
+        var friendsArray = new Array();
+        friendsArray.push(popcastUser);
+        user.set("friendsArray", friendsArray);
+        console.log("successfuly added popcast user as friend");
+        response.success();
+    } else {
+        console.log("user not new");
+        response.success();
+    }
+});
+
 
 
 // var createUserBroadcast = function ( user) {
@@ -34,22 +54,48 @@ Array.prototype.arrayContains = function(obj) {
 
 // } 
 
+// var isPhoneNumberAvailable = function (phoneNumber) {
+//     console.log("isPhoneNumberAvailable called on " + phoneNumber);
+    
+// }
 
 Parse.Cloud.define("sendVerificationCode",function(request,response){
   var code = (Math.floor(Math.random()*9000)+1000).toString();
+  var phoneNumber = request.params.phoneNumber;
+  var query = new Parse.Query("_User");
+    query.equalTo("phoneNumber", phoneNumber);
+    query.find({
+        success: function(results) {
+            console.log("isPhoneNumberAvailable found:");
+            console.log(results);
+            if (results.length > 0) {
+                response.error("taken");
+            } else {
+                console.log("gone past checking if phone number is avaiable");
 
-  var user = request.user;
-  user.set("phoneNumber",request.params.phoneNumber);
-  user.set("phoneVerified",false);
-  user.set("verifyCode",code);
+                  var user = request.user;
 
-  user.save().then(function(obj){
-      textVerification(request.params.phoneNumber,code);
-      console.log("code " + code);
-      response.success("Sent verif code to "+ request.params.phoneNumber);
-  },function (error) {
-      response.error(error);
-  });
+                  // user.set("phoneNumber",phoneNumber);
+                  user.set("phoneVerified",false);
+                  user.set("verifyCode",code);
+
+                  user.save().then(function(obj){
+                      textVerification(phoneNumber,code);
+                      console.log("Sent verif code to "+ phoneNumber);
+                      response.success();
+                  },function (error) {
+                      response.error(error);
+                  });
+            }
+        },
+        error: function ( error) {
+            console.log("error finding phone number");
+            console.log(error);
+            response.error(error);
+        }
+    });
+
+  
 });
 
 
@@ -71,7 +117,8 @@ var getContactNameFromPhoneNumber = function(userId, phoneNumber) {
                 
                 // object.save().then(
                 //     function (res) {
-                response.success("getContactNameFromPhoneNumber " + object);
+                console.log("getContactNameFromPhoneNumber " + object);
+                response.success();
                         // console.log(response);
                     // }, function ( error) {
                          // response.error(error);
@@ -549,7 +596,8 @@ Parse.Cloud.define("verifyCode",function(request,response){
                                     inst[0].set("channels",chan);
                                     // inst.set("user",user);
                                     inst[0].save().then(function(obj){
-                                        response.success("true");
+                                        console.log("true");
+                                        response.success();
                                     },function(error){
                                         response.error("Failed to save installation " + error);
                                     });
@@ -567,7 +615,8 @@ Parse.Cloud.define("verifyCode",function(request,response){
                 });
             }
             else{
-                response.success("false");
+                console.log("false");
+                response.success();
             }
         },
         error:function(error){

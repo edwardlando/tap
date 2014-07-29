@@ -161,30 +161,38 @@
         self.paginationEnabled = NO;
         
         // The number of objects to show per page
-//        self.objectsPerPage = 20;
+        self.objectsPerPage = 100;
         
         
     }
     return self;
 }
 
+-(void)loadedForFirstTime {
+    UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"This is your inbox" message:@"Here you'll find your casts and your friends'. Casts live for 24 hours and can only be viewed once. Have fun 😎" delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK!", nil];
+    [alert show];
+    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"hasOpenedInbox"];
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     self.sections = @[@"ME", @"FRIENDS"];
-    NSLog(@"Inbox view did load");
+    if (DEBUG) NSLog(@"Inbox view did load");
 //    self.loadedTapsByIndexPaths = nil;
     [self registerForNotifications];
 //    [self setTapLogo];
     [self setNavbarIcon];
     [self setupNavBarStyle];
     
+        if(![[NSUserDefaults standardUserDefaults] boolForKey:@"hasOpenedInbox"]) {
+            [self loadedForFirstTime];
+        }
 //    self.selectedInteraction =[[PFObject alloc] initWithClassName:@"Interaction"];
-//    NSLog(@"selected interaction %@", self.selectedInteraction);
+//    if (DEBUG) NSLog(@"selected interaction %@", self.selectedInteraction);
 //    [self.navigationController.navigationBar setTintColor:[UIColor whiteColor]];
     
-    UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"This is your inbox" message:@"" delegate:nil cancelButtonTitle:nil otherButtonTitles:@"FUCK YEAH!", nil];
-    [alert show];
+
 
 }
 
@@ -201,7 +209,7 @@
 
     }
     @catch (NSException *exception) {
-        NSLog(@"set navbar exception: %@", exception);
+        if (DEBUG) NSLog(@"set navbar exception: %@", exception);
     }
 }
 
@@ -273,7 +281,7 @@
 -(void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
     [self.customBadge removeFromSuperview];
-    NSLog(@"View disappeared");
+    if (DEBUG) NSLog(@"View disappeared");
     
     
 }
@@ -317,7 +325,7 @@
     [self dismissViewControllerAnimated:NO completion:nil];
 }
 -(void)handleNewTaps {
-    NSLog(@"handle new taps");
+    if (DEBUG) NSLog(@"handle new taps");
 //    [self queryForTable];
 //    self.view ref
 //    [self.tableView reloadData];
@@ -325,7 +333,7 @@
 }
 
 -(void)didDismissSingleTapView:(NSNotification *)notification {
-    NSLog(@"Dismissed single tap view %@", notification.object);
+    if (DEBUG) NSLog(@"Dismissed single tap view %@", notification.object);
     
     @try {
         
@@ -345,7 +353,7 @@
         [self.tableView reloadData];
     }
     @catch (NSException *exception) {
-        NSLog(@"Exceptions : %@", exception);
+        if (DEBUG) NSLog(@"Exceptions : %@", exception);
     }
     @finally {
         
@@ -379,11 +387,11 @@
         [self checkUserSituation];
         return;
     }
-    NSLog(@"querying my broadcasts");
+    if (DEBUG) NSLog(@"querying my broadcasts");
 
     PFQuery *myFlipcasts = [PFQuery queryWithClassName:@"Flipcast"];
     
-    NSLog (@"my flipcasts has cached results %d",[myFlipcasts hasCachedResult]);
+    if (DEBUG) NSLog (@"my flipcasts has cached results %d",[myFlipcasts hasCachedResult]);
     
     [myFlipcasts whereKey:@"owner" equalTo:[PFUser currentUser]];
     
@@ -392,14 +400,14 @@
     
     [myFlipcasts orderByDescending:@"createdAt"];
     [myFlipcasts findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-        NSLog(@"self.myflip count %lu == objects count %lx", (unsigned long)[self.myFlipcasts count], (unsigned long)[objects count]);
-        NSLog(@"[self.myFlipcasts count] != [objects count] ---- %d", [self.myFlipcasts count] != [objects count]);
+        if (DEBUG) NSLog(@"self.myflip count %lu == objects count %lx", (unsigned long)[self.myFlipcasts count], (unsigned long)[objects count]);
+        if (DEBUG) NSLog(@"[self.myFlipcasts count] != [objects count] ---- %d", [self.myFlipcasts count] != [objects count]);
         if ([self.myFlipcasts count] != [objects count]) {
             self.myFlipcasts = [objects mutableCopy];
-            NSLog(@"shouldSkipFetchingMyFlips = NO");
+            if (DEBUG) NSLog(@"shouldSkipFetchingMyFlips = NO");
             shouldSkipFetchingMyFlips = NO;
         } else {
-            NSLog(@"shouldSkipFetchingMyFlips = YES");
+            if (DEBUG) NSLog(@"shouldSkipFetchingMyFlips = YES");
             shouldSkipFetchingMyFlips = YES;
         }
 //        [self viewDidLoad];
@@ -416,20 +424,20 @@
 
 -(void) objectsDidLoad:(NSError *)error {
     [super objectsDidLoad:error];
-    NSLog(@"self.objects count %ld", (unsigned long)[self.objects count]);
-    NSLog(@"self.mybroadcasts count %ld", (unsigned long)[self.myFlipcasts count]);
+    if (DEBUG) NSLog(@"self.objects count %ld", (unsigned long)[self.objects count]);
+    if (DEBUG) NSLog(@"self.mybroadcasts count %ld", (unsigned long)[self.myFlipcasts count]);
     [self getThumbnailAndAdditionalDataForAllObjects];
 
 }
 
 -(void)getThumbnailAndAdditionalDataForMyPopcasts {
-    NSLog(@"getThumbnailAndAdditionalDataForMyPopcasts");
+    if (DEBUG) NSLog(@"getThumbnailAndAdditionalDataForMyPopcasts");
     
     if (!self.myFlipcasts) {
-        NSLog(@"No flipcasts");
+        if (DEBUG) NSLog(@"No flipcasts");
         return;
     } else {
-        NSLog(@"Got flipcasts");
+        if (DEBUG) NSLog(@"Got flipcasts");
     }
     
     NSMutableArray *batchIds = [[NSMutableArray alloc] init];
@@ -441,30 +449,30 @@
     
     PFQuery *tapsQuery = [[PFQuery alloc] initWithClassName:@"Message"];
     [tapsQuery whereKey:@"batchId" containedIn:batchIds];
-//    NSLog(@"batchId contained in %@",batchIds);
+//    if (DEBUG) NSLog(@"batchId contained in %@",batchIds);
     [tapsQuery whereKey:@"imageId" equalTo:@(1)];
     [tapsQuery orderByAscending:@"createdAt"];
     [tapsQuery whereKey:@"senderId" equalTo:[[PFUser currentUser] objectId]];
     [tapsQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         if (!error) {
-            NSLog(@"got first ones in my flipcasts. Number of first ones: %ld", [objects count]);
+            if (DEBUG) NSLog(@"got first ones in my flipcasts. Number of first ones: %ld", [objects count]);
             for (PFObject *message in objects) {
-                NSLog(@"This is a first with batchId %@", [message objectForKey:@"batchId"]);
+                if (DEBUG) NSLog(@"This is a first with batchId %@", [message objectForKey:@"batchId"]);
 
 
                 NSString *batchId = [message objectForKey:@"batchId"];
                 
                 if (![self.additionalInformationForBatchId objectForKey:batchId]) {
-                    NSLog(@"Adding first one with batchId %@",batchId);
+                    if (DEBUG) NSLog(@"Adding first one with batchId %@",batchId);
                     [self.additionalInformationForBatchId setObject:message forKey: batchId];
                     [self.tableView reloadData];
                 } else {
-                    NSLog(@"Already got first one with batchId %@",batchId);
+                    if (DEBUG) NSLog(@"Already got first one with batchId %@",batchId);
                 }
                 
             }
         } else {
-            NSLog(@"Error getting the first ones %@", error);
+            if (DEBUG) NSLog(@"Error getting the first ones %@", error);
         }
     }];
     
@@ -472,13 +480,13 @@
 
 -(void)getThumbnailAndAdditionalDataForAllObjects {
     
-    NSLog(@"getThumbnailAndAdditionalDataForAllObjects");
+    if (DEBUG) NSLog(@"getThumbnailAndAdditionalDataForAllObjects");
     
     if (!self.objects) {
-        NSLog(@"No objects");
+        if (DEBUG) NSLog(@"No objects");
         return;
     } else {
-        NSLog(@"Got objects");
+        if (DEBUG) NSLog(@"Got objects");
     }
     
     NSMutableArray *sendingUsersIds = [[NSMutableArray alloc] init];
@@ -495,32 +503,32 @@
     PFQuery *tapsQuery = [[PFQuery alloc] initWithClassName:@"Message"];
 
     [tapsQuery whereKey:@"batchId" containedIn:batchIds];
-//    NSLog(@"batchId contained in %@",batchIds);
+//    if (DEBUG) NSLog(@"batchId contained in %@",batchIds);
     [tapsQuery whereKey:@"imageId" equalTo:@(1)];
     [tapsQuery orderByAscending:@"createdAt"];
     [tapsQuery whereKey:@"senderId" containedIn:sendingUsersIds];
-//    NSLog(@"senderId contained in %@",sendingUsersIds);
+//    if (DEBUG) NSLog(@"senderId contained in %@",sendingUsersIds);
     [tapsQuery whereKey:@"readArray" notEqualTo:[[PFUser currentUser] objectId]];
     [tapsQuery whereKey:@"objectId" notContainedIn:self.appDelegate.allReadTaps];
     
     [tapsQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         if (!error) {
-            NSLog(@"got first ones. Number of first ones: %ld", [objects count]);
+            if (DEBUG) NSLog(@"got first ones. Number of first ones: %ld", [objects count]);
             for (PFObject *message in objects) {
-                NSLog(@"This is a first one  by %@", [message objectForKey:@"sender"]);
+                if (DEBUG) NSLog(@"This is a first one  by %@", [message objectForKey:@"sender"]);
                 NSString *senderId = [[message objectForKey:@"sender"] objectId];
                 
                 if (![self.additionalInformationForSenderId objectForKey:senderId]) {
-                    NSLog(@"Adding first one from %@",senderId);
+                    if (DEBUG) NSLog(@"Adding first one from %@",senderId);
                     [self.additionalInformationForSenderId setObject:message forKey: senderId];
                     [self.tableView reloadData];
                 } else {
-                    NSLog(@"Already got first one from %@",senderId);
+                    if (DEBUG) NSLog(@"Already got first one from %@",senderId);
                 }
 
             }
         } else {
-            NSLog(@"Error getting the first ones %@", error);
+            if (DEBUG) NSLog(@"Error getting the first ones %@", error);
         }
     }];
 }
@@ -610,7 +618,7 @@
 
 
 -(void)cellHasNoTaps:(TPViewCell *)cell withObject:(PFObject *)object{
-    NSLog(@"This is cellHasNoTaps");
+    if (DEBUG) NSLog(@"This is cellHasNoTaps");
     cell.backgroundColor = [UIColor whiteColor];
     cell.textLabel.font = DEFAULT_FONT;
 //    @try {
@@ -630,7 +638,7 @@
 //    }
 //    @catch (NSException *exception) {
 //        cell.detailTextLabel.text = @"";
-//        NSLog(@"latest status exception %@", exception);
+//        if (DEBUG) NSLog(@"latest status exception %@", exception);
 //    }
     cell.detailTextLabel.text = @"";
 
@@ -754,8 +762,8 @@
 
 -(void)initCellWithMyPopcast:(TPViewCell *)cell withMessageObjects:(PFObject *)message andPopcast:(PFObject *)popcast {
     
-    NSLog(@"initCellWithMyPopcast");
-    NSLog(@"loadedTapsByBatchId %@", self.loadedTapsByBatchId);
+    if (DEBUG) NSLog(@"initCellWithMyPopcast");
+    if (DEBUG) NSLog(@"loadedTapsByBatchId %@", self.loadedTapsByBatchId);
     
     cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:FONTSIZE];
     
@@ -771,7 +779,7 @@
             status = [[popcast objectForKey:@"firstCaption"] substringToIndex:25];
             status = [NSString stringWithFormat:@"%@...", status];
         }
-        NSLog(@"There is first caption %@", status);
+        if (DEBUG) NSLog(@"There is first caption %@", status);
         cell.textLabel.text = status;
     } else {
             cell.textLabel.text = @"Sent";
@@ -796,7 +804,7 @@
     cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ ago - Tap to view",[self dateDiff:[dateFormat stringFromDate:created]]];
     
     if ([self.loadedTapsByBatchId containsObject:[message objectForKey:@"batchId" ]]) {
-        NSLog(@"Already loaded this batch!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        if (DEBUG) NSLog(@"Already loaded this batch!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 //        cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ ago - Tap to open",
 //                                     [self dateDiff:[dateFormat stringFromDate:created]]];
         
@@ -839,13 +847,13 @@
 //                                   [ind stopAnimating];
                                    [ind setHidden:YES];
                                } else {
-                                   NSLog(@"Error gettings image");
+                                   if (DEBUG) NSLog(@"Error gettings image");
                                }
                            }];
 }
 
 -(void)initCellWithTaps:(TPViewCell *)cell withMessageObjects:(PFObject *)message {
-    NSLog(@"This cell has message %@", cell);
+    if (DEBUG) NSLog(@"This cell has message %@", cell);
     cell.userInteractionEnabled = YES;
     cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:FONTSIZE];
     NSDate *created = [message updatedAt];
@@ -912,7 +920,7 @@
 //                                   [ind stopAnimating];
                                    [ind setHidden:YES];
                                } else {
-                                   NSLog(@"Error gettings image");
+                                   if (DEBUG) NSLog(@"Error gettings image");
                                }
                            }];
 }
@@ -948,7 +956,7 @@
         
         if([title isEqualToString:@"Delete"])
         {
-            NSLog(@"Delete %@", self.flipcastToEdit);
+            if (DEBUG) NSLog(@"Delete %@", self.flipcastToEdit);
             [self deleteFlipCast:self.flipcastToEdit];
         } else if ([title isEqualToString:@"Edit title"]) {
             [self editCastTitle:self.flipcastToEdit];
@@ -978,12 +986,12 @@
 }
 
 -(void)saveNewCastTitle:(NSString *)title forCast:(PFObject *)cast {
-    NSLog(@"This is the new title %@ for this cast %@", title, cast);
+    if (DEBUG) NSLog(@"This is the new title %@ for this cast %@", title, cast);
     if (title) {
         [cast setObject:title forKey:@"firstCaption"];
         [cast saveEventually:^(BOOL succeeded, NSError *error) {
             if (succeeded) {
-                NSLog(@"Succesfully changed title");
+                if (DEBUG) NSLog(@"Succesfully changed title");
                 [self.tableView reloadData];
             }
         }];
@@ -1003,7 +1011,7 @@
         if (!error) {
             NSMutableArray *batchIds = [object objectForKey:@"batchIds"];
             if ([batchIds containsObject:batchId]) {
-                NSLog(@"found batchId %@ in batchIds", batchId);
+                if (DEBUG) NSLog(@"found batchId %@ in batchIds", batchId);
                 [batchIds removeObject:batchId];
                 [object setObject:batchIds forKey:@"batchIds"];
                 [object saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
@@ -1015,21 +1023,21 @@
                         
                         [self.tableView reloadData];
                         
-                        NSLog(@"Successfuly removed batchId");
+                        if (DEBUG) NSLog(@"Successfuly removed batchId");
                     } else {
-                        NSLog(@"Error removing batchId: %@", error);
+                        if (DEBUG) NSLog(@"Error removing batchId: %@", error);
                     }
                 }];
             }
         } else {
-            NSLog(@"Error getting broadcast: %@", error);
+            if (DEBUG) NSLog(@"Error getting broadcast: %@", error);
         }
     }];
     [flipcast deleteInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         if (succeeded) {
-            NSLog(@"Removed this cast");
+            if (DEBUG) NSLog(@"Removed this cast");
         } else {
-            NSLog(@"Error deleting cast: %@", error);
+            if (DEBUG) NSLog(@"Error deleting cast: %@", error);
         }
     }];
 }
@@ -1076,18 +1084,18 @@
     PFQuery *query = [PFQuery queryWithClassName:@"FriendRequest"];
     [query whereKey:@"targetUser" equalTo:[PFUser currentUser] ];
     
-//    NSLog(@"Friends phone numbers array %@", self.appDelegate.friendsPhoneNumbersArray);
+//    if (DEBUG) NSLog(@"Friends phone numbers array %@", self.appDelegate.friendsPhoneNumbersArray);
     [query whereKey:@"requestingUserPhoneNumber" notContainedIn:self.appDelegate.friendsPhoneNumbersArray];
     [query whereKey:@"status" equalTo:@"pending"];
     [query countObjectsInBackgroundWithBlock:^(int number, NSError *error) {
-        NSLog(@"counted friend requests %d", number);
+        if (DEBUG) NSLog(@"counted friend requests %d", number);
         self.appDelegate.pendingFriendRequests = @(number);
         [self initFriendRequestsBadge];
     }];
 }
 
 -(void)initFriendRequestsBadge {
-    NSLog(@"initFriendRequestsBadge");
+    if (DEBUG) NSLog(@"initFriendRequestsBadge");
     
     if ([self.appDelegate.pendingFriendRequests intValue] > 0) {
         self.customBadge = [CustomBadge customBadgeWithString:[self.appDelegate.pendingFriendRequests stringValue]
@@ -1115,7 +1123,7 @@
 -(void)checkUserSituation {
     PFUser *currentUser = [PFUser currentUser];
     if (!currentUser && currentUser.isAuthenticated) {
-        NSLog(@"No user on inbox");
+        if (DEBUG) NSLog(@"No user on inbox");
         [self dismissViewControllerAnimated:NO completion:nil];
     }
 }
@@ -1130,15 +1138,15 @@
     [tableView deselectRowAtIndexPath:indexPath animated:NO];
 
     
-    NSLog(@"Cell.hasNewTaps %x", [cell.hasNewTaps boolValue]);
+    if (DEBUG) NSLog(@"Cell.hasNewTaps %x", [cell.hasNewTaps boolValue]);
     
     if (![cell.hasNewTaps boolValue]) {
-        NSLog(@"Doesn't have new taps");
+        if (DEBUG) NSLog(@"Doesn't have new taps");
         return;
     }
     
     if (![self.loadedTapsByIndexPaths containsObject:indexPath]) {
-        NSLog(@"Loaded taps doesn't contain this one: %@", indexPath);
+        if (DEBUG) NSLog(@"Loaded taps doesn't contain this one: %@", indexPath);
 //        cell.detailTextLabel.text = @"Loading...";
 //        UIActivityIndicatorView *ind = (UIActivityIndicatorView *)[cell viewWithTag:5];
 //        [ind startAnimating];
@@ -1147,7 +1155,7 @@
         [self loadImagesForIndexPath:indexPath];
         return;
     } else {
-        NSLog(@"[self.loadedTapsByIndexPaths containsObject:indexPath]");
+        if (DEBUG) NSLog(@"[self.loadedTapsByIndexPaths containsObject:indexPath]");
     }
     
     BOOL isMyFlipcast;
@@ -1168,17 +1176,17 @@
     
 
     
-//    NSLog(@"self.allTapsImages %@", self.allTapsImages);
-    NSLog(@"[self.selectedBroadcast objectId] %@", [self.selectedBroadcast objectId]);
+//    if (DEBUG) NSLog(@"self.allTapsImages %@", self.allTapsImages);
+    if (DEBUG) NSLog(@"[self.selectedBroadcast objectId] %@", [self.selectedBroadcast objectId]);
     
     UILabel *tapsCounter = (UILabel *)[cell viewWithTag:11];
     [tapsCounter setHidden:YES];
     
 
     if (([batchTaps count] == 0 || !allInteractionTaps) && !isMyFlipcast) {
-        NSLog(@"Batch taps is 0 or no interactionsTaps");
-        NSLog(@"BatchTaps %@", batchTaps);
-        NSLog(@"allInteractionTaps %@", allInteractionTaps);
+        if (DEBUG) NSLog(@"Batch taps is 0 or no interactionsTaps");
+        if (DEBUG) NSLog(@"BatchTaps %@", batchTaps);
+        if (DEBUG) NSLog(@"allInteractionTaps %@", allInteractionTaps);
 
 //        PFUser *userToReply = cell.sendingUser;
 //        [self performSegueWithIdentifier:@"showCamera" sender:userToReply];
@@ -1191,12 +1199,12 @@
 //        NSArray *sortedImagesArray = [batchTapsImages sortedArrayUsingDescriptors:sortDescriptors];
         NSArray *sortedTapsArray = [batchTaps sortedArrayUsingDescriptors:sortDescriptors];
         
-//        NSLog(@"batch images array %@", batchTapsImages);
-//        NSLog(@"sorted batch images array %@", sortedImagesArray);
-//        NSLog(@"batch taps %@", batchTaps);
+//        if (DEBUG) NSLog(@"batch images array %@", batchTapsImages);
+//        if (DEBUG) NSLog(@"sorted batch images array %@", sortedImagesArray);
+//        if (DEBUG) NSLog(@"batch taps %@", batchTaps);
         
 //        if (cell.justVisited) {
-//            NSLog(@"tapped on the one visited");
+//            if (DEBUG) NSLog(@"tapped on the one visited");
 //            batchTaps = [[NSMutableArray alloc] init];
 //            sortedImagesArray = [[NSMutableArray alloc] init];
             
@@ -1216,21 +1224,21 @@
                     [allFlipcastsArray addObject:tapBatchId];
                 }
                 if (![allTapsDict objectForKey:tapBatchId]) {
-                    NSLog(@"First tap %@", [tap objectForKey:@"imageId"]);
+                    if (DEBUG) NSLog(@"First tap %@", [tap objectForKey:@"imageId"]);
                     [allTapsDict setObject:[[NSMutableArray alloc] initWithObjects:tap, nil] forKey:tapBatchId];
                 } else {
                     if (![[allTapsDict objectForKey:tapBatchId] containsObject:tap]) {
-                        NSLog(@"adding this %@", [tap objectForKey:@"imageId"]);
+                        if (DEBUG) NSLog(@"adding this %@", [tap objectForKey:@"imageId"]);
                         [[allTapsDict objectForKey:tapBatchId] addObject:tap];
                     } else {
-                        NSLog(@"aleady contains this tap %@", [tap objectForKey:@"imageId"]);
+                        if (DEBUG) NSLog(@"aleady contains this tap %@", [tap objectForKey:@"imageId"]);
                     }
                 }
             }
         }
 
         if (isMyFlipcast) {
-         NSLog(@"It is my flipcast");
+         if (DEBUG) NSLog(@"It is my flipcast");
         } else {
             [[cell viewWithTag:516] setHidden:YES];
             [self cellHasNoTaps:cell withObject:self.selectedBroadcast];
@@ -1254,7 +1262,7 @@
 }
 
 -(void)loadImagesForIndexPath:(NSIndexPath *)indexPath {
-    NSLog(@"loadImagesForIndexPath %@", indexPath);
+    if (DEBUG) NSLog(@"loadImagesForIndexPath %@", indexPath);
     
     TPViewCell *cell = (TPViewCell *)[self.tableView cellForRowAtIndexPath:indexPath];
     UIActivityIndicatorView *ind = (UIActivityIndicatorView *)[cell viewWithTag:5];
@@ -1266,7 +1274,7 @@
     if (indexPath.section == 0) {
 //        static NSString *CellIdentifier = @"sentTap";
         
-        NSLog(@"Section is 0: My Taps");
+        if (DEBUG) NSLog(@"Section is 0: My Taps");
         
         PFObject *flipcast = [self.myFlipcasts objectAtIndex:indexPath.row];
         
@@ -1295,7 +1303,7 @@
         
         UILabel *tapsCounter = (UILabel *)[cell viewWithTag:11];
         UIImageView *thumb = (UIImageView *)[cell viewWithTag:516];
-        NSLog(@"My Flipcasts count %ld", (unsigned long)[self.myFlipcasts count]);
+        if (DEBUG) NSLog(@"My Flipcasts count %ld", (unsigned long)[self.myFlipcasts count]);
         
         [tapsQuery whereKey:@"batchId" equalTo:[flipcast objectForKey:@"batchId"]];
         [tapsQuery orderByAscending:@"batchId"];
@@ -1309,13 +1317,13 @@
                 if ([objects count] > 0) {
 //                    cell.detailTextLabel.text = @"Loading...";
 //                    
-//                    NSLog(@"Number of objects %ld", (unsigned long)[objects count]);
+//                    if (DEBUG) NSLog(@"Number of objects %ld", (unsigned long)[objects count]);
 //                    cell.userInteractionEnabled = NO;
 //                    [tapsCounter setHidden: YES];
 //                    [ind startAnimating];
 //                    [ind setHidden:NO];
                 } else {
-                    NSLog(@"No Objects");
+                    if (DEBUG) NSLog(@"No Objects");
                 }
                 
                 [self.allTaps setObject:objects forKey:broadcastId];
@@ -1341,8 +1349,8 @@
                                            completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
                                                if ( !error )
                                                {
-                                                   //                                                    NSLog(@"Start fetching photos");
-                                                   //                                                    NSLog(@"read array %@", [tap objectForKey:@"readArray"]);
+                                                   //                                                    if (DEBUG) NSLog(@"Start fetching photos");
+                                                   //                                                    if (DEBUG) NSLog(@"read array %@", [tap objectForKey:@"readArray"]);
                                                    //                                                    long readArrayCount = [[tap objectForKey:@"readArray"] count];
                                                    //                                                    if (readArrayCount > 0) {
                                                    //                                                        cell.detailTextLabel.text = readArrayCount == 1 ? [NSString stringWithFormat:@"Tap to open - %ld view", readArrayCount] : [NSString stringWithFormat:@"Tap to open - %ld views", readArrayCount];
@@ -1367,7 +1375,7 @@
                                                    }
                                                    
                                                    
-                                                   NSLog(@"%d iterations out of %ld objects", iterations, (unsigned long)[objects count]);
+                                                   if (DEBUG) NSLog(@"%d iterations out of %ld objects", iterations, (unsigned long)[objects count]);
                                                    
                                                    iterations++;
                                                    if (iterations == [objects count]) {
@@ -1390,18 +1398,18 @@
                                                        
                                                        [self.allTapsImages setObject:allPhotosInBatchDict forKey:broadcastId];
                                                       
-                                                       NSLog(@"All taps images set object %@", broadcastId);
+                                                       if (DEBUG) NSLog(@"All taps images set object %@", broadcastId);
                                                        
                                                        [allPhotosInBatchDict setObject: allPhotosInBatch forKey:batchId];
-                                                       //                                                        NSLog(@"all photos in batch %@", allPhotosInBatch);
+                                                       //                                                        if (DEBUG) NSLog(@"all photos in batch %@", allPhotosInBatch);
                                                        //  [self.allTapsImages setValue:allPhotosInBatch forKey:batchId];
-                                                       //   NSLog(@"All taps images %@", self.allTapsImages);
+                                                       //   if (DEBUG) NSLog(@"All taps images %@", self.allTapsImages);
 //                                                       [ind stopAnimating];
                                                        [ind setHidden:YES];
                                                        
                                                        cell.userInteractionEnabled = YES;
                                                        
-                                                       NSLog(@"loadedTapsByIndexPaths add object %@", indexPath);
+                                                       if (DEBUG) NSLog(@"loadedTapsByIndexPaths add object %@", indexPath);
                                                        if (![self.loadedTapsByIndexPaths containsObject:indexPath])
                                                            [self.loadedTapsByIndexPaths addObject:indexPath];
                                                        
@@ -1441,7 +1449,7 @@
                 
                 
             } else {
-                NSLog(@"Error: %@", error);
+                if (DEBUG) NSLog(@"Error: %@", error);
             }
         }];
 
@@ -1467,8 +1475,8 @@
         
         NSString *username = [[object objectForKey:@"owner"] objectForKey:@"username"];
         
-        NSLog(@"username %@", username);
-        NSLog(@"name %@", friendNameInMyContacts);
+        if (DEBUG) NSLog(@"username %@", username);
+        if (DEBUG) NSLog(@"name %@", friendNameInMyContacts);
         
         cell.sendingUser = [object objectForKey:@"owner"];
         
@@ -1489,7 +1497,7 @@
         @try {
             if ([self.selectedBroadcast isKindOfClass:[PFObject class]]) {
                 if ([[object updatedAt] isEqual:[self.selectedBroadcast updatedAt]]) {
-                    NSLog(@"not reloading the one just watched");
+                    if (DEBUG) NSLog(@"not reloading the one just watched");
                     //                 cell.justVisited = [NSNumber numberWithBool:YES];
                     //                 return cell;
                 } else {
@@ -1498,7 +1506,7 @@
             }
         }
         @catch (NSException *exception) {
-            NSLog(@"Exception: %@", exception);
+            if (DEBUG) NSLog(@"Exception: %@", exception);
         }
         
         
@@ -1523,7 +1531,7 @@
             if (!error) {
                 if ([objects count] > 0) {
 //                    cell.detailTextLabel.text = @"Loading...";
-                    NSLog(@"Number of objects %ld", (unsigned long)[objects count]);
+                    if (DEBUG) NSLog(@"Number of objects %ld", (unsigned long)[objects count]);
 
 //                    [tapsCounter setHidden: YES];
 //                    [ind setHidden:NO];
@@ -1534,7 +1542,7 @@
                                                  [self dateDiff:[dateFormat stringFromDate:created]]];/*, (unsigned long)[objects count]*/
                 }
                 
-                //            NSLog(@"Found %ld objects", [objects count]);
+                //            if (DEBUG) NSLog(@"Found %ld objects", [objects count]);
                 [self.allTaps setObject:objects forKey:broadcastId];
                 
                 NSMutableArray *allPhotosInBatch = [[NSMutableArray alloc] init];
@@ -1542,7 +1550,7 @@
                 
                 __block int iterations = 0;
                 
-                NSLog(@"Gonna load taps");
+                if (DEBUG) NSLog(@"Gonna load taps");
                 for (PFObject *tap in objects) {
                     
                     PFFile *image = [tap objectForKey:@"img"];
@@ -1554,7 +1562,7 @@
                             caption = [tap objectForKey:@"caption"];
                     }
                     @catch (NSException *exception) {
-                        NSLog(@"Coundlt get caption for this message exception: %@", exception);
+                        if (DEBUG) NSLog(@"Coundlt get caption for this message exception: %@", exception);
                     }
 
 
@@ -1566,7 +1574,7 @@
                                            completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
                                                if ( !error )
                                                {
-                                                   //                                                   NSLog(@"Start fetching photos");
+                                                   //                                                   if (DEBUG) NSLog(@"Start fetching photos");
 //                                                   cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:FONTSIZE];
                                                    
                                                    [ind setHidden:NO];
@@ -1578,7 +1586,7 @@
 //                                                       thumb.image = image;
 //                                                   }
                                                    
-                                                   NSLog(@"This is the caption %@", caption);
+                                                   if (DEBUG) NSLog(@"This is the caption %@", caption);
                                                    
                                                    [allPhotosInBatch addObject:@{@"imageData": data, @"imageId": imageId, @"batchId": batchId, @"broadcastId":broadcastId, @"caption":caption}];
                                                    
@@ -1589,7 +1597,7 @@
 //                                                   [allPhotosInBatch addObject:objectToAdd];
 //                                                   [self.allTapsArray addObject:objectToAdd];
                                                    
-                                                NSLog(@"%d iterations out of %ld objects", iterations, (unsigned long)[objects count]);
+                                                if (DEBUG) NSLog(@"%d iterations out of %ld objects", iterations, (unsigned long)[objects count]);
                                                    
                                                    iterations++;
                                                    
@@ -1598,7 +1606,7 @@
                                                        // setting the thumbnail
                                                        
                                                        [thumb setAlpha:0.9];
-                                                       NSLog(@"All taps images set object %@", broadcastId);
+                                                       if (DEBUG) NSLog(@"All taps images set object %@", broadcastId);
                                                        [self.allTapsImages setObject:allPhotosInBatchDict forKey:broadcastId];
                                                        [allPhotosInBatchDict setObject: allPhotosInBatch forKey:[tap objectForKey:@"batchId"]];
                                                        cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ ago - Tap to view",
@@ -1616,7 +1624,7 @@
                                                    //
                                                } else{
                                                    //
-                                                   NSLog(@"There was an error getting photo: %@", error);
+                                                   if (DEBUG) NSLog(@"There was an error getting photo: %@", error);
                                                    //                                                   completionBlock(NO,nil);
                                                }
                                            }];
@@ -1640,7 +1648,7 @@
                 }
                 
             } else {
-                NSLog(@"Error: %@", error);
+                if (DEBUG) NSLog(@"Error: %@", error);
             }
         }];
         cell.userInteractionEnabled = YES;
@@ -1656,7 +1664,7 @@
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     [self.customBadge removeFromSuperview];
     if ([segue.identifier isEqual:@"showTap"]) {
-        NSLog(@"Performing segue show tap");
+        if (DEBUG) NSLog(@"Performing segue show tap");
         
         TPSingleTapViewController *vc = (TPSingleTapViewController *)segue.destinationViewController;
 //        vc.spray = self.selectedBroadcast;
@@ -1674,12 +1682,12 @@
             
 //            vc.indexPath = i
             
-            NSLog(@"sender is my flip %@", [sender objectForKey:@"isMyFlipcast"]);
+            if (DEBUG) NSLog(@"sender is my flip %@", [sender objectForKey:@"isMyFlipcast"]);
             vc.isMyFlipcast = [sender objectForKey:@"isMyFlipcast"];
 
         }
         @catch (NSException *exception) {
-            NSLog(@"Exception getting all tap properties: %@", exception);
+            if (DEBUG) NSLog(@"Exception getting all tap properties: %@", exception);
         }
 
         
